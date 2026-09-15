@@ -35,6 +35,20 @@ public class PlayerCollisionScript : MonoBehaviour
         playerPosition = gameObject.transform.position;
     }
 
+    void FixedUpdate()
+    {
+        if (PlayerMovementScript.shouldCrouch)
+        {
+            standingCollider.enabled = false;
+            crouchingCollider.enabled = true;
+        }
+        else
+        {
+            standingCollider.enabled = true;
+            crouchingCollider.enabled = false;
+        }
+    }
+
     // ==========================================//
 
     void OnCollisionStay(Collision collision)
