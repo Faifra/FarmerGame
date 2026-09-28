@@ -655,7 +655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1426938586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,6 +733,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   powerUp: {fileID: 11400000, guid: 85decb307b81a8e49be67cb611da6289, type: 2}
+  movementScript: {fileID: 1872001416}
 --- !u!135 &1481471956
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -748,7 +749,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -831,6 +832,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5414414110882789466, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 993720155}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1872001416 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 993720155}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6567bc5d242c0511f84f5fcce6ab3254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementScript
 --- !u!1 &2085016092
 GameObject:
   m_ObjectHideFlags: 0
