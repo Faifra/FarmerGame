@@ -15,6 +15,7 @@ public class MoveTo : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        goal = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void OnDestroy()
