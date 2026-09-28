@@ -151,4 +151,14 @@ public class PlayerMovementScript : MonoBehaviour
     {
         
     }
+
+    public void ApplyPowerUp(PowerUpSO powerUp)
+    {
+        switch (powerUp.type)
+        {
+            case PowerUpType.SuperMegaJump:
+                maxJumps++;
+                break;
+        }
+    }
 }
