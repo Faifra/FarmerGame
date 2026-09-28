@@ -6,6 +6,12 @@ public class PowerUpScript : MonoBehaviour
     [SerializeField]
     private UnityEvent powerup_pickup = new UnityEvent();
 
+    [SerializeField]
+    private PowerUpSO powerUp;
+
+    [SerializeField]
+    private PlayerMovementScript movementScript;
+
     void Start()
     {
         // Fail safe
@@ -19,6 +25,7 @@ public class PowerUpScript : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             powerup_pickup.Invoke();
+            movementScript.ApplyPowerUp(powerUp);
             Destroy(gameObject);
         }
     }

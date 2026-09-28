@@ -34,6 +34,12 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private float groundedAirControl = 1f;
 
+    [SerializeField]
+    private int maxJumps = 1;
+
+    [SerializeField]
+    private int jumpsLeft;
+
     // ==========================================//
 
     private InputAction moveAction;
@@ -61,6 +67,8 @@ public class PlayerMovementScript : MonoBehaviour
         jumpAction = InputSystem.actions.FindAction("Jump");
         sprintAction = InputSystem.actions.FindAction("Sprint");
         crouchAction = InputSystem.actions.FindAction("Crouch");
+
+        jumpsLeft = maxJumps;
     }
 
     // ==========================================//
@@ -73,7 +81,12 @@ public class PlayerMovementScript : MonoBehaviour
 
         jumpTimer += Time.deltaTime;
 
-        if (jumpAction.WasPressedThisFrame() && (grounded || jumpTimer < fallOffTime))
+        if (grounded && playerRigidBody.linearVelocity.y <= 0)
+        {
+            jumpsLeft = maxJumps;
+        }
+
+        if (jumpAction.WasPressedThisFrame() && jumpsLeft > 0)
         {
             shouldJump = true;
         }
@@ -120,8 +133,11 @@ public class PlayerMovementScript : MonoBehaviour
 
         if (shouldJump)
         {
+            Debug.Log("JUMP EXECUTED | jumps left before jump: " + jumpsLeft);
+
             playerRigidBody.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
             shouldJump = false;
+            jumpsLeft--;
         }
     }
 
@@ -134,5 +150,15 @@ public class PlayerMovementScript : MonoBehaviour
     public void ApplyGravityBoots()
     {
         
+    }
+
+    public void ApplyPowerUp(PowerUpSO powerUp)
+    {
+        switch (powerUp.type)
+        {
+            case PowerUpType.SuperMegaJump:
+                maxJumps++;
+                break;
+        }
     }
 }
