@@ -10,11 +10,16 @@ public class ProjectileScript : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Projectile hit: {collision.gameObject.name}");
+        Debug.Log($"Projectile hit: {other.gameObject.name}");
 
-        //Damage system here
+        EnemyHealthScript health = other.GetComponentInParent<EnemyHealthScript>();
+
+        if (health != null)
+        {
+            health.TakeDamage((int)damage);
+        }
 
         Destroy(gameObject);
     }

@@ -21,7 +21,12 @@ public class MeleeWeaponScript : WeaponScript
         {
             Debug.Log($"Melee hit: {hit.gameObject.name}");
 
-            //Damage system here
+            EnemyHealthScript health = hit.GetComponent<EnemyHealthScript>();
+
+            if (health != null)
+            {
+                health.TakeDamage((int)damage);
+            }
         }
     }
 
