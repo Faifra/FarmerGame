@@ -30,18 +30,21 @@ public class PlayerLookScript : MonoBehaviour
     private Camera playerCamera;
 
     // ==========================================//
+
+    private bool menuOpen = false;
+
     void Start()
     {
         playerCamera = Camera.main;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        SetMenuOpen(false);
     }
 
     // ==========================================//
     
     void Update()
     {
-        foreach(var c in cameraInputAxisController.Controllers)
+        foreach (var c in cameraInputAxisController.Controllers)
         {
             c.Driver.AccelTime = mouseAcceleration;
             c.Driver.DecelTime = mouseDecceleration;
@@ -70,6 +73,30 @@ public class PlayerLookScript : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (menuOpen)
+            return;
+
         transform.eulerAngles = new Vector3(0, playerCamera.transform.eulerAngles.y, 0);
+    }
+
+    public void SetMenuOpen(bool open)
+    {
+        menuOpen = open;
+
+        if (cameraInputAxisController != null)
+        {
+            cameraInputAxisController.enabled = !menuOpen;
+        }
+
+        if (menuOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 }
