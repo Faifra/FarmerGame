@@ -24,6 +24,15 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private float slideSpeedMultiplier = 1.2f;
 
+    [Space, SerializeField]
+    private int maxStamina = 100;
+    
+    [SerializeField]
+    private int staminaRemovalRate = 1;
+
+    [SerializeField]
+    private int staminaRecoveryRate = 1;
+
     [Header("Control Values")]
     [SerializeField]
     private float fallOffTime = 1f;
@@ -40,6 +49,9 @@ public class PlayerMovementScript : MonoBehaviour
 
     [SerializeField]
     private int jumpsLeft;
+
+    [SerializeField]
+    private int playerStamina = 100;
 
     // ==========================================//
 
@@ -92,6 +104,7 @@ public class PlayerMovementScript : MonoBehaviour
             shouldJump = true;
         }
 
+        // Sprint
         if (!useTogglableSprint)
         {
             if (sprintAction.IsPressed()) shouldSprint = true;
@@ -102,6 +115,7 @@ public class PlayerMovementScript : MonoBehaviour
             if (sprintAction.WasPressedThisFrame()) shouldSprint = !shouldSprint;
         }
 
+        // Crouch
         if (useTogglableCrouch)
         {
             if (crouchAction.WasPressedThisFrame())
@@ -124,6 +138,24 @@ public class PlayerMovementScript : MonoBehaviour
 
         Vector3 velocity = playerRigidBody.linearVelocity;
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce;
+
+        // Stamina
+        if (shouldSprint)
+        {
+            if(playerStamina <= 0)
+            {
+                shouldSprint = false;
+            }
+            else
+            {
+                playerStamina -= staminaRemovalRate;
+            }  
+        }
+        else if (!shouldSprint && playerStamina < maxStamina)
+        {
+            playerStamina += staminaRecoveryRate;
+        }
+
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
         targetVelocity *= !shouldSlide ? 1 : slideSpeedMultiplier;
         Vector3 appliedVelocity = new Vector3(targetVelocity.x - velocity.x, 0, targetVelocity.z - velocity.z);

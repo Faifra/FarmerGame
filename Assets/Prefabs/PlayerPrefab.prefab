@@ -453,7 +453,7 @@ MonoBehaviour:
   slideSpeedMultiplier: 1.2
   fallOffTime: 1
   airControl: 0.3
-  groundedAirControl: 1
+  groundedAirControl: 0.39
   maxJumps: 1
   jumpsLeft: 0
 --- !u!114 &4348695818364076343
