@@ -446,16 +446,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementScript
   moveForce: 6
-  jumpForce: 5
+  jumpForce: 3.75
   useTogglableSprint: 0
   useTogglableCrouch: 1
   sprintMultiplier: 1.4
   slideSpeedMultiplier: 1.2
+  maxStamina: 100
+  staminaRemovalRate: 1
+  staminaRecoveryRate: 1
   fallOffTime: 1
   airControl: 0.3
   groundedAirControl: 0.39
   maxJumps: 1
   jumpsLeft: 0
+  playerStamina: 100
 --- !u!114 &4348695818364076343
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,7 +24,7 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private float slideSpeedMultiplier = 1.2f;
 
-    [Space, SerializeField]
+    [Header("Stamina"), SerializeField]
     private int maxStamina = 100;
     
     [SerializeField]
@@ -51,7 +51,7 @@ public class PlayerMovementScript : MonoBehaviour
     private int jumpsLeft;
 
     [SerializeField]
-    private int playerStamina = 100;
+    private int playerStamina;
 
     // ==========================================//
 
@@ -82,6 +82,7 @@ public class PlayerMovementScript : MonoBehaviour
         crouchAction = InputSystem.actions.FindAction("Crouch");
 
         jumpsLeft = maxJumps;
+        playerStamina = maxStamina;
     }
 
     // ==========================================//
@@ -168,6 +169,7 @@ public class PlayerMovementScript : MonoBehaviour
         {
             Debug.Log("JUMP EXECUTED | jumps left before jump: " + jumpsLeft);
 
+            playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z); // Set y vel to 0 for consistent jump
             playerRigidBody.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
             shouldJump = false;
             jumpsLeft--;
