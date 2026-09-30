@@ -34,6 +34,7 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private float groundedAirControl = 1f;
 
+    [Header("Debug")]
     [SerializeField]
     private int maxJumps = 1;
 
@@ -139,17 +140,6 @@ public class PlayerMovementScript : MonoBehaviour
             shouldJump = false;
             jumpsLeft--;
         }
-    }
-
-    public void ApplyMagnetBoots()
-    {
-        // debug
-        Debug.Log("We picked up a power up!");
-    }
-
-    public void ApplyGravityBoots()
-    {
-        
     }
 
     public void ApplyPowerUp(PowerUpSO powerUp)
