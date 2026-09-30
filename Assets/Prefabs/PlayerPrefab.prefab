@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 1261170562980040956}
   m_Layer: 3
   m_Name: PlayerPrefab
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -445,17 +445,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6567bc5d242c0511f84f5fcce6ab3254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementScript
-  moveForce: 3
-  jumpForce: 5
-  useTogglableSprint: 1
+  moveForce: 6
+  jumpForce: 3.75
+  useTogglableSprint: 0
   useTogglableCrouch: 1
-  sprintMultiplier: 2
+  sprintMultiplier: 1.4
   slideSpeedMultiplier: 1.2
+  maxStamina: 100
+  staminaRemovalRate: 1
+  staminaRecoveryRate: 1
   fallOffTime: 1
   airControl: 0.3
-  groundedAirControl: 1
+  groundedAirControl: 0.39
   maxJumps: 1
   jumpsLeft: 0
+  playerStamina: 100
 --- !u!114 &4348695818364076343
 MonoBehaviour:
   m_ObjectHideFlags: 0
