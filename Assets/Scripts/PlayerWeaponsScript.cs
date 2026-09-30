@@ -12,10 +12,18 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     private int currentWeapon = 0;
 
+    private bool menuOpen = false;
+
+    [Header("Trap Prefabs")]
     [SerializeField] private GameObject launchTrapPrefab;
     [SerializeField] private GameObject pullTrapPrefab;
+
     private TrapPlacementScript trapPlacement;
     private InputAction placeTrapAction;
+
+    [Header("Trap Inventory")]
+    private int launchTrapCount = 0;
+    private int pullTrapCount = 0;
 
     private void Start()
     {
@@ -24,14 +32,17 @@ public class PlayerWeaponsScript : MonoBehaviour
         attackAction = InputSystem.actions.FindAction("Attack");
         weaponScrollAction = InputSystem.actions.FindAction("WeaponScroll");
 
-        SelectWeapon(currentWeapon);
-
         trapPlacement = GetComponent<TrapPlacementScript>();
-        placeTrapAction = InputSystem.actions.FindAction("Traps");
+        placeTrapAction = InputSystem.actions.FindAction("Attack");
+
+        SelectWeapon(currentWeapon);
     }
 
     private void Update()
     {
+        if (menuOpen)
+            return;
+
         if (previousAction.WasPressedThisFrame())
         {
             SelectPreviousWeapon();
@@ -64,28 +75,93 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
-    private void SelectPreviousWeapon()
+    public void SetMenuOpen(bool open)
     {
-        currentWeapon--;
+        menuOpen = open;
+    }
 
-        if (currentWeapon < 0)
+    public void AddLaunchTrap()
+    {
+        launchTrapCount++;
+    }
+
+    public void AddPullTrap()
+    {
+        pullTrapCount++;
+    }
+
+    private bool CanUseWeapon(int index)
+    {
+        if (index < 0 || index >= weapons.Length)
+            return false;
+
+        // Launch Trap
+        if (index == 3)
         {
-            currentWeapon = weapons.Length - 1;
+            return launchTrapCount > 0;
         }
 
-        SelectWeapon(currentWeapon);
+        // Pull Trap
+        if (index == 4)
+        {
+            return pullTrapCount > 0;
+        }
+
+        return true;
+    }
+
+    private void SelectPreviousWeapon()
+    {
+        int newWeapon = currentWeapon - 1;
+
+        if (newWeapon < 0)
+        {
+            newWeapon = weapons.Length - 1;
+        }
+
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (CanUseWeapon(newWeapon))
+            {
+                currentWeapon = newWeapon;
+                SelectWeapon(currentWeapon);
+                return;
+            }
+
+            newWeapon--;
+
+            if (newWeapon < 0)
+            {
+                newWeapon = weapons.Length - 1;
+            }
+        }
     }
 
     private void SelectNextWeapon()
     {
-        currentWeapon++;
+        int newWeapon = currentWeapon + 1;
 
-        if (currentWeapon >= weapons.Length)
+        if (newWeapon >= weapons.Length)
         {
-            currentWeapon = 0;
+            newWeapon = 0;
         }
 
-        SelectWeapon(currentWeapon);
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (CanUseWeapon(newWeapon))
+            {
+                currentWeapon = newWeapon;
+                SelectWeapon(currentWeapon);
+                return;
+            }
+
+            newWeapon++;
+
+            if (newWeapon >= weapons.Length)
+            {
+                newWeapon = 0;
+            }
+        }
     }
 
     private void SelectWeapon(int index)
@@ -93,7 +169,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (weapons == null || weapons.Length == 0)
             return;
 
-        if (index < 0 || index >= weapons.Length)
+        if (!CanUseWeapon(index))
             return;
 
         for (int i = 0; i < weapons.Length; i++)
@@ -104,6 +180,13 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     private void Attack()
     {
+        if (weapons == null ||
+            currentWeapon < 0 ||
+            currentWeapon >= weapons.Length)
+        {
+            return;
+        }
+
         WeaponScript weapon = weapons[currentWeapon].GetComponent<WeaponScript>();
 
         if (weapon != null)
@@ -115,24 +198,53 @@ public class PlayerWeaponsScript : MonoBehaviour
     private void PlaceTrap()
     {
         if (trapPlacement == null)
-        {
-            return; 
-        }
+            return;
 
         TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
 
         if (trap == null)
-        {
             return;
-        }
 
         if (trap is LaunchTrapScript)
         {
+            if (launchTrapCount <= 0)
+                return;
+
             trapPlacement.PlaceTrap(launchTrapPrefab);
+
+            launchTrapCount--;
+
+            if (launchTrapCount <= 0)
+            {
+                SelectWeaponAfterTrapUsed();
+            }
         }
         else if (trap is PullTrapScript)
         {
+            if (pullTrapCount <= 0)
+                return;
+
             trapPlacement.PlaceTrap(pullTrapPrefab);
+
+            pullTrapCount--;
+
+            if (pullTrapCount <= 0)
+            {
+                SelectWeaponAfterTrapUsed();
+            }
+        }
+    }
+
+    private void SelectWeaponAfterTrapUsed()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (CanUseWeapon(i))
+            {
+                currentWeapon = i;
+                SelectWeapon(currentWeapon);
+                return;
+            }
         }
     }
 }

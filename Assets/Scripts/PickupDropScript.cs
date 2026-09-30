@@ -99,19 +99,15 @@ public class PickupDropScript : MonoBehaviour
 
         collected = true;
 
-        DropsUIControllerScript ui = FindFirstObjectByType<DropsUIControllerScript>();
-
-        if (ui != null)
+        if (player != null)
         {
-            ui.AddDrops(amount);
+            PlayerResourceScript resources = player.GetComponent<PlayerResourceScript>();
+
+            if (resources != null)
+            {
+                resources.AddDrops(amount);
+            }
         }
-
-        //PlayerResourceScript resources = player.GetComponent<PlayerResourceScript>();
-
-        //if (resources != null)
-        //{
-        //    resources.AddDrops(amount);
-        //}
 
         Debug.Log(
             $"Picked up {amount} x {materialType}"
