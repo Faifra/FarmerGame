@@ -98,8 +98,7 @@ public class MoveTo : MonoBehaviour
 
             float progress = time / duration;
 
-            transform.position =
-                Vector3.Lerp(startPosition, targetPosition, progress);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, progress);
 
             yield return null;
         }
