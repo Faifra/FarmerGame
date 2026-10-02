@@ -58,6 +58,11 @@ public class PlayerWeaponsScript : MonoBehaviour
             Attack();
         }
 
+        if (attackAction.IsPressed())
+        {
+            HoldAttack();
+        }
+
         float scroll = weaponScrollAction.ReadValue<float>();
 
         if (scroll > 0)
@@ -180,9 +185,7 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     private void Attack()
     {
-        if (weapons == null ||
-            currentWeapon < 0 ||
-            currentWeapon >= weapons.Length)
+        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
         {
             return;
         }
@@ -192,6 +195,21 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (weapon != null)
         {
             weapon.Attack();
+        }
+    }
+
+    private void HoldAttack()
+    {
+        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
+        {
+            return;
+        }
+
+        RangedWeaponScript rangedWeapon = weapons[currentWeapon].GetComponent<RangedWeaponScript>();
+
+        if (rangedWeapon != null)
+        {
+            rangedWeapon.HoldAttack();
         }
     }
 

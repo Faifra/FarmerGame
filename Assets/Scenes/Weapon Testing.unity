@@ -759,6 +759,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1593414044868933787, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: fireRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593414044868933787, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: automatic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593414044868933787, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: muzzleVelocity
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2095645908196433372, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: muzzleVelocity
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: moveForce
       value: 8
