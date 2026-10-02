@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 7557086610914698805}
   - component: {fileID: 9219392764725717517}
   - component: {fileID: 7750758238009210116}
+  - component: {fileID: 2055990771804951910}
+  - component: {fileID: 6795840019995754340}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -228,3 +230,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2055990771804951910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7487730756968861998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
+  drops:
+  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 10
+  burstDistance: 1.5
+  burstHeight: 0.5
+--- !u!114 &6795840019995754340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7487730756968861998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
+  drops:
+  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 10
+  burstDistance: 1.5
+  burstHeight: 0.5

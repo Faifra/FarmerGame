@@ -882,13 +882,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: totalText
+      value: 
+      objectReference: {fileID: 1369810834}
+    - target: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: pendingText
+      value: 
+      objectReference: {fileID: 1929445385}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4226127632634856397, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1276370234}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
 --- !u!4 &993720156 stripped
 Transform:
@@ -1028,37 +1033,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &1276370225 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4226127632634856397, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
-  m_PrefabInstance: {fileID: 993720155}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1276370232 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4348695818364076343, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 993720155}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1276370225}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c897686f3f1a416b3cda1bd0d32210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLookScript
---- !u!114 &1276370234
+--- !u!114 &1276370234 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 993720155}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1276370225}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e3c30dedf55c244e866293688e805e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerResourceScript
-  totalText: {fileID: 1369810834}
-  pendingText: {fileID: 1929445385}
-  pendingDisplayTime: 1
 --- !u!1 &1369810832
 GameObject:
   m_ObjectHideFlags: 0
@@ -1913,13 +1909,13 @@ MonoBehaviour:
   upgradeMenu: {fileID: 1600094933}
   playerResources: {fileID: 1276370234}
   playerLook: {fileID: 1276370232}
+  playerWeapons: {fileID: 1502290100}
   launchTrapCost: 10
   launchTrapButton: {fileID: 1540047577}
   launchTrapCostText: {fileID: 1661392154}
   pullTrapCost: 5
   pullTrapButton: {fileID: 1029136001}
   pullTrapCostText: {fileID: 90032146}
-  playerWeapons: {fileID: 1502290100}
 --- !u!1 &1906474270
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,40 +2392,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2106993371}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
---- !u!1 &2106993370 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
-  m_PrefabInstance: {fileID: 2106993369}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2106993371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2106993370}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
-  drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
-  burstDistance: 1.5
-  burstHeight: 0.5
 --- !u!1001 &4353176000749017811
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2489,33 +2456,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4353176000749017813}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
---- !u!1 &4353176000749017812 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
-  m_PrefabInstance: {fileID: 4353176000749017811}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4353176000749017813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4353176000749017812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
-  drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
-  burstDistance: 1.5
-  burstHeight: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2528,3 +2470,4 @@ SceneRoots:
   - {fileID: 1388688450}
   - {fileID: 1904715191}
   - {fileID: 1828681511}
+  - {fileID: 467286089}
