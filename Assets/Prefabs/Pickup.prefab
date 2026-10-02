@@ -129,7 +129,7 @@ MonoBehaviour:
   materialType: Material
   amount: 1
   pickupRange: 4
-  pickupSpeed: 6
+  pickupSpeed: 12
   settleTime: 0.7
 --- !u!54 &-1772790810037459882
 Rigidbody:
