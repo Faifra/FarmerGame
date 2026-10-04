@@ -9,6 +9,7 @@ public class PlayerWeaponsScript : MonoBehaviour
     private InputAction nextAction;
     private InputAction attackAction;
     private InputAction weaponScrollAction;
+    private InputAction placeTrapAction;
 
     private int currentWeapon = 0;
 
@@ -19,7 +20,6 @@ public class PlayerWeaponsScript : MonoBehaviour
     [SerializeField] private GameObject pullTrapPrefab;
 
     private TrapPlacementScript trapPlacement;
-    private InputAction placeTrapAction;
 
     [Header("Trap Inventory")]
     private int launchTrapCount = 0;
@@ -33,7 +33,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         weaponScrollAction = InputSystem.actions.FindAction("WeaponScroll");
 
         trapPlacement = GetComponent<TrapPlacementScript>();
-        placeTrapAction = InputSystem.actions.FindAction("Attack");
+        placeTrapAction = InputSystem.actions.FindAction("PlaceTrap");
 
         SelectWeapon(currentWeapon);
     }
@@ -218,6 +218,9 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (trapPlacement == null)
             return;
 
+        if (trapPlacement.IsPlacingTrap())
+            return;
+
         TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
 
         if (trap == null)
@@ -228,7 +231,28 @@ public class PlayerWeaponsScript : MonoBehaviour
             if (launchTrapCount <= 0)
                 return;
 
-            trapPlacement.PlaceTrap(launchTrapPrefab);
+            trapPlacement.StartPlacement(launchTrapPrefab);
+        }
+        else if (trap is PullTrapScript)
+        {
+            if (pullTrapCount <= 0)
+                return;
+
+            trapPlacement.StartPlacement(pullTrapPrefab);
+        }
+    }
+
+    public void TrapPlacementConfirmed()
+    {
+        TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
+
+        if (trap == null)
+            return;
+
+        if (trap is LaunchTrapScript)
+        {
+            if (launchTrapCount <= 0)
+                return;
 
             launchTrapCount--;
 
@@ -241,8 +265,6 @@ public class PlayerWeaponsScript : MonoBehaviour
         {
             if (pullTrapCount <= 0)
                 return;
-
-            trapPlacement.PlaceTrap(pullTrapPrefab);
 
             pullTrapCount--;
 
