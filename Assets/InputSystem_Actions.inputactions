@@ -40,7 +40,7 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "852140f2-7766-474d-8707-702459ba45f3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold",
                     "initialStateCheck": false,
@@ -107,7 +107,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Traps",
+                    "name": "PlaceTrap",
                     "type": "Button",
                     "id": "1822fbc5-a351-4340-a90b-12330a7c5741",
                     "expectedControlType": "",
@@ -120,6 +120,19 @@
                     "name": "Dash",
                     "type": "Button",
                     "id": "141fb697-dd00-4b8e-a9d3-4a712232d080",
+                    "name": "RotateTrap",
+                    "type": "Button",
+                    "id": "7764ca7e-9693-4eb7-8f83-9438bc7fa2da",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "CancelTrap",
+                    "type": "Button",
+                    "id": "4ba2abc8-a306-4548-9e37-b1dd64ead1b0",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -527,11 +540,33 @@
                 {
                     "name": "",
                     "id": "606daf35-2828-4abd-bb61-e01838b02323",
-                    "path": "<Keyboard>/t",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Traps",
+                    "action": "PlaceTrap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c92c10f8-008d-44ff-a55b-c408ec0ef9b1",
+                    "path": "<Keyboard>/#(R)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "RotateTrap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d31ab665-975f-4335-b670-ee398f4f4f70",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "CancelTrap",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

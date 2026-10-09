@@ -9,6 +9,7 @@ public class PlayerWeaponsScript : MonoBehaviour
     private InputAction nextAction;
     private InputAction attackAction;
     private InputAction weaponScrollAction;
+    private InputAction placeTrapAction;
 
     private int currentWeapon = 0;
 
@@ -19,7 +20,6 @@ public class PlayerWeaponsScript : MonoBehaviour
     [SerializeField] private GameObject pullTrapPrefab;
 
     private TrapPlacementScript trapPlacement;
-    private InputAction placeTrapAction;
 
     [Header("Trap Inventory")]
     private int launchTrapCount = 0;
@@ -33,7 +33,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         weaponScrollAction = InputSystem.actions.FindAction("WeaponScroll");
 
         trapPlacement = GetComponent<TrapPlacementScript>();
-        placeTrapAction = InputSystem.actions.FindAction("Attack");
+        placeTrapAction = InputSystem.actions.FindAction("PlaceTrap");
 
         SelectWeapon(currentWeapon);
     }
@@ -56,6 +56,11 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (attackAction.WasPressedThisFrame())
         {
             Attack();
+        }
+
+        if (attackAction.IsPressed())
+        {
+            HoldAttack();
         }
 
         float scroll = weaponScrollAction.ReadValue<float>();
@@ -180,9 +185,7 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     private void Attack()
     {
-        if (weapons == null ||
-            currentWeapon < 0 ||
-            currentWeapon >= weapons.Length)
+        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
         {
             return;
         }
@@ -195,9 +198,27 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
+    private void HoldAttack()
+    {
+        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
+        {
+            return;
+        }
+
+        RangedWeaponScript rangedWeapon = weapons[currentWeapon].GetComponent<RangedWeaponScript>();
+
+        if (rangedWeapon != null)
+        {
+            rangedWeapon.HoldAttack();
+        }
+    }
+
     private void PlaceTrap()
     {
         if (trapPlacement == null)
+            return;
+
+        if (trapPlacement.IsPlacingTrap())
             return;
 
         TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
@@ -210,7 +231,28 @@ public class PlayerWeaponsScript : MonoBehaviour
             if (launchTrapCount <= 0)
                 return;
 
-            trapPlacement.PlaceTrap(launchTrapPrefab);
+            trapPlacement.StartPlacement(launchTrapPrefab);
+        }
+        else if (trap is PullTrapScript)
+        {
+            if (pullTrapCount <= 0)
+                return;
+
+            trapPlacement.StartPlacement(pullTrapPrefab);
+        }
+    }
+
+    public void TrapPlacementConfirmed()
+    {
+        TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
+
+        if (trap == null)
+            return;
+
+        if (trap is LaunchTrapScript)
+        {
+            if (launchTrapCount <= 0)
+                return;
 
             launchTrapCount--;
 
@@ -223,8 +265,6 @@ public class PlayerWeaponsScript : MonoBehaviour
         {
             if (pullTrapCount <= 0)
                 return;
-
-            trapPlacement.PlaceTrap(pullTrapPrefab);
 
             pullTrapCount--;
 
