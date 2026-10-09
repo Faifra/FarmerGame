@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -7,7 +8,7 @@ public class PlayerMovementScript : MonoBehaviour
 
     [Header("Move Values")]
     [SerializeField]
-    private float moveForce = 1.5f; 
+    private float moveForce = 1.5f;
 
     [SerializeField]
     private float jumpForce = 5.0f;
@@ -26,7 +27,7 @@ public class PlayerMovementScript : MonoBehaviour
 
     [Header("Stamina"), SerializeField]
     private int maxStamina = 100;
-    
+
     [SerializeField]
     private int staminaRemovalRate = 1;
 
@@ -59,6 +60,7 @@ public class PlayerMovementScript : MonoBehaviour
     private InputAction jumpAction;
     private InputAction sprintAction;
     private InputAction crouchAction;
+    private InputAction dashAction;
 
     private Vector3 finalMoveVector;
     private bool shouldJump;
@@ -71,6 +73,23 @@ public class PlayerMovementScript : MonoBehaviour
 
     static public float jumpTimer = 0;
 
+    [Header("Dash")]
+    [SerializeField] private float dashForce = 15f;
+    [SerializeField] private float dashDuration = 0.15f;
+    [SerializeField] private float dashCooldown = 1.0f;
+
+    [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
+    [SerializeField] private float dashSpeedChangeFactor = 25f;
+
+    private bool isDashing;
+    private float dashTimer;
+    private float dashCooldownTimer;
+    private Vector3 dashDirection;
+
+    private bool keepMomentum;
+    private float dashMomentumSpeed;
+    private Coroutine dashMomentumRoutine;
+
     // ==========================================//
 
     void Start()
@@ -80,6 +99,7 @@ public class PlayerMovementScript : MonoBehaviour
         jumpAction = InputSystem.actions.FindAction("Jump");
         sprintAction = InputSystem.actions.FindAction("Sprint");
         crouchAction = InputSystem.actions.FindAction("Crouch");
+        dashAction = InputSystem.actions.FindAction("Dash");
 
         jumpsLeft = maxJumps;
         playerStamina = maxStamina;
@@ -108,8 +128,7 @@ public class PlayerMovementScript : MonoBehaviour
         // Sprint
         if (!useTogglableSprint)
         {
-            if (sprintAction.IsPressed()) shouldSprint = true;
-            else shouldSprint = false;
+            shouldSprint = sprintAction.IsPressed();
         }
         else
         {
@@ -126,16 +145,42 @@ public class PlayerMovementScript : MonoBehaviour
         }
         else
         {
-            if(crouchAction.IsPressed()) shouldCrouch = true;
-            else shouldCrouch = false;
+            shouldCrouch = crouchAction.IsPressed();
         }
 
+        // Dash cooldown
+        if (dashCooldownTimer > 0f)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
+
+        // Dash input
+        if (dashAction.WasPressedThisFrame() && dashCooldownTimer <= 0f && !isDashing)
+        {
+            StartDash(moveValue);
+        }
+
+        // Dash timer
+        if (isDashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0f)
+            {
+                isDashing = false;
+                StartDashMomentum();
+            }
+        }
     }
 
     // ==========================================//
 
     private void FixedUpdate()
     {
+        if (isDashing)
+        {
+            ApplyDash();
+            return;
+        }
 
         Vector3 velocity = playerRigidBody.linearVelocity;
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce;
@@ -143,14 +188,14 @@ public class PlayerMovementScript : MonoBehaviour
         // Stamina
         if (shouldSprint)
         {
-            if(playerStamina <= 0)
+            if (playerStamina <= 0)
             {
                 shouldSprint = false;
             }
             else
             {
                 playerStamina -= staminaRemovalRate;
-            }  
+            }
         }
         else if (!shouldSprint && playerStamina < maxStamina)
         {
@@ -159,6 +204,12 @@ public class PlayerMovementScript : MonoBehaviour
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
         targetVelocity *= !shouldSlide ? 1 : slideSpeedMultiplier;
+
+        if (keepMomentum)
+        {
+            targetVelocity = dashDirection * dashMomentumSpeed;
+        }
+
         Vector3 appliedVelocity = new Vector3(targetVelocity.x - velocity.x, 0, targetVelocity.z - velocity.z);
 
         float moveControlMultiplier = grounded ? groundedAirControl : airControl;
@@ -167,14 +218,90 @@ public class PlayerMovementScript : MonoBehaviour
 
         if (shouldJump)
         {
-            Debug.Log("JUMP EXECUTED | jumps left before jump: " + jumpsLeft);
-
-            playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z); // Set y vel to 0 for consistent jump
+            playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z);
             playerRigidBody.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
             shouldJump = false;
             jumpsLeft--;
         }
     }
+
+    // ==========================================
+
+    private void StartDash(Vector2 moveValue)
+    {
+        // If no input, dash forward
+        Vector3 inputDir = transform.forward * moveValue.y + transform.right * moveValue.x;
+        if (inputDir.sqrMagnitude > 0.01f)
+            dashDirection = inputDir.normalized;
+        else
+            dashDirection = transform.forward;
+
+        // Cancel any momentum left over from a previous dash
+        StopDashMomentum();
+
+        isDashing = true;
+        dashTimer = dashDuration;
+        dashCooldownTimer = dashCooldown;
+
+        // Reset velocity to make dash consistent
+        playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0f, playerRigidBody.linearVelocity.z);
+    }
+
+    private void ApplyDash()
+    {
+        Vector3 dashVelocity = dashDirection * dashForce;
+        Vector3 current = playerRigidBody.linearVelocity;
+        Vector3 change = new Vector3(dashVelocity.x - current.x, 0f, dashVelocity.z - current.z);
+
+        playerRigidBody.AddForce(change, ForceMode.VelocityChange);
+    }
+
+    private void StartDashMomentum()
+    {
+        StopDashMomentum();
+        dashMomentumRoutine = StartCoroutine(DashMomentumRoutine());
+    }
+
+    private void StopDashMomentum()
+    {
+        if (dashMomentumRoutine != null)
+        {
+            StopCoroutine(dashMomentumRoutine);
+            dashMomentumRoutine = null;
+        }
+        keepMomentum = false;
+    }
+
+    private IEnumerator DashMomentumRoutine()
+    {
+        // Smoothly lerp from the dash speed down to the normal move speed
+        keepMomentum = true;
+        dashMomentumSpeed = dashForce;
+
+        float time = 0f;
+        float difference = Mathf.Abs(dashForce - GetNormalMoveSpeed());
+
+        while (time < difference)
+        {
+            dashMomentumSpeed = Mathf.Lerp(dashForce, GetNormalMoveSpeed(), time / difference);
+            time += Time.deltaTime * dashSpeedChangeFactor;
+
+            yield return null;
+        }
+
+        keepMomentum = false;
+        dashMomentumRoutine = null;
+    }
+
+    private float GetNormalMoveSpeed()
+    {
+        float speed = moveForce;
+        speed *= !shouldSprint ? 1 : sprintMultiplier;
+        speed *= !shouldSlide ? 1 : slideSpeedMultiplier;
+        return speed;
+    }
+
+    // ==========================================//
 
     public void ApplyPowerUp(PowerUpSO powerUp)
     {
