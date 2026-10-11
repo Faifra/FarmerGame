@@ -7,12 +7,14 @@ public abstract class EnemyHealthScript : MonoBehaviour
     protected int currentHealth;
 
     private EnemyDropsScript dropsScript;
+    private WaveManager waveManager;
     private bool isDead = false;
 
     protected virtual void Start()
     {
         currentHealth = maxHealth;
         dropsScript = GetComponent<EnemyDropsScript>();
+        waveManager = FindFirstObjectByType<WaveManager>();
     }
 
     public virtual void TakeDamage(int damage)
@@ -44,6 +46,10 @@ public abstract class EnemyHealthScript : MonoBehaviour
             dropsScript.Drop();
         }
 
+        if (waveManager != null)
+        {
+            waveManager.EnemyDied();
+        }
         Destroy(gameObject);
     }
 }

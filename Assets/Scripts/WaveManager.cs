@@ -13,7 +13,7 @@ public class WaveManager : MonoBehaviour
 {
     [SerializeField] private List<WaveSO> waves; //list of all waves, they are scriptable objects
     [SerializeField] private List<SpawnEnemy> spawners; //list of spawners scattered throughout the map. 
-    [SerializeField] private float waveInterval = 60f;
+    [SerializeField] private float waveInterval = 5f;
     [SerializeField] private float waveTimer = 0f;
 
     public int CurrentWave => currentWaveIndex;
@@ -24,7 +24,7 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        
+
     }
 
     private void Update()
