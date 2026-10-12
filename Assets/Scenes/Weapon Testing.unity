@@ -2504,6 +2504,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1526581792360779690, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526581792360779690, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: knockbackSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526581792360779690, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: knockbackDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 1593414044868933787, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: automatic
       value: 1
@@ -2515,6 +2527,10 @@ PrefabInstance:
     - target: {fileID: 2095645908196433372, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: shotgun
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2095645908196433372, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: attackCooldown
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 2095645908196433372, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: muzzleVelocity
