@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Wave0
   m_EditorClassIdentifier: Assembly-CSharp::WaveSO
   enemies:
-  - enemyPrefab: {fileID: 8384746767767502866, guid: cfab3055c60dc554fa4b6d943bf8be7e, type: 3}
+  - enemyPrefab: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
     amount: 10
