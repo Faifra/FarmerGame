@@ -38,6 +38,13 @@ public class RangedWeaponScript : WeaponScript
         if (automatic)
             return;
 
+        if (!CanAttack())
+            return;
+
+        if (projectilePrefab == null || muzzle == null)
+            return;
+
+        StartAttackCooldown();
         Fire();
     }
 

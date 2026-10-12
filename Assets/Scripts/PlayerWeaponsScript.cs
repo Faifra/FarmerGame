@@ -3,15 +3,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerWeaponsScript : MonoBehaviour
 {
+    [Header("Weapons")]
     [SerializeField] private GameObject[] weapons;
 
-    private InputAction previousAction;
-    private InputAction nextAction;
+    private const int HotbarSize = 9;
+
+    private GameObject[] primaryHotbar = new GameObject[HotbarSize];
+    private GameObject[] trapHotbar = new GameObject[HotbarSize];
+
     private InputAction attackAction;
     private InputAction weaponScrollAction;
     private InputAction placeTrapAction;
+    private InputAction toggleHotbarAction;
+    private InputAction[] selectActions = new InputAction[HotbarSize];
 
-    private int currentWeapon = 0;
+    private int currentSlot = -1;
+    private int activeHotbar = 0;
 
     private bool menuOpen = false;
 
@@ -21,21 +28,58 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     private TrapPlacementScript trapPlacement;
 
-    [Header("Trap Inventory")]
+    private GameObject launchTrapWeapon;
+    private GameObject pullTrapWeapon;
+
     private int launchTrapCount = 0;
     private int pullTrapCount = 0;
 
+    private GameObject[] ActiveHotbar => activeHotbar == 0 ? primaryHotbar : trapHotbar;
+
     private void Start()
     {
-        previousAction = InputSystem.actions.FindAction("Previous");
-        nextAction = InputSystem.actions.FindAction("Next");
         attackAction = InputSystem.actions.FindAction("Attack");
         weaponScrollAction = InputSystem.actions.FindAction("WeaponScroll");
+        placeTrapAction = InputSystem.actions.FindAction("PlaceTrap");
+        toggleHotbarAction = InputSystem.actions.FindAction("Hotbar Toggle");
+
+        for (int i = 0; i < HotbarSize; i++)
+        {
+            selectActions[i] = InputSystem.actions.FindAction("Select " + (i + 1));
+        }
 
         trapPlacement = GetComponent<TrapPlacementScript>();
-        placeTrapAction = InputSystem.actions.FindAction("PlaceTrap");
 
-        SelectWeapon(currentWeapon);
+        int nextSlot = 0;
+
+        if (weapons != null)
+        {
+            foreach (GameObject weapon in weapons)
+            {
+                if (weapon == null)
+                    continue;
+
+                TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
+
+                if (trap is LaunchTrapScript)
+                {
+                    launchTrapWeapon = weapon;
+                }
+                else if (trap is PullTrapScript)
+                {
+                    pullTrapWeapon = weapon;
+                }
+                else if (nextSlot < HotbarSize)
+                {
+                    primaryHotbar[nextSlot] = weapon;
+                    nextSlot++;
+                }
+
+                weapon.SetActive(false);
+            }
+        }
+
+        SelectFirstAvailableSlot();
     }
 
     private void Update()
@@ -43,38 +87,44 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (menuOpen)
             return;
 
-        if (previousAction.WasPressedThisFrame())
+        if (trapPlacement != null && trapPlacement.IsPlacingTrap())
+            return;
+
+        if (toggleHotbarAction != null && toggleHotbarAction.WasPressedThisFrame())
         {
-            SelectPreviousWeapon();
+            ToggleHotbar();
         }
 
-        if (nextAction.WasPressedThisFrame())
+        for (int i = 0; i < selectActions.Length; i++)
         {
-            SelectNextWeapon();
+            if (selectActions[i] != null && selectActions[i].WasPressedThisFrame())
+            {
+                SelectSlot(i);
+            }
         }
 
-        if (attackAction.WasPressedThisFrame())
+        float scroll = weaponScrollAction != null ? weaponScrollAction.ReadValue<float>() : 0f;
+
+        if (scroll > 0f)
+        {
+            CycleWeapons(1);
+        }
+        else if (scroll < 0f)
+        {
+            CycleWeapons(-1);
+        }
+
+        if (attackAction != null && attackAction.WasPressedThisFrame())
         {
             Attack();
         }
 
-        if (attackAction.IsPressed())
+        if (attackAction != null && attackAction.IsPressed())
         {
             HoldAttack();
         }
 
-        float scroll = weaponScrollAction.ReadValue<float>();
-
-        if (scroll > 0)
-        {
-            SelectNextWeapon();
-        }
-        else if (scroll < 0)
-        {
-            SelectPreviousWeapon();
-        }
-
-        if (placeTrapAction.WasPressedThisFrame())
+        if (placeTrapAction != null && placeTrapAction.WasPressedThisFrame())
         {
             PlaceTrap();
         }
@@ -87,204 +137,252 @@ public class PlayerWeaponsScript : MonoBehaviour
 
     public void AddLaunchTrap()
     {
+        int slot = FindRightmostEmptySlot(primaryHotbar);
+
+        if (slot == -1)
+        {
+            return;
+        }
+
+        if (launchTrapWeapon == null || launchTrapPrefab == null)
+        {
+            return;
+        }
+
+        primaryHotbar[slot] = launchTrapWeapon;
         launchTrapCount++;
     }
 
     public void AddPullTrap()
     {
+        int slot = FindRightmostEmptySlot(primaryHotbar);
+
+        if (slot == -1)
+        {
+            return;
+        }
+
+        if (pullTrapWeapon == null || pullTrapPrefab == null)
+        {
+            return;
+        }
+
+        primaryHotbar[slot] = pullTrapWeapon;
         pullTrapCount++;
     }
 
-    private bool CanUseWeapon(int index)
+    private int FindRightmostEmptySlot(GameObject[] hotbar)
     {
-        if (index < 0 || index >= weapons.Length)
+        for (int i = hotbar.Length - 1; i >= 0; i--)
+        {
+            if (hotbar[i] == null)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void ToggleHotbar()
+    {
+        activeHotbar = 1 - activeHotbar;
+
+        SelectFirstAvailableSlot();
+    }
+
+    private void SelectFirstAvailableSlot()
+    {
+        GameObject[] hotbar = ActiveHotbar;
+
+        for (int i = 0; i < hotbar.Length; i++)
+        {
+            if (CanUseSlot(i))
+            {
+                SelectSlot(i);
+                return;
+            }
+        }
+
+        currentSlot = -1;
+        DeactivateAllWeapons();
+    }
+
+    private void SelectSlot(int slot)
+    {
+        if (!CanUseSlot(slot))
+            return;
+
+        currentSlot = slot;
+        DeactivateAllWeapons();
+
+        GameObject weapon = ActiveHotbar[currentSlot];
+
+        if (weapon != null)
+            weapon.SetActive(true);
+    }
+
+    private bool CanUseSlot(int slot)
+    {
+        if (slot < 0 || slot >= HotbarSize)
             return false;
 
-        // Launch Trap
-        if (index == 3)
-        {
-            return launchTrapCount > 0;
-        }
+        GameObject weapon = ActiveHotbar[slot];
 
-        // Pull Trap
-        if (index == 4)
-        {
+        if (weapon == null)
+            return false;
+
+        TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
+
+        if (trap is LaunchTrapScript)
+            return launchTrapCount > 0;
+
+        if (trap is PullTrapScript)
             return pullTrapCount > 0;
-        }
 
         return true;
     }
 
-    private void SelectPreviousWeapon()
+    private void CycleWeapons(int direction)
     {
-        int newWeapon = currentWeapon - 1;
-
-        if (newWeapon < 0)
+        if (currentSlot == -1)
         {
-            newWeapon = weapons.Length - 1;
+            SelectFirstAvailableSlot();
+            return;
         }
 
-        for (int i = 0; i < weapons.Length; i++)
+        GameObject[] hotbar = ActiveHotbar;
+
+        for (int i = 1; i <= HotbarSize; i++)
         {
-            if (CanUseWeapon(newWeapon))
+            int nextSlot = (currentSlot + direction * i + HotbarSize * 2) % HotbarSize;
+
+            if (CanUseSlot(nextSlot))
             {
-                currentWeapon = newWeapon;
-                SelectWeapon(currentWeapon);
+                SelectSlot(nextSlot);
                 return;
-            }
-
-            newWeapon--;
-
-            if (newWeapon < 0)
-            {
-                newWeapon = weapons.Length - 1;
             }
         }
     }
 
-    private void SelectNextWeapon()
+    public string GetHotbarSlotName(int slot)
     {
-        int newWeapon = currentWeapon + 1;
+        if (slot < 0 || slot >= HotbarSize)
+            return "";
 
-        if (newWeapon >= weapons.Length)
-        {
-            newWeapon = 0;
-        }
+        GameObject weapon = ActiveHotbar[slot];
 
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (CanUseWeapon(newWeapon))
-            {
-                currentWeapon = newWeapon;
-                SelectWeapon(currentWeapon);
-                return;
-            }
+        if (weapon == null)
+            return "";
 
-            newWeapon++;
+        TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
 
-            if (newWeapon >= weapons.Length)
-            {
-                newWeapon = 0;
-            }
-        }
+        if (trap is LaunchTrapScript)
+            return "Launch Trap";
+
+        if (trap is PullTrapScript)
+            return "Pull Trap";
+
+        return weapon.name;
     }
 
-    private void SelectWeapon(int index)
+    public int GetCurrentHotbarSlot()
     {
-        if (weapons == null || weapons.Length == 0)
+        return currentSlot;
+    }
+
+    private void DeactivateAllWeapons()
+    {
+        if (weapons == null)
             return;
 
-        if (!CanUseWeapon(index))
-            return;
-
-        for (int i = 0; i < weapons.Length; i++)
+        foreach (GameObject weapon in weapons)
         {
-            weapons[i].SetActive(i == index);
+            if (weapon != null)
+                weapon.SetActive(false);
         }
     }
 
     private void Attack()
     {
-        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
-        {
+        if (currentSlot < 0)
             return;
-        }
 
-        WeaponScript weapon = weapons[currentWeapon].GetComponent<WeaponScript>();
+        GameObject weapon = ActiveHotbar[currentSlot];
 
-        if (weapon != null)
-        {
-            weapon.Attack();
-        }
+        if (weapon == null)
+            return;
+
+        WeaponScript weaponScript = weapon.GetComponent<WeaponScript>();
+
+        if (weaponScript != null)
+            weaponScript.Attack();
     }
 
     private void HoldAttack()
     {
-        if (weapons == null || currentWeapon < 0 || currentWeapon >= weapons.Length)
-        {
+        if (currentSlot < 0)
             return;
-        }
 
-        RangedWeaponScript rangedWeapon = weapons[currentWeapon].GetComponent<RangedWeaponScript>();
+        GameObject weapon = ActiveHotbar[currentSlot];
+
+        if (weapon == null)
+            return;
+
+        RangedWeaponScript rangedWeapon = weapon.GetComponent<RangedWeaponScript>();
 
         if (rangedWeapon != null)
-        {
             rangedWeapon.HoldAttack();
-        }
     }
 
     private void PlaceTrap()
     {
-        if (trapPlacement == null)
+        if (trapPlacement == null || currentSlot < 0)
             return;
 
-        if (trapPlacement.IsPlacingTrap())
+        GameObject weapon = ActiveHotbar[currentSlot];
+
+        if (weapon == null)
             return;
 
-        TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
+        TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
 
-        if (trap == null)
-            return;
-
-        if (trap is LaunchTrapScript)
+        if (trap is LaunchTrapScript && launchTrapCount > 0)
         {
-            if (launchTrapCount <= 0)
-                return;
-
             trapPlacement.StartPlacement(launchTrapPrefab);
         }
-        else if (trap is PullTrapScript)
+        else if (trap is PullTrapScript && pullTrapCount > 0)
         {
-            if (pullTrapCount <= 0)
-                return;
-
             trapPlacement.StartPlacement(pullTrapPrefab);
         }
     }
 
     public void TrapPlacementConfirmed()
     {
-        TrapBaseScript trap = weapons[currentWeapon].GetComponent<TrapBaseScript>();
-
-        if (trap == null)
+        if (currentSlot < 0)
             return;
 
-        if (trap is LaunchTrapScript)
-        {
-            if (launchTrapCount <= 0)
-                return;
+        GameObject[] hotbar = ActiveHotbar;
+        GameObject weapon = hotbar[currentSlot];
 
+        if (weapon == null)
+            return;
+
+        TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
+
+        if (trap is LaunchTrapScript && launchTrapCount > 0)
+        {
             launchTrapCount--;
-
-            if (launchTrapCount <= 0)
-            {
-                SelectWeaponAfterTrapUsed();
-            }
+            hotbar[currentSlot] = null;
         }
-        else if (trap is PullTrapScript)
+        else if (trap is PullTrapScript && pullTrapCount > 0)
         {
-            if (pullTrapCount <= 0)
-                return;
-
             pullTrapCount--;
-
-            if (pullTrapCount <= 0)
-            {
-                SelectWeaponAfterTrapUsed();
-            }
+            hotbar[currentSlot] = null;
         }
-    }
-
-    private void SelectWeaponAfterTrapUsed()
-    {
-        for (int i = 0; i < weapons.Length; i++)
+        else
         {
-            if (CanUseWeapon(i))
-            {
-                currentWeapon = i;
-                SelectWeapon(currentWeapon);
-                return;
-            }
+            return;
         }
+
+        SelectFirstAvailableSlot();
     }
 }

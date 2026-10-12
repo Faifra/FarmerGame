@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class EnemyHealthScript : MonoBehaviour
 {
@@ -7,12 +9,18 @@ public abstract class EnemyHealthScript : MonoBehaviour
     protected int currentHealth;
 
     private EnemyDropsScript dropsScript;
+    private NavMeshAgent agent;
     private bool isDead = false;
+
+    private MoveTo moveTo;
+    private Coroutine knockbackCoroutine;
 
     protected virtual void Start()
     {
         currentHealth = maxHealth;
         dropsScript = GetComponent<EnemyDropsScript>();
+        agent = GetComponent<NavMeshAgent>();
+        moveTo = GetComponent<MoveTo>();
     }
 
     public virtual void TakeDamage(int damage)
@@ -22,12 +30,27 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         currentHealth -= damage;
 
-        Debug.Log($"{gameObject.name} took {damage} damage. HP: {currentHealth}/{maxHealth}");
-
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+
+
+    public virtual void TakeDamage(int damage, Vector3 knockbackDirection, float knockbackSpeed, float knockbackDuration)
+    {
+        if (isDead)
+            return;
+
+        TakeDamage(damage);
+
+        if (isDead || currentHealth <= 0 || moveTo == null)
+            return;
+
+        if (knockbackCoroutine != null)
+            StopCoroutine(knockbackCoroutine);
+
+        knockbackCoroutine = StartCoroutine(moveTo.Knockback(knockbackDirection, knockbackSpeed, knockbackDuration));
     }
 
     protected virtual void Die()
@@ -36,8 +59,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
             return;
 
         isDead = true;
-        
-        Debug.Log($"{gameObject.name} died.");
 
         if (dropsScript != null)
         {

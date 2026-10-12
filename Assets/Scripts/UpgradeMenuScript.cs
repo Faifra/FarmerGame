@@ -13,9 +13,6 @@ public class UpgradeMenuScript : MonoBehaviour
     [SerializeField] private PlayerLookScript playerLook;
     [SerializeField] private PlayerWeaponsScript playerWeapons;
 
-    [Header("Input")]
-    private InputAction upgradeMenuAction;
-
     [Header("Launch Trap Upgrade")]
     [SerializeField] private int launchTrapCost = 10;
     [SerializeField] private Button launchTrapButton;
@@ -28,10 +25,10 @@ public class UpgradeMenuScript : MonoBehaviour
 
     private bool menuOpen = false;
 
+    public bool IsMenuOpen => menuOpen;
+
     private void Start()
     {
-        upgradeMenuAction = InputSystem.actions.FindAction("Interact");
-
         upgradeMenu.SetActive(false);
 
         if (launchTrapCostText != null)
@@ -49,32 +46,42 @@ public class UpgradeMenuScript : MonoBehaviour
 
     private void Update()
     {
-        if (upgradeMenuAction.WasPressedThisFrame())
-        {
-            ToggleMenu();
-        }
-
         if (menuOpen)
         {
             UpdateButton();
         }
     }
 
-    private void ToggleMenu()
+    public void OpenMenu()
     {
-        menuOpen = !menuOpen;
+        if (menuOpen)
+            return;
 
-        upgradeMenu.SetActive(menuOpen);
+        menuOpen = true;
+        upgradeMenu.SetActive(true);
 
         if (playerLook != null)
-        {
-            playerLook.SetMenuOpen(menuOpen);
-        }
+            playerLook.SetMenuOpen(true);
 
         if (playerWeapons != null)
-        {
-            playerWeapons.SetMenuOpen(menuOpen);
-        }
+            playerWeapons.SetMenuOpen(true);
+
+    }
+
+    public void CloseMenu()
+    {
+        if (!menuOpen)
+            return;
+
+        menuOpen = false;
+        upgradeMenu.SetActive(false);
+
+        if (playerLook != null)
+            playerLook.SetMenuOpen(false);
+
+        if (playerWeapons != null)
+            playerWeapons.SetMenuOpen(false);
+
     }
 
     public void BuyLaunchTrap()
