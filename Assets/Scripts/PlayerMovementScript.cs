@@ -48,6 +48,16 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private int jumpsLeft;
 
+    [Header("FOV")]
+    [SerializeField]
+    private float playerFOV;
+
+    [SerializeField]
+    private float playerRunFOV;
+
+    [SerializeField]
+    private float playerRunTimerRate = 0.5f;
+
     // ==========================================//
 
     private InputAction moveAction;
@@ -62,6 +72,7 @@ public class PlayerMovementScript : MonoBehaviour
     private bool shouldSprint;
     public static bool shouldCrouch;
     private bool shouldSlide;
+    private float maxFOV;
 
     private Rigidbody playerRigidBody;
 
@@ -84,6 +95,8 @@ public class PlayerMovementScript : MonoBehaviour
     private float dashMomentumSpeed;
     private Coroutine dashMomentumRoutine;
 
+    private float fovTimer = 0;
+
     // ==========================================//
 
     void Start()
@@ -97,6 +110,7 @@ public class PlayerMovementScript : MonoBehaviour
 
         jumpsLeft = maxJumps;
         GameManagerScript.SetStamina(maxStamina);
+        maxFOV = playerFOV;
     }
 
     // ==========================================//
@@ -188,12 +202,16 @@ public class PlayerMovementScript : MonoBehaviour
             }
             else
             {
+                fovTimer += Time.fixedDeltaTime;
+                CameraScript.SetCameraFOV(Mathf.Lerp(maxFOV, maxFOV + playerRunFOV, fovTimer * playerRunTimerRate)); 
                 GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
             }
         }
         else if (!shouldSprint && GameManagerScript.GetStamina() < maxStamina)
         {
             GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
+            CameraScript.SetCameraFOV(maxFOV);
+            fovTimer = 0;
         }
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
