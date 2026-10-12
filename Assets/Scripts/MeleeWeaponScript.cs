@@ -19,40 +19,26 @@ public class MeleeWeaponScript : WeaponScript
 
         StartAttackCooldown();
 
-        Vector3 attackPosition =
-            transform.position + transform.forward * attackRange;
+        Vector3 attackPosition = transform.position + transform.forward * attackRange;
 
-        Collider[] hits = Physics.OverlapSphere(
-            attackPosition,
-            attackRadius,
-            damageLayers
-        );
+        Collider[] hits = Physics.OverlapSphere(attackPosition, attackRadius, damageLayers);
 
         foreach (Collider hit in hits)
         {
-            EnemyHealthScript health =
-                hit.GetComponentInParent<EnemyHealthScript>();
+            EnemyHealthScript health = hit.GetComponentInParent<EnemyHealthScript>();
 
             if (health == null)
                 continue;
 
-            // Push the enemy away from the weapon.
-            Vector3 knockbackDirection =
-                health.transform.position - transform.position;
+            Vector3 knockbackDirection = health.transform.position - transform.position;
 
-            // Keep knockback horizontal.
             knockbackDirection.y = 0f;
 
             if (knockbackDirection.sqrMagnitude > 0.001f)
             {
                 knockbackDirection.Normalize();
 
-                health.TakeDamage(
-                    damage,
-                    knockbackDirection,
-                    knockbackSpeed,
-                    knockbackDuration
-                );
+                health.TakeDamage(damage, knockbackDirection, knockbackSpeed, knockbackDuration);
             }
             else
             {
@@ -63,8 +49,7 @@ public class MeleeWeaponScript : WeaponScript
 
     private void OnDrawGizmosSelected()
     {
-        Vector3 attackPosition =
-            transform.position + transform.forward * attackRange;
+        Vector3 attackPosition = transform.position + transform.forward * attackRange;
 
         Gizmos.DrawWireSphere(attackPosition, attackRadius);
     }

@@ -30,11 +30,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         currentHealth -= damage;
 
-        Debug.Log(
-            $"{gameObject.name} took {damage} damage. " +
-            $"HP: {currentHealth}/{maxHealth}"
-        );
-
         if (currentHealth <= 0)
         {
             Die();
@@ -42,11 +37,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     }
 
 
-    public virtual void TakeDamage(
-        int damage,
-        Vector3 knockbackDirection,
-        float knockbackSpeed,
-        float knockbackDuration)
+    public virtual void TakeDamage(int damage, Vector3 knockbackDirection, float knockbackSpeed, float knockbackDuration)
     {
         if (isDead)
             return;
@@ -59,13 +50,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
         if (knockbackCoroutine != null)
             StopCoroutine(knockbackCoroutine);
 
-        knockbackCoroutine = StartCoroutine(
-            moveTo.Knockback(
-                knockbackDirection,
-                knockbackSpeed,
-                knockbackDuration
-            )
-        );
+        knockbackCoroutine = StartCoroutine(moveTo.Knockback(knockbackDirection, knockbackSpeed, knockbackDuration));
     }
 
     protected virtual void Die()
@@ -74,8 +59,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
             return;
 
         isDead = true;
-
-        Debug.Log($"{gameObject.name} died.");
 
         if (dropsScript != null)
         {

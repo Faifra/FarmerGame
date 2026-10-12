@@ -27,12 +27,7 @@ public class MoveTo : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDestroyed &&
-            !isMovingSpecial &&
-            agent != null &&
-            agent.enabled &&
-            agent.isOnNavMesh &&
-            goal != null)
+        if (!isDestroyed && !isMovingSpecial && agent != null && agent.enabled && agent.isOnNavMesh && goal != null)
         {
             agent.destination = goal.position;
         }
@@ -40,8 +35,7 @@ public class MoveTo : MonoBehaviour
 
     public IEnumerator Knockback(Vector3 direction, float speed, float duration)
     {
-        if (isDestroyed || isMovingSpecial ||
-            agent == null || !agent.enabled || !agent.isOnNavMesh)
+        if (isDestroyed || isMovingSpecial || agent == null || !agent.enabled || !agent.isOnNavMesh)
             yield break;
 
         isMovingSpecial = true;
@@ -131,8 +125,7 @@ public class MoveTo : MonoBehaviour
             time += Time.deltaTime;
             float progress = time / duration;
 
-            transform.position = Vector3.Lerp(
-                startPosition, targetPosition, progress);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, progress);
 
             yield return null;
         }
@@ -172,8 +165,7 @@ public class MoveTo : MonoBehaviour
             time += Time.deltaTime;
             float progress = time / duration;
 
-            transform.position = Vector3.Lerp(
-                startPosition, endPosition, progress);
+            transform.position = Vector3.Lerp(startPosition, endPosition, progress);
 
             yield return null;
         }
