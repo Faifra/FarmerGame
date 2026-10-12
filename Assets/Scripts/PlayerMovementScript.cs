@@ -36,9 +36,6 @@ public class PlayerMovementScript : MonoBehaviour
 
     [Header("Control Values")]
     [SerializeField]
-    private float fallOffTime = 1f;
-
-    [SerializeField]
     private float airControl = 0.3f;
 
     [SerializeField]
@@ -50,9 +47,6 @@ public class PlayerMovementScript : MonoBehaviour
 
     [SerializeField]
     private int jumpsLeft;
-
-    [SerializeField]
-    private int playerStamina;
 
     // ==========================================//
 
@@ -102,7 +96,7 @@ public class PlayerMovementScript : MonoBehaviour
         dashAction = InputSystem.actions.FindAction("Dash");
 
         jumpsLeft = maxJumps;
-        playerStamina = maxStamina;
+        GameManagerScript.SetStamina(maxStamina);
     }
 
     // ==========================================//
@@ -188,18 +182,18 @@ public class PlayerMovementScript : MonoBehaviour
         // Stamina
         if (shouldSprint)
         {
-            if (playerStamina <= 0)
+            if (GameManagerScript.GetStamina() <= 0)
             {
                 shouldSprint = false;
             }
             else
             {
-                playerStamina -= staminaRemovalRate;
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
             }
         }
-        else if (!shouldSprint && playerStamina < maxStamina)
+        else if (!shouldSprint && GameManagerScript.GetStamina() < maxStamina)
         {
-            playerStamina += staminaRecoveryRate;
+            GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
         }
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
