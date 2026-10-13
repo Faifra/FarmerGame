@@ -12,6 +12,7 @@ public class ProjectileScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"Projectile hit: {other.gameObject.name}");
 
         EnemyHealthScript health = other.GetComponentInParent<EnemyHealthScript>();
 

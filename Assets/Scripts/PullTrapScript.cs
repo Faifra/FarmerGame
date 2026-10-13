@@ -2,25 +2,19 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-/// <summary>
-/// Pulls enemies toward the trap before launching them away.
-/// </summary>
 public class PullTrapScript : TrapBaseScript
 {
-    // Controls the pull and launch distances, durations, and damage dealt.
+    [SerializeField] private float pullDistance = 3f;
     [SerializeField] private float pullDuration = 0.5f;
     [SerializeField] private float launchDistance = 7f;
     [SerializeField] private float launchDuration = 0.4f;
     [SerializeField] private int damage = 0;
 
-    // Tracks how many enemies have been hit and whether the trap is finished.
     private int enemiesHit = 0;
     private bool trapFinished = false;
 
-    // Prevents the same enemy from being processed more than once at a time.
     private HashSet<MoveTo> enemiesBeingProcessed = new HashSet<MoveTo>();
 
-    // Activates the trap on valid enemies in front of it.
     public override void Activate(GameObject target)
     {
         if (trapFinished)
@@ -66,10 +60,9 @@ public class PullTrapScript : TrapBaseScript
         }
     }
 
-    // Pulls the enemy to the trap, launches it away, and cleans up when finished.
     private IEnumerator PullAndLaunch(MoveTo enemy, Vector3 trapPosition, Vector3 launchDirection)
     {
-        yield return enemy.PullTo(trapPosition, pullDuration
+        yield return enemy.PullTo(trapPosition,pullDuration
         );
 
         if (enemy == null)
@@ -77,7 +70,8 @@ public class PullTrapScript : TrapBaseScript
             yield break;
         }
 
-        yield return enemy.LaunchDirection(launchDirection, launchDistance, launchDuration);
+        yield return enemy.LaunchDirection(launchDirection, launchDistance, launchDuration
+        );
 
         if (enemy == null)
         {
