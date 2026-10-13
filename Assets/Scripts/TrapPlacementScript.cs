@@ -1,28 +1,37 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles trap preview, positioning, rotation, and placement confirmation.
+/// </summary>
 public class TrapPlacementScript : MonoBehaviour
 {
+    // Controls the preview's distance, height, and valid ground surfaces.
     [Header("Placement")]
     [SerializeField] private float placementDistance = 2f;
     [SerializeField] private float placementHeight = 2f;
     [SerializeField] private LayerMask groundLayers;
 
+    // Controls the rotation increment applied to the preview.
     [Header("Rotation")]
     [SerializeField] private float rotationAmount = 45f;
 
+    // Controls the transparency of the trap preview.
     [Header("Preview")]
     [SerializeField, Range(0f, 1f)] private float previewTransparency = 0.5f;
 
+    // Tracks the preview object and current placement state.
     private GameObject previewTrap;
 
     private bool placingTrap = false;
     private float currentRotation = 0f;
 
+    // Input actions used to confirm, cancel, or rotate placement.
     private InputAction confirmAction;
     private InputAction cancelAction;
     private InputAction rotateAction;
 
+    // Retrieves the configured placement input actions.
     private void Start()
     {
         confirmAction =
@@ -35,6 +44,7 @@ public class TrapPlacementScript : MonoBehaviour
             InputSystem.actions.FindAction("RotateTrap");
     }
 
+    // Updates the preview and handles placement input while active.
     private void Update()
     {
         if (!placingTrap)
@@ -58,6 +68,7 @@ public class TrapPlacementScript : MonoBehaviour
         }
     }
 
+    // Creates a trap preview and disables its gameplay components.
     public bool StartPlacement(GameObject trapPrefab)
     {
         if (placingTrap)
@@ -99,6 +110,7 @@ public class TrapPlacementScript : MonoBehaviour
         return true;
     }
 
+    // Positions and rotates the preview on a valid ground surface.
     private void UpdatePreview()
     {
         if (previewTrap == null)
@@ -131,6 +143,7 @@ public class TrapPlacementScript : MonoBehaviour
         PlacePreviewOnGround(hit.point);
     }
 
+    // Aligns the preview's lowest rendered point with the ground.
     private void PlacePreviewOnGround(Vector3 groundPoint)
     {
         Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
@@ -150,6 +163,7 @@ public class TrapPlacementScript : MonoBehaviour
         previewTrap.transform.position += Vector3.up * offset;
     }
 
+    // Applies the configured transparency to the preview's materials.
     private void SetPreviewTransparency()
     {
         Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
@@ -168,6 +182,7 @@ public class TrapPlacementScript : MonoBehaviour
         }
     }
 
+    // Configures a material's color and rendering settings for transparency.
     private void SetMaterialTransparent(Material material, float transparency)
     {
         transparency = Mathf.Clamp01(transparency);
@@ -219,6 +234,7 @@ public class TrapPlacementScript : MonoBehaviour
         material.renderQueue = 3000;
     }
 
+    // Rotates the preview by the configured increment.
     private void RotatePreview()
     {
         currentRotation += rotationAmount;
@@ -229,6 +245,7 @@ public class TrapPlacementScript : MonoBehaviour
         }
     }
 
+    // Finalizes placement and restores the trap's gameplay components.
     private void ConfirmPlacement()
     {
         if (previewTrap == null)
@@ -273,6 +290,7 @@ public class TrapPlacementScript : MonoBehaviour
         }
     }
 
+    // Destroys the preview's instantiated materials to release them.
     private void RestoreMaterials()
     {
         Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
@@ -289,6 +307,7 @@ public class TrapPlacementScript : MonoBehaviour
         }
     }
 
+    // Cancels placement and removes the preview object.
     private void CancelPlacement()
     {
         if (previewTrap != null)
@@ -302,6 +321,7 @@ public class TrapPlacementScript : MonoBehaviour
         currentRotation = 0f;
     }
 
+    // Indicates whether trap placement is currently active.
     public bool IsPlacingTrap()
     {
         return placingTrap;
