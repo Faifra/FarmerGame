@@ -24,7 +24,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
     // References to additional enemy components.
     private EnemyDropsScript dropsScript;
     private WaveManager waveManager;
-    private bool isDead = false;
     private MoveTo moveTo;
 
     // Tracks death state and any active knockback coroutine.
