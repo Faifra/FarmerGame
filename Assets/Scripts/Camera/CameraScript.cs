@@ -16,4 +16,9 @@ public class CameraScript : MonoBehaviour
         Ccamera.Lens.FieldOfView = fov;
     }
 
+    public static void SetCameraDutch(float dutch)
+    {
+        Ccamera.Lens.Dutch = dutch;
+    }
+
 }

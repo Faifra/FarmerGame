@@ -119,6 +119,12 @@ public class PlayerMovementScript : MonoBehaviour
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
         finalMoveVector = transform.forward * moveValue.y + transform.right * moveValue.x;
+
+        if (PlayerCollisionScript.isCollidingWithWall())
+        {
+            finalMoveVector = Vector2.zero;
+        }
+
         grounded = PlayerCollisionScript.isGrounded();
 
         jumpTimer += Time.deltaTime;
@@ -225,6 +231,16 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 appliedVelocity = new Vector3(targetVelocity.x - velocity.x, 0, targetVelocity.z - velocity.z);
 
         float moveControlMultiplier = grounded ? groundedAirControl : airControl;
+
+        if (PlayerCollisionScript.playerWallRunning)
+        {
+            //playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z); // Slowly glide down the wall
+            playerRigidBody.useGravity = false; 
+        }
+        else
+        {
+            playerRigidBody.useGravity = true;
+        }
 
         playerRigidBody.AddForce(appliedVelocity * moveControlMultiplier, ForceMode.VelocityChange);
 
