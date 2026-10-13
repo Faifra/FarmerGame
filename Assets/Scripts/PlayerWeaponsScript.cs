@@ -1,41 +1,55 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Manages weapon selection, hotbars, attacks, and trap placement.
+/// </summary>
 public class PlayerWeaponsScript : MonoBehaviour
 {
+    // Weapons available to the player at startup.
     [Header("Weapons")]
     [SerializeField] private GameObject[] weapons;
 
+    // Number of slots available in each hotbar.
     private const int HotbarSize = 9;
 
+    // Stores regular weapons and traps separately.
     private GameObject[] primaryHotbar = new GameObject[HotbarSize];
     private GameObject[] trapHotbar = new GameObject[HotbarSize];
 
+    // Input actions for combat, hotbar switching, and slot selection.
     private InputAction attackAction;
     private InputAction weaponScrollAction;
     private InputAction placeTrapAction;
     private InputAction toggleHotbarAction;
     private InputAction[] selectActions = new InputAction[HotbarSize];
 
+    // Tracks the selected slot and currently active hotbar.
     private int currentSlot = -1;
     private int activeHotbar = 0;
 
+    // Prevents weapon input while a menu is open.
     private bool menuOpen = false;
 
+    // Trap prefabs used when placing purchased traps.
     [Header("Trap Prefabs")]
     [SerializeField] private GameObject launchTrapPrefab;
     [SerializeField] private GameObject pullTrapPrefab;
 
+    // References to the trap placement system and trap weapon objects.
     private TrapPlacementScript trapPlacement;
 
     private GameObject launchTrapWeapon;
     private GameObject pullTrapWeapon;
 
+    // Tracks the number of each trap available to place.
     private int launchTrapCount = 0;
     private int pullTrapCount = 0;
 
+    // Returns the hotbar currently selected by the player.
     private GameObject[] ActiveHotbar => activeHotbar == 0 ? primaryHotbar : trapHotbar;
 
+    // Initializes input actions, sorts weapons into slots, and selects the first usable weapon.
     private void Start()
     {
         attackAction = InputSystem.actions.FindAction("Attack");
@@ -82,6 +96,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         SelectFirstAvailableSlot();
     }
 
+    // Processes weapon input while gameplay is active and trap placement is inactive.
     private void Update()
     {
         if (menuOpen)
@@ -130,11 +145,13 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
+    // Enables or disables weapon input when menus open or close.
     public void SetMenuOpen(bool open)
     {
         menuOpen = open;
     }
 
+    // Adds a launch trap to the rightmost available primary hotbar slot.
     public void AddLaunchTrap()
     {
         int slot = FindRightmostEmptySlot(primaryHotbar);
@@ -153,6 +170,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         launchTrapCount++;
     }
 
+    // Adds a pull trap to the rightmost available primary hotbar slot.
     public void AddPullTrap()
     {
         int slot = FindRightmostEmptySlot(primaryHotbar);
@@ -171,6 +189,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         pullTrapCount++;
     }
 
+    // Finds the last empty slot so newly added traps appear from right to left.
     private int FindRightmostEmptySlot(GameObject[] hotbar)
     {
         for (int i = hotbar.Length - 1; i >= 0; i--)
@@ -182,6 +201,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         return -1;
     }
 
+    // Switches between the primary and trap hotbars.
     private void ToggleHotbar()
     {
         activeHotbar = 1 - activeHotbar;
@@ -189,6 +209,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         SelectFirstAvailableSlot();
     }
 
+    // Selects the first usable slot or clears the selection if none are available.
     private void SelectFirstAvailableSlot()
     {
         GameObject[] hotbar = ActiveHotbar;
@@ -206,6 +227,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         DeactivateAllWeapons();
     }
 
+    // Activates the selected weapon and deactivates all others.
     private void SelectSlot(int slot)
     {
         if (!CanUseSlot(slot))
@@ -220,6 +242,7 @@ public class PlayerWeaponsScript : MonoBehaviour
             weapon.SetActive(true);
     }
 
+    // Checks whether a slot contains a weapon or a trap with remaining inventory.
     private bool CanUseSlot(int slot)
     {
         if (slot < 0 || slot >= HotbarSize)
@@ -241,6 +264,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         return true;
     }
 
+    // Cycles through the hotbar until a usable slot is found.
     private void CycleWeapons(int direction)
     {
         if (currentSlot == -1)
@@ -263,6 +287,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
+    // Returns the display name of a weapon or trap for the hotbar UI.
     public string GetHotbarSlotName(int slot)
     {
         if (slot < 0 || slot >= HotbarSize)
@@ -284,11 +309,13 @@ public class PlayerWeaponsScript : MonoBehaviour
         return weapon.name;
     }
 
+    // Returns the index of the currently selected hotbar slot.
     public int GetCurrentHotbarSlot()
     {
         return currentSlot;
     }
 
+    // Disables all weapon objects before another weapon is selected.
     private void DeactivateAllWeapons()
     {
         if (weapons == null)
@@ -301,6 +328,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
+    // Executes the selected weapon's attack.
     private void Attack()
     {
         if (currentSlot < 0)
@@ -317,6 +345,7 @@ public class PlayerWeaponsScript : MonoBehaviour
             weaponScript.Attack();
     }
 
+    // Handles continuous attacks for ranged weapons while the attack input is held.
     private void HoldAttack()
     {
         if (currentSlot < 0)
@@ -333,6 +362,7 @@ public class PlayerWeaponsScript : MonoBehaviour
             rangedWeapon.HoldAttack();
     }
 
+    // Starts placement using the prefab matching the selected trap type.
     private void PlaceTrap()
     {
         if (trapPlacement == null || currentSlot < 0)
@@ -355,6 +385,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
     }
 
+    // Consumes one trap after placement and selects the next available slot.
     public void TrapPlacementConfirmed()
     {
         if (currentSlot < 0)

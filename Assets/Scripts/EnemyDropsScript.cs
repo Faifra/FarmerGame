@@ -1,8 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Handles spawning item drops when an enemy is defeated.
+/// </summary>
 public class EnemyDropsScript : MonoBehaviour
 {
+    // Defines an item prefab and the quantity to spawn.
     [System.Serializable]
     public class DropEntry
     {
@@ -10,12 +14,15 @@ public class EnemyDropsScript : MonoBehaviour
         public int amount = 1;
     }
 
+    // List of items this enemy can drop.
     [SerializeField] private List<DropEntry> drops = new List<DropEntry>();
 
+    // Controls the distance and height of spawned drops.
     [Header("Drop Burst")]
     [SerializeField] private float burstDistance = 1.5f;
     [SerializeField] private float burstHeight = 0.5f;
 
+    // Spawns the configured quantity of each valid drop.
     public void Drop()
     {
         foreach (DropEntry drop in drops)
@@ -30,6 +37,7 @@ public class EnemyDropsScript : MonoBehaviour
         }
     }
 
+    // Spawns a drop in a random direction and launches it outward.
     private void SpawnDrop(GameObject prefab)
     {
         Vector2 randomDirection = Random.insideUnitCircle.normalized;

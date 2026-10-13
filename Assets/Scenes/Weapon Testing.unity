@@ -1982,7 +1982,7 @@ PrefabInstance:
       objectReference: {fileID: 6302498647906882875, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
     - target: {fileID: 3655751871265422904, guid: 7dadf10cb3a12fb40af644d49df7b209, type: 3}
       propertyPath: spawnInterval
-      value: 2.5
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2751,7 +2751,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1526581792360779690, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: damage
-      value: 5
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1526581792360779690, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: knockbackSpeed
@@ -5061,6 +5061,30 @@ PrefabInstance:
       propertyPath: goal
       value: 
       objectReference: {fileID: 1159817818}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: maxHealth
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: damageNumberPrefab
+      value: 
+      objectReference: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: damageNumberOffset.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: damageNumberOffset.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: damageNumberAdditionalOffset.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3237995777541088405, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
+      propertyPath: damageNumberAdditionalOffset.y
+      value: -1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4558002087295871764, guid: 94ad094fc15d29b408760df7cef13ea7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.7480036
