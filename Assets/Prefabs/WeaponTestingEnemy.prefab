@@ -201,7 +201,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
-  maxHealth: 10
+  maxHealth: 70
+  damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
+  damageNumberForwardOffset: 0.75
+  damageNumberHeight: 2
+  damageNumberAdditionalOffset: {x: 1, y: -1.5, z: 0}
 --- !u!54 &5821718157569806990
 Rigidbody:
   m_ObjectHideFlags: 0
