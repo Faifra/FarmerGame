@@ -36,9 +36,6 @@ public class PlayerMovementScript : MonoBehaviour
 
     [Header("Control Values")]
     [SerializeField]
-    private float fallOffTime = 1f;
-
-    [SerializeField]
     private float airControl = 0.3f;
 
     [SerializeField]
@@ -51,8 +48,23 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private int jumpsLeft;
 
+    [Header("FOV")]
     [SerializeField]
-    private int playerStamina;
+    private float playerFOV;
+
+    [SerializeField]
+    private float playerRunFOV;
+
+    [SerializeField]
+    private float playerRunTimerRate = 0.5f;
+
+    [Header("Dash")]
+    [SerializeField] private float dashForce = 15f;
+    [SerializeField] private float dashDuration = 0.15f;
+    [SerializeField] private float dashCooldown = 1.0f;
+
+    [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
+    [SerializeField] private float dashSpeedChangeFactor = 25f;
 
     // ==========================================//
 
@@ -68,18 +80,11 @@ public class PlayerMovementScript : MonoBehaviour
     private bool shouldSprint;
     public static bool shouldCrouch;
     private bool shouldSlide;
+    private float maxFOV;
 
     private Rigidbody playerRigidBody;
 
     static public float jumpTimer = 0;
-
-    [Header("Dash")]
-    [SerializeField] private float dashForce = 15f;
-    [SerializeField] private float dashDuration = 0.15f;
-    [SerializeField] private float dashCooldown = 1.0f;
-
-    [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
-    [SerializeField] private float dashSpeedChangeFactor = 25f;
 
     private bool isDashing;
     private float dashTimer;
@@ -89,6 +94,8 @@ public class PlayerMovementScript : MonoBehaviour
     private bool keepMomentum;
     private float dashMomentumSpeed;
     private Coroutine dashMomentumRoutine;
+
+    private float fovTimer = 0;
 
     // ==========================================//
 
@@ -102,7 +109,8 @@ public class PlayerMovementScript : MonoBehaviour
         dashAction = InputSystem.actions.FindAction("Dash");
 
         jumpsLeft = maxJumps;
-        playerStamina = maxStamina;
+        GameManagerScript.SetStamina(maxStamina);
+        maxFOV = playerFOV;
     }
 
     // ==========================================//
@@ -111,6 +119,12 @@ public class PlayerMovementScript : MonoBehaviour
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
         finalMoveVector = transform.forward * moveValue.y + transform.right * moveValue.x;
+
+        if (PlayerCollisionScript.isCollidingWithWall())
+        {
+            finalMoveVector = Vector2.zero;
+        }
+
         grounded = PlayerCollisionScript.isGrounded();
 
         jumpTimer += Time.deltaTime;
@@ -188,18 +202,22 @@ public class PlayerMovementScript : MonoBehaviour
         // Stamina
         if (shouldSprint)
         {
-            if (playerStamina <= 0)
+            if (GameManagerScript.GetStamina() <= 0)
             {
                 shouldSprint = false;
             }
             else
             {
-                playerStamina -= staminaRemovalRate;
+                fovTimer += Time.fixedDeltaTime;
+                CameraScript.SetCameraFOV(Mathf.Lerp(maxFOV, maxFOV + playerRunFOV, fovTimer * playerRunTimerRate)); 
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
             }
         }
-        else if (!shouldSprint && playerStamina < maxStamina)
+        else if (!shouldSprint && GameManagerScript.GetStamina() < maxStamina)
         {
-            playerStamina += staminaRecoveryRate;
+            GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
+            CameraScript.SetCameraFOV(maxFOV);
+            fovTimer = 0;
         }
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
@@ -213,6 +231,16 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 appliedVelocity = new Vector3(targetVelocity.x - velocity.x, 0, targetVelocity.z - velocity.z);
 
         float moveControlMultiplier = grounded ? groundedAirControl : airControl;
+
+        if (PlayerCollisionScript.playerWallRunning && targetVelocity.magnitude > 1)
+        {
+            //playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z); // Slowly glide down the wall
+            playerRigidBody.useGravity = false;
+        }
+        else
+        {
+            playerRigidBody.useGravity = true;
+        }
 
         playerRigidBody.AddForce(appliedVelocity * moveControlMultiplier, ForceMode.VelocityChange);
 

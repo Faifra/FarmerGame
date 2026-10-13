@@ -3,10 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
-
     private static int playerHP;
-
-    // 
+    private static float playerStamina;
+    
     public static GameManagerScript instance { get; private set; }
 
     private void Awake() 
@@ -32,6 +31,16 @@ public class GameManagerScript : MonoBehaviour
         return playerHP;
     }
 
+    public static void SetStamina(float newsp)
+    {
+        playerStamina = newsp;
+    }
+
+    public static float GetStamina()
+    {
+        return playerStamina;
+    }
+
     void Start()
     {
         playerHP = 100; // Test variable
@@ -43,6 +52,18 @@ public class GameManagerScript : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
+
+    // Helper methods
+    public static void ExitGame()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+
+        #else
+            Application.Quit();
+            
+        #endif
     }
 
 }
