@@ -23,6 +23,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
     // References to additional enemy components.
     private EnemyDropsScript dropsScript;
+    private WaveManager waveManager;
     private MoveTo moveTo;
 
     // Tracks death state and any active knockback coroutine.
@@ -34,6 +35,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     {
         currentHealth = maxHealth;
         dropsScript = GetComponent<EnemyDropsScript>();
+        waveManager = FindFirstObjectByType<WaveManager>();
         moveTo = GetComponent<MoveTo>();
     }
 
@@ -114,6 +116,10 @@ public abstract class EnemyHealthScript : MonoBehaviour
             dropsScript.Drop();
         }
 
+        if (waveManager != null)
+        {
+            waveManager.EnemyDied();
+        }
         Destroy(gameObject);
     }
 }
