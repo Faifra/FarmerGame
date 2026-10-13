@@ -58,6 +58,14 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField]
     private float playerRunTimerRate = 0.5f;
 
+    [Header("Dash")]
+    [SerializeField] private float dashForce = 15f;
+    [SerializeField] private float dashDuration = 0.15f;
+    [SerializeField] private float dashCooldown = 1.0f;
+
+    [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
+    [SerializeField] private float dashSpeedChangeFactor = 25f;
+
     // ==========================================//
 
     private InputAction moveAction;
@@ -77,14 +85,6 @@ public class PlayerMovementScript : MonoBehaviour
     private Rigidbody playerRigidBody;
 
     static public float jumpTimer = 0;
-
-    [Header("Dash")]
-    [SerializeField] private float dashForce = 15f;
-    [SerializeField] private float dashDuration = 0.15f;
-    [SerializeField] private float dashCooldown = 1.0f;
-
-    [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
-    [SerializeField] private float dashSpeedChangeFactor = 25f;
 
     private bool isDashing;
     private float dashTimer;
