@@ -143,4 +143,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LaunchTrapScript
   launchHeight: 7
   launchDuration: 1.3
-  damage: 5
+  damage: 50
