@@ -145,4 +145,4 @@ MonoBehaviour:
   pullDuration: 0.5
   launchDistance: 7
   launchDuration: 0.4
-  damage: 3
+  damage: 20
