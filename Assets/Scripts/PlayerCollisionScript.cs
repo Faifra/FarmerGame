@@ -76,22 +76,31 @@ public class PlayerCollisionScript : MonoBehaviour
                 
                 Vector3 cross =  Vector3.Cross(collision.GetContact(0).normal, transform.rotation.eulerAngles);
 
-                if(cross.x > 0 && cross.z < 0) // left: 1,0,-1
+                if(!isGrounded())
                 {
-                    CameraScript.SetCameraDutch(cross.magnitude >= 270 || cross.magnitude < 90 ? 25 : -25); // apply depending on the angle --  a bit buggy as of rn
+                    if(cross.x > 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.left) // left: 1,0,-1
+                    {
+                        CameraScript.SetCameraDutch(cross.magnitude >= 270 || cross.magnitude < 90 ? 25 : -25); // apply depending on the angle --  a bit buggy as of rn
+                    }
+                    else if(cross.x < 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.right) // right -1,0,1
+                    {
+                        CameraScript.SetCameraDutch(cross.magnitude >= 90 && cross.magnitude < 270 ? 25 : -25); 
+                    }
+                    else if (cross.x < 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.forward) // front: -1,0,-1
+                    {
+                        CameraScript.SetCameraDutch(cross.magnitude >= 180 && cross.magnitude < 360 ? -25 : 25); 
+                    }
+                    else if (cross.x > 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.back) // back: 1,0,1
+                    {
+                        CameraScript.SetCameraDutch(cross.magnitude >= 180 ? 25 : -25);
+                    }
                 }
-                else if(cross.x < 0 && cross.z > 0) // right -1,0,1
+                else
                 {
-                    CameraScript.SetCameraDutch(cross.magnitude >= 90 && cross.magnitude < 270 ? 25 : -25); 
+                    CameraScript.SetCameraDutch(0);
                 }
-                else if (cross.x < 0 && cross.z < 0) // front: -1,0,-1
-                {
-                    CameraScript.SetCameraDutch(cross.magnitude >= 180 && cross.magnitude < 360 ? -25 : 25); 
-                }
-                else if (cross.x > 0 && cross.z > 0) // back: 1,0,1
-                {
-                    CameraScript.SetCameraDutch(cross.magnitude >= 180 ? 25 : -25);
-                }
+
+
             }
         }
     }
