@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5085738659678095265}
   - component: {fileID: 2052149020299970590}
+  - component: {fileID: 412746287932549674}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -44,3 +45,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255d882816b55a3feb42e57321aad1da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagerScript
+--- !u!114 &412746287932549674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464295828613810119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28bd77401f960874883bb6903fc35928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaveManager
+  waves:
+  - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
+  - {fileID: 11400000, guid: a4c0ae5766c9bf146a1d9d73a4d47295, type: 2}
+  - {fileID: 11400000, guid: d568de24985795c4a9fe74399be36698, type: 2}
+  - {fileID: 11400000, guid: 99640837d397227478a5b53badbdf2ae, type: 2}
+  spawners:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  waveInterval: 5
+  waveTimer: 0
