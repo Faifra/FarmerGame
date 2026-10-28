@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 2403161935632561624}
   - component: {fileID: 1031783802622268212}
   - component: {fileID: 900774824694261011}
+  - component: {fileID: 3460612676656861680}
   m_Layer: 3
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -256,7 +257,7 @@ MonoBehaviour:
   Lens:
     FieldOfView: 65
     OrthographicSize: 5
-    NearClipPlane: 0.3
+    NearClipPlane: 0.1
     FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
@@ -361,6 +362,18 @@ MonoBehaviour:
         DecelTime: 0.2
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &3460612676656861680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853728398533086722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 711d8a33d8a725440820d4f592eb2b6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &2823344069173402512
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,12 +468,17 @@ MonoBehaviour:
   maxStamina: 100
   staminaRemovalRate: 1
   staminaRecoveryRate: 1
-  fallOffTime: 1
   airControl: 0.3
   groundedAirControl: 0.39
   maxJumps: 1
   jumpsLeft: 0
-  playerStamina: 100
+  playerFOV: 65
+  playerRunFOV: 35
+  playerRunTimerRate: 2
+  dashForce: 50
+  dashDuration: 0.1
+  dashCooldown: 1
+  dashSpeedChangeFactor: 110
 --- !u!114 &4348695818364076343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -711,7 +729,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 65
   orthographic: 0
@@ -1103,6 +1121,11 @@ MonoBehaviour:
   projectilePrefab: {fileID: 607015218365864330, guid: 8d0e43a23428c394f8a61872b1287906, type: 3}
   muzzle: {fileID: 1164514690852281935}
   muzzleVelocity: 100
+  automatic: 0
+  fireRate: 0.1
+  shotgun: 0
+  projectileCount: 6
+  spreadAngle: 15
 --- !u!1 &5820756287548931923
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,6 +1386,11 @@ MonoBehaviour:
   projectilePrefab: {fileID: 607015218365864330, guid: 8d0e43a23428c394f8a61872b1287906, type: 3}
   muzzle: {fileID: 3521412830843964405}
   muzzleVelocity: 70
+  automatic: 0
+  fireRate: 0.1
+  shotgun: 0
+  projectileCount: 6
+  spreadAngle: 15
 --- !u!1 &9068128927887238113
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,3 +1492,5 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 128
+  rotationAmount: 45
+  previewTransparency: 0.5
