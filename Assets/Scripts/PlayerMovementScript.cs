@@ -95,7 +95,7 @@ public class PlayerMovementScript : MonoBehaviour
     private float dashMomentumSpeed;
     private Coroutine dashMomentumRoutine;
 
-    private float fovTimer = 0;
+    private bool grappleMovementActive;
 
     // ==========================================//
 
@@ -120,9 +120,13 @@ public class PlayerMovementScript : MonoBehaviour
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
         finalMoveVector = transform.forward * moveValue.y + transform.right * moveValue.x;
 
-        if (PlayerCollisionScript.isCollidingWithWall())
+        if (grappleMovementActive)
         {
-            finalMoveVector = Vector2.zero;
+            shouldJump = false;
+            shouldSprint = false;
+            shouldSlide = false;
+            isDashing = false;
+            return;
         }
 
         grounded = PlayerCollisionScript.isGrounded();
@@ -190,6 +194,9 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (grappleMovementActive)
+            return;
+
         if (isDashing)
         {
             ApplyDash();
@@ -339,5 +346,31 @@ public class PlayerMovementScript : MonoBehaviour
                 maxJumps++;
                 break;
         }
+    }
+
+    // Enables restricted movement while pulling the player with the grapple.
+    public void SetGrappleMovement(bool active)
+    {
+        grappleMovementActive = active;
+
+        if (active)
+        {
+            shouldJump = false;
+            shouldSprint = false;
+            shouldSlide = false;
+            isDashing = false;
+            StopDashMomentum();
+        }
+    }
+
+    // Returns sideways movement only, so the player can steer during a pull.
+    public Vector3 GetGrappleSidewaysVelocity()
+    {
+        if (moveAction == null)
+            return Vector3.zero;
+
+        float sidewaysInput = moveAction.ReadValue<Vector2>().x;
+
+        return transform.right * sidewaysInput * moveForce;
     }
 }
