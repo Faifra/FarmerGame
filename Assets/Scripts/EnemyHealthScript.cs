@@ -18,6 +18,10 @@ public abstract class EnemyHealthScript : MonoBehaviour
     [SerializeField] private float damageNumberHeight = 2f;
     [SerializeField] private Vector3 damageNumberAdditionalOffset = Vector3.zero;
 
+    [Header("Temporary Damage Vulnerability")]
+    private float temporaryDamageMultiplier = 1f;
+    private Coroutine damageMultiplierCoroutine;
+
     // Current health shared with derived enemy classes.
     protected int currentHealth;
 
@@ -43,9 +47,11 @@ public abstract class EnemyHealthScript : MonoBehaviour
         if (isDead)
             return;
 
-        currentHealth -= damage;
+        int finalDamage = Mathf.RoundToInt(damage * temporaryDamageMultiplier);
 
-        ShowDamageNumber(damage);
+        currentHealth -= finalDamage;
+
+        ShowDamageNumber(finalDamage);
 
         if (currentHealth <= 0)
         {
@@ -99,6 +105,27 @@ public abstract class EnemyHealthScript : MonoBehaviour
             StopCoroutine(knockbackCoroutine);
 
         knockbackCoroutine = StartCoroutine(moveTo.Knockback(knockbackDirection, knockbackSpeed, knockbackDuration));
+    }
+
+    // Increases damage taken temporarily, replacing any previous vulnerability timer.
+    public void ApplyTemporaryDamageMultiplier(float multiplier, float duration)
+    {
+        if (damageMultiplierCoroutine != null)
+            StopCoroutine(damageMultiplierCoroutine);
+
+        temporaryDamageMultiplier = Mathf.Max(1f, multiplier);
+
+        damageMultiplierCoroutine = StartCoroutine(
+            ResetDamageMultiplierAfterDelay(duration)
+        );
+    }
+
+    private IEnumerator ResetDamageMultiplierAfterDelay(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryDamageMultiplier = 1f;
+        damageMultiplierCoroutine = null;
     }
 
     // Handles death, drops, and removal of the enemy.
