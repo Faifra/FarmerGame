@@ -81,7 +81,7 @@ public class PlayerMovementScript : MonoBehaviour
     public static bool shouldCrouch;
     private bool shouldSlide;
     private float maxFOV;
-
+    private float fovTimer;
     private Rigidbody playerRigidBody;
 
     static public float jumpTimer = 0;
