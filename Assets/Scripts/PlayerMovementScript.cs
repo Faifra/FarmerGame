@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -81,7 +82,6 @@ public class PlayerMovementScript : MonoBehaviour
     public static bool shouldCrouch;
     private bool shouldSlide;
     private float maxFOV;
-    private float fovTimer;
     private Rigidbody playerRigidBody;
 
     static public float jumpTimer = 0;
@@ -215,16 +215,19 @@ public class PlayerMovementScript : MonoBehaviour
             }
             else
             {
-                fovTimer += Time.fixedDeltaTime;
-                CameraScript.SetCameraFOV(Mathf.Lerp(maxFOV, maxFOV + playerRunFOV, fovTimer * playerRunTimerRate)); 
                 GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
+                CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
         }
-        else if (!shouldSprint && GameManagerScript.GetStamina() < maxStamina)
+        else 
         {
-            GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
-            CameraScript.SetCameraFOV(maxFOV);
-            fovTimer = 0;
+
+            if (GameManagerScript.GetStamina() < maxStamina)
+            {
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
+            }
+            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
+
         }
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
