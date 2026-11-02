@@ -206,29 +206,7 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 velocity = playerRigidBody.linearVelocity;
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce;
 
-        // Stamina
-        if (shouldSprint)
-        {
-            if (GameManagerScript.GetStamina() <= 0)
-            {
-                shouldSprint = false;
-            }
-            else
-            {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
-                CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
-            }
-        }
-        else 
-        {
-
-            if (GameManagerScript.GetStamina() < maxStamina)
-            {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
-            }
-            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
-
-        }
+        StaminaCalculation();
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
         targetVelocity *= !shouldSlide ? 1 : slideSpeedMultiplier;
@@ -375,5 +353,33 @@ public class PlayerMovementScript : MonoBehaviour
         float sidewaysInput = moveAction.ReadValue<Vector2>().x;
 
         return transform.right * sidewaysInput * moveForce;
+    }
+
+    private void StaminaCalculation()
+    {
+        // Stamina
+        if (shouldSprint)
+        {
+            if (GameManagerScript.GetStamina() <= 0)
+            {
+                shouldSprint = false;
+                CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
+            }
+            else
+            {
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
+                CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
+            }
+        }
+        else 
+        {
+
+            if (GameManagerScript.GetStamina() < maxStamina)
+            {
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
+            }
+            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
+
+        }
     }
 }
