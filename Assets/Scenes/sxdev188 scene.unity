@@ -2988,8 +2988,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: playerRunFOV
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: slideRemovalRate
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: playerRunTimerRate
-      value: 10
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: slideSpeedMultiplier
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

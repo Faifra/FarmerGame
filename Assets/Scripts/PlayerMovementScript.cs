@@ -8,56 +8,27 @@ public class PlayerMovementScript : MonoBehaviour
 {
 
     [Header("Move Values")]
-    [SerializeField]
-    private float moveForce = 1.5f;
+    [SerializeField]private float moveForce = 1.5f;
+    [SerializeField]private float jumpForce = 5.0f;
+    [Space, SerializeField]private bool useTogglableSprint;
+    [SerializeField] private bool useTogglableCrouch;
+    [Space, SerializeField]private float sprintMultiplier = 2f;
+    [SerializeField] private float slideSpeedMultiplier = 1.2f;
 
-    [SerializeField]
-    private float jumpForce = 5.0f;
-
-    [Space, SerializeField]
-    private bool useTogglableSprint;
-
-    [SerializeField]
-    private bool useTogglableCrouch;
-
-    [Space, SerializeField]
-    private float sprintMultiplier = 2f;
-
-    [SerializeField]
-    private float slideSpeedMultiplier = 1.2f;
-
-    [Header("Stamina"), SerializeField]
-    private int maxStamina = 100;
-
-    [SerializeField]
-    private int staminaRemovalRate = 1;
-
-    [SerializeField]
-    private int staminaRecoveryRate = 1;
+    [Header("Stamina")]
+    [SerializeField] private int maxStamina = 100;
+    [SerializeField] private int staminaRemovalRate = 1;
+    [SerializeField] private int staminaRecoveryRate = 1;
+    [SerializeField] private float slideRemovalRate = 0.5f; 
 
     [Header("Control Values")]
-    [SerializeField]
-    private float airControl = 0.3f;
-
-    [SerializeField]
-    private float groundedAirControl = 1f;
-
-    [Header("Debug")]
-    [SerializeField]
-    private int maxJumps = 1;
-
-    [SerializeField]
-    private int jumpsLeft;
+    [SerializeField] private float airControl = 0.3f;
+    [SerializeField] private float groundedAirControl = 1f;
 
     [Header("FOV")]
-    [SerializeField]
-    private float playerFOV;
-
-    [SerializeField]
-    private float playerRunFOV;
-
-    [SerializeField]
-    private float playerRunTimerRate = 0.5f;
+    [SerializeField] private float playerFOV;
+    [SerializeField] private float playerRunFOV;
+    [SerializeField] private float playerRunTimerRate = 0.5f;
 
     [Header("Dash")]
     [SerializeField] private float dashForce = 15f;
@@ -66,6 +37,10 @@ public class PlayerMovementScript : MonoBehaviour
 
     [Tooltip("How fast the speed dissapears after dashing, higher = faster dissapearance")]
     [SerializeField] private float dashSpeedChangeFactor = 25f;
+
+    [Header("Debug")]
+    [SerializeField] private int maxJumps = 1;
+    [SerializeField] private int jumpsLeft;
 
     // ==========================================//
 
@@ -79,7 +54,9 @@ public class PlayerMovementScript : MonoBehaviour
     private bool shouldJump;
     private bool grounded;
     private bool shouldSprint;
+
     public static bool shouldCrouch;
+
     private bool shouldSlide;
     private float maxFOV;
     private Rigidbody playerRigidBody;
@@ -144,28 +121,13 @@ public class PlayerMovementScript : MonoBehaviour
         }
 
         // Sprint
-        if (!useTogglableSprint)
-        {
-            shouldSprint = sprintAction.IsPressed();
-        }
-        else
-        {
-            if (sprintAction.WasPressedThisFrame()) shouldSprint = !shouldSprint;
-        }
-
+        if (!useTogglableSprint) shouldSprint = sprintAction.IsPressed();
+        else if (sprintAction.WasPressedThisFrame()) shouldSprint = !shouldSprint;
+    
         // Crouch
-        if (useTogglableCrouch)
-        {
-            if (crouchAction.WasPressedThisFrame())
-            {
-                shouldCrouch = !shouldCrouch;
-            }
-        }
-        else
-        {
-            shouldCrouch = crouchAction.IsPressed();
-        }
-
+        if (useTogglableCrouch && crouchAction.WasPressedThisFrame()) shouldCrouch = !shouldCrouch;
+        else shouldCrouch = crouchAction.IsPressed();
+        
         // Dash cooldown
         if (dashCooldownTimer > 0f)
         {
@@ -207,6 +169,8 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce;
 
         StaminaCalculation();
+        if(shouldSprint && shouldCrouch)shouldSlide = true;
+        else shouldSlide = false;
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
         targetVelocity *= !shouldSlide ? 1 : slideSpeedMultiplier;
@@ -367,7 +331,7 @@ public class PlayerMovementScript : MonoBehaviour
             }
             else
             {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate);
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate - (shouldSlide ? slideRemovalRate : 0));
                 CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
         }
