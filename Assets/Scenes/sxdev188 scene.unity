@@ -1890,6 +1890,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 975898400}
   m_CullTransparentMesh: 1
+--- !u!1 &980804989 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7037807460559071716, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 1637679558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &980804995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980804989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  smooth: 10
+  multiplier: 3
 --- !u!1 &1046352557
 GameObject:
   m_ObjectHideFlags: 0
@@ -2490,6 +2509,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1306738959 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5128115854161293212, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 1637679558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1306738965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306738959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  smooth: 10
+  multiplier: 3
 --- !u!1 &1419061781
 GameObject:
   m_ObjectHideFlags: 0
@@ -2862,6 +2900,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d49b724c82777c4cbd25e633bfd2229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!1 &1462931584 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5820756287548931923, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 1637679558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1462931590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462931584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  smooth: 10
+  multiplier: 3
 --- !u!1001 &1637679558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2922,10 +2979,23 @@ PrefabInstance:
       propertyPath: pendingText
       value: 
       objectReference: {fileID: 2112886185}
+    - target: {fileID: 7037807460559071716, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7037807460559071716, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 980804995}
+    - targetCorrespondingSourceObject: {fileID: 5128115854161293212, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1306738965}
+    - targetCorrespondingSourceObject: {fileID: 5820756287548931923, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1462931590}
   m_SourcePrefab: {fileID: 100100000, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
 --- !u!114 &1637679559 stripped
 MonoBehaviour:
@@ -5096,6 +5166,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
       propertyPath: 'spawners.Array.data[0]'
       value: 
