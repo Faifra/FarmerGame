@@ -14,7 +14,12 @@ public class PlayerCollisionScript : MonoBehaviour
     [SerializeField]
     private CapsuleCollider crouchingCollider;
 
+    [Header("Wall Run Settings")]
+    [SerializeField] private float dutchSmoothTime = 0.2f;
+    [SerializeField] private float dutchAngle = 25f;
+
     [Header("Debug")]
+    [SerializeField] private bool toggleCameraDutch;
     [SerializeField]
     private static bool toggleDebug;
 
@@ -25,6 +30,10 @@ public class PlayerCollisionScript : MonoBehaviour
     private static bool playerCollidingWithWall = false;
 
     public static bool playerWallRunning;
+    
+    private float currentDutch;
+    private float dutchVelocity;
+    private float targetDutch;
 
     // ==========================================//
 
@@ -37,6 +46,10 @@ public class PlayerCollisionScript : MonoBehaviour
     void Update()
     {
         playerPosition = gameObject.transform.position;
+
+        currentDutch = Mathf.SmoothDampAngle(currentDutch, targetDutch, ref dutchVelocity, dutchSmoothTime);
+
+        CameraScript.SetCameraDutch(currentDutch);
     }
 
     void FixedUpdate()
@@ -68,39 +81,44 @@ public class PlayerCollisionScript : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("WallRun"))
+        if (!collision.gameObject.CompareTag("WallRun") || !toggleCameraDutch)
         {
-            if(collision.GetContact(0).normal != Vector3.up && collision.GetContact(0).normal != Vector3.down)
+            targetDutch = 0;
+        }
+        else
+        {
+            Vector3 normal = collision.GetContact(0).normal;
+
+            if(Mathf.Abs(normal.y) > 0.9f)
+                return;
+
+            playerWallRunning = true;
+
+            if (!isGrounded())
             {
-                playerWallRunning = true;
-                
-                Vector3 cross =  Vector3.Cross(collision.GetContact(0).normal, transform.rotation.eulerAngles);
 
-                if(!isGrounded())
+                Vector3 cross = Vector3.Cross(normal, transform.rotation.eulerAngles);
+
+                if(cross.x > 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.left) // left: 1,0,-1
                 {
-                    if(cross.x > 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.left) // left: 1,0,-1
-                    {
-                        CameraScript.SetCameraDutch(cross.magnitude >= 270 || cross.magnitude < 90 ? 25 : -25); // apply depending on the angle --  a bit buggy as of rn
-                    }
-                    else if(cross.x < 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.right) // right -1,0,1
-                    {
-                        CameraScript.SetCameraDutch(cross.magnitude >= 90 && cross.magnitude < 270 ? 25 : -25); 
-                    }
-                    else if (cross.x < 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.forward) // front: -1,0,-1
-                    {
-                        CameraScript.SetCameraDutch(cross.magnitude >= 180 && cross.magnitude < 360 ? -25 : 25); 
-                    }
-                    else if (cross.x > 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.back) // back: 1,0,1
-                    {
-                        CameraScript.SetCameraDutch(cross.magnitude >= 180 ? 25 : -25);
-                    }
+                    targetDutch = cross.magnitude >= 270 || cross.magnitude < 90 ? dutchAngle : -dutchAngle;
                 }
-                else
+                else if(cross.x < 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.right) // right -1,0,1
                 {
-                    CameraScript.SetCameraDutch(0);
+                    targetDutch = cross.magnitude >= 90 && cross.magnitude < 270 ? dutchAngle : -dutchAngle;
                 }
-
-
+                else if (cross.x < 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.forward) // front: -1,0,-1
+                {
+                    targetDutch = cross.magnitude >= 180 && cross.magnitude < 360 ? -dutchAngle : dutchAngle;
+                }
+                else if (cross.x > 0 && cross.z > 0 || collision.GetContact(0).normal == Vector3.back) // back: 1,0,1
+                {
+                    targetDutch = cross.magnitude >= 180 ? dutchAngle : -dutchAngle;
+                }
+            }
+            else
+            {
+                targetDutch = 0;
             }
         }
     }
