@@ -148,15 +148,37 @@ public class TrapPlacementScript : MonoBehaviour
     {
         Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
 
-        if (renderers.Length == 0)
-            return;
-
         float lowestPoint = float.MaxValue;
 
         foreach (Renderer renderer in renderers)
         {
-            lowestPoint = Mathf.Min(lowestPoint, renderer.bounds.min.y);
+            if (renderer is LineRenderer)
+                continue;
+
+            Bounds bounds = renderer.localBounds;
+
+            // Check all 8 corners of the renderer's local bounds.
+            for (int x = -1; x <= 1; x += 2)
+            {
+                for (int y = -1; y <= 1; y += 2)
+                {
+                    for (int z = -1; z <= 1; z += 2)
+                    {
+                        Vector3 corner = bounds.center + Vector3.Scale(
+                            bounds.extents,
+                            new Vector3(x, y, z)
+                        );
+
+                        Vector3 worldCorner = renderer.transform.TransformPoint(corner);
+
+                        lowestPoint = Mathf.Min(lowestPoint, worldCorner.y);
+                    }
+                }
+            }
         }
+
+        if (lowestPoint == float.MaxValue)
+            return;
 
         float offset = groundPoint.y - lowestPoint;
 
@@ -170,6 +192,9 @@ public class TrapPlacementScript : MonoBehaviour
 
         foreach (Renderer renderer in renderers)
         {
+            if (renderer is LineRenderer)
+                continue;
+
             Material[] materials = renderer.materials;
 
             foreach (Material material in materials)
@@ -261,6 +286,27 @@ public class TrapPlacementScript : MonoBehaviour
             trap.enabled = true;
         }
 
+        BeehiveTrapScript beehive = previewTrap.GetComponent<BeehiveTrapScript>();
+
+        if (beehive != null)
+        {
+            beehive.InitializePlacedHive();
+        }
+
+        MagnifyingGlassTrapScript magnifyingGlass = previewTrap.GetComponent<MagnifyingGlassTrapScript>();
+
+        if (magnifyingGlass != null)
+        {
+            magnifyingGlass.InitializePlacedTrap();
+        }
+
+        SprinklerTrapScript sprinkler = previewTrap.GetComponent<SprinklerTrapScript>();
+
+        if (sprinkler != null)
+        {
+            sprinkler.InitializePlacedSprinkler();
+        }
+
         TrapTriggerScript trigger = previewTrap.GetComponent<TrapTriggerScript>();
 
         if (trigger != null)
@@ -297,6 +343,12 @@ public class TrapPlacementScript : MonoBehaviour
 
         foreach (Renderer renderer in renderers)
         {
+            if (renderer is LineRenderer)
+                continue;
+
+            if (renderer is ParticleSystemRenderer)
+                continue;
+
             foreach (Material material in renderer.materials)
             {
                 if (material != null)

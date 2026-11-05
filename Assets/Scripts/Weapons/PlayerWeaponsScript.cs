@@ -36,16 +36,25 @@ public class PlayerWeaponsScript : MonoBehaviour
     [Header("Trap Prefabs")]
     [SerializeField] private GameObject launchTrapPrefab;
     [SerializeField] private GameObject pullTrapPrefab;
+    [SerializeField] private GameObject beehiveTrapPrefab;
+    [SerializeField] private GameObject magnifyingGlassTrapPrefab;
+    [SerializeField] private GameObject sprinklerTrapPrefab;
 
     // References to the trap placement system and trap weapon objects.
     private TrapPlacementScript trapPlacement;
 
     private GameObject launchTrapWeapon;
     private GameObject pullTrapWeapon;
+    private GameObject beehiveTrapWeapon;
+    private GameObject magnifyingGlassTrapWeapon;
+    private GameObject sprinklerTrapWeapon;
 
     // Tracks the number of each trap available to place.
     private int launchTrapCount = 0;
     private int pullTrapCount = 0;
+    private int beehiveTrapCount = 0;
+    private int magnifyingGlassTrapCount = 0;
+    private int sprinklerTrapCount = 0;
 
     private GrappleControllerScript grappleController;
 
@@ -87,6 +96,18 @@ public class PlayerWeaponsScript : MonoBehaviour
                 else if (trap is PullTrapScript)
                 {
                     pullTrapWeapon = weapon;
+                }
+                else if (trap is BeehiveTrapScript)
+                {
+                    beehiveTrapWeapon = weapon;
+                }
+                else if (trap is MagnifyingGlassTrapScript)
+                {
+                    magnifyingGlassTrapWeapon = weapon;
+                }
+                else if (trap is SprinklerTrapScript)
+                {
+                    sprinklerTrapWeapon = weapon;
                 }
                 else if (nextSlot < HotbarSize)
                 {
@@ -183,10 +204,10 @@ public class PlayerWeaponsScript : MonoBehaviour
         menuOpen = open;
     }
 
-    // Adds a launch trap to the rightmost available primary hotbar slot.
+    // Adds a launch trap to the rightmost available trap hotbar slot.
     public void AddLaunchTrap()
     {
-        int slot = FindRightmostEmptySlot(primaryHotbar);
+        int slot = FindRightmostEmptySlot(trapHotbar);
 
         if (slot == -1)
             return;
@@ -194,14 +215,14 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (launchTrapWeapon == null || launchTrapPrefab == null)
             return;
 
-        primaryHotbar[slot] = launchTrapWeapon;
+        trapHotbar[slot] = launchTrapWeapon;
         launchTrapCount++;
     }
 
-    // Adds a pull trap to the rightmost available primary hotbar slot.
+    // Adds a pull trap to the rightmost available trap hotbar slot.
     public void AddPullTrap()
     {
-        int slot = FindRightmostEmptySlot(primaryHotbar);
+        int slot = FindRightmostEmptySlot(trapHotbar);
 
         if (slot == -1)
             return;
@@ -209,8 +230,53 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (pullTrapWeapon == null || pullTrapPrefab == null)
             return;
 
-        primaryHotbar[slot] = pullTrapWeapon;
+        trapHotbar[slot] = pullTrapWeapon;
         pullTrapCount++;
+    }
+
+    // Adds a beehive trap to the rightmost available trap hotbar slot.
+    public void AddBeehiveTrap()
+    {
+        int slot = FindRightmostEmptySlot(trapHotbar);
+
+        if (slot == -1)
+            return;
+
+        if (beehiveTrapWeapon == null || beehiveTrapPrefab == null)
+            return;
+
+        trapHotbar[slot] = beehiveTrapWeapon;
+        beehiveTrapCount++;
+    }
+
+    // Adds a magnifying glass trap to the rightmost available trap hotbar slot.
+    public void AddMagnifyingGlassTrap()
+    {
+        int slot = FindRightmostEmptySlot(trapHotbar);
+
+        if (slot == -1)
+            return;
+
+        if (magnifyingGlassTrapWeapon == null || magnifyingGlassTrapPrefab == null)
+            return;
+
+        trapHotbar[slot] = magnifyingGlassTrapWeapon;
+        magnifyingGlassTrapCount++;
+    }
+
+    // Adds a sprinkler trap to the rightmost available trap hotbar slot.
+    public void AddSprinklerTrap()
+    {
+        int slot = FindRightmostEmptySlot(trapHotbar);
+
+        if (slot == -1)
+            return;
+
+        if (sprinklerTrapWeapon == null || sprinklerTrapPrefab == null)
+            return;
+
+        trapHotbar[slot] = sprinklerTrapWeapon;
+        sprinklerTrapCount++;
     }
 
     // Finds the last empty slot so newly added traps appear from right to left.
@@ -296,6 +362,15 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (trap is PullTrapScript)
             return pullTrapCount > 0;
 
+        if (trap is BeehiveTrapScript)
+            return beehiveTrapCount > 0;
+
+        if (trap is MagnifyingGlassTrapScript)
+            return magnifyingGlassTrapCount > 0;
+
+        if (trap is SprinklerTrapScript)
+            return sprinklerTrapCount > 0;
+
         return true;
     }
 
@@ -338,6 +413,15 @@ public class PlayerWeaponsScript : MonoBehaviour
 
         if (trap is PullTrapScript)
             return "Pull Trap";
+
+        if (trap is BeehiveTrapScript)
+            return "Beehive";
+
+        if (trap is MagnifyingGlassTrapScript)
+            return "Magnifying Glass";
+
+        if (trap is SprinklerTrapScript)
+            return "Sprinkler Trap";
 
         return weapon.name;
     }
@@ -451,6 +535,18 @@ public class PlayerWeaponsScript : MonoBehaviour
         {
             trapPlacement.StartPlacement(pullTrapPrefab);
         }
+        else if (trap is BeehiveTrapScript && beehiveTrapCount > 0)
+        {
+            trapPlacement.StartPlacement(beehiveTrapPrefab);
+        }
+        else if (trap is MagnifyingGlassTrapScript && magnifyingGlassTrapCount > 0)
+        {
+            trapPlacement.StartPlacement(magnifyingGlassTrapPrefab);
+        }
+        else if (trap is SprinklerTrapScript &&  sprinklerTrapCount > 0)
+        {
+            trapPlacement.StartPlacement(sprinklerTrapPrefab);
+        }
     }
 
     // Consumes one trap after placement and selects the next available slot.
@@ -475,6 +571,21 @@ public class PlayerWeaponsScript : MonoBehaviour
         else if (trap is PullTrapScript && pullTrapCount > 0)
         {
             pullTrapCount--;
+            hotbar[currentSlot] = null;
+        }
+        else if (trap is BeehiveTrapScript && beehiveTrapCount > 0)
+        {
+            beehiveTrapCount--;
+            hotbar[currentSlot] = null;
+        }
+        else if (trap is MagnifyingGlassTrapScript && magnifyingGlassTrapCount > 0)
+        {
+            magnifyingGlassTrapCount--;
+            hotbar[currentSlot] = null;
+        }
+        else if (trap is SprinklerTrapScript && sprinklerTrapCount > 0)
+        {
+            sprinklerTrapCount--;
             hotbar[currentSlot] = null;
         }
         else

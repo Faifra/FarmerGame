@@ -211,8 +211,6 @@ public class GrappleControllerScript : MonoBehaviour
         pullingEnemy = false;
         tetheredEnemy = null;
 
-        Debug.Log("Grapple tether ended");
-
         if (playerMovement != null)
             playerMovement.SetGrappleMovement(false);
 

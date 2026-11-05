@@ -34,6 +34,8 @@ public abstract class EnemyHealthScript : MonoBehaviour
     private bool isDead = false;
     private Coroutine knockbackCoroutine;
 
+    private GameObject rootedWallPrefab;
+
     // Initializes health and caches component references.
     protected virtual void Start()
     {
@@ -57,6 +59,24 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            Die();
+        }
+    }
+
+    public void TakeDamageFromSprinkler(int damage, GameObject wallPrefab)
+    {
+        if (isDead)
+            return;
+
+        int finalDamage = Mathf.RoundToInt(damage * temporaryDamageMultiplier);
+
+        currentHealth -= finalDamage;
+
+        ShowDamageNumber(finalDamage);
+
+        if (currentHealth <= 0)
+        {
+            rootedWallPrefab = wallPrefab;
             Die();
         }
     }
@@ -137,6 +157,11 @@ public abstract class EnemyHealthScript : MonoBehaviour
             return;
 
         isDead = true;
+
+        if (rootedWallPrefab != null)
+        {
+            Instantiate(rootedWallPrefab, transform.position, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+        }
 
         if (dropsScript != null)
         {

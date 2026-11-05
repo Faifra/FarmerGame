@@ -74,6 +74,8 @@ public class PlayerMovementScript : MonoBehaviour
 
     private bool grappleMovementActive;
 
+    private float fovTimer = 0;
+
     // ==========================================//
 
     void Start()
@@ -104,6 +106,11 @@ public class PlayerMovementScript : MonoBehaviour
             shouldSlide = false;
             isDashing = false;
             return;
+        }
+
+        if (PlayerCollisionScript.isCollidingWithWall())
+        {
+            finalMoveVector = Vector2.zero;
         }
 
         grounded = PlayerCollisionScript.isGrounded();
