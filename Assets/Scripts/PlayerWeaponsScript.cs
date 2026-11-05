@@ -22,6 +22,7 @@ public class PlayerWeaponsScript : MonoBehaviour
     private InputAction weaponScrollAction;
     private InputAction placeTrapAction;
     private InputAction toggleHotbarAction;
+    private InputAction reloadAction;
     private InputAction[] selectActions = new InputAction[HotbarSize];
 
     // Tracks the selected slot and currently active hotbar.
@@ -46,6 +47,8 @@ public class PlayerWeaponsScript : MonoBehaviour
     private int launchTrapCount = 0;
     private int pullTrapCount = 0;
 
+    private GrappleControllerScript grappleController;
+
     // Returns the hotbar currently selected by the player.
     private GameObject[] ActiveHotbar => activeHotbar == 0 ? primaryHotbar : trapHotbar;
 
@@ -56,6 +59,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         weaponScrollAction = InputSystem.actions.FindAction("WeaponScroll");
         placeTrapAction = InputSystem.actions.FindAction("PlaceTrap");
         toggleHotbarAction = InputSystem.actions.FindAction("Hotbar Toggle");
+        reloadAction = InputSystem.actions.FindAction("Reload");
 
         for (int i = 0; i < HotbarSize; i++)
         {
@@ -63,6 +67,7 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
 
         trapPlacement = GetComponent<TrapPlacementScript>();
+        grappleController = GetComponent<GrappleControllerScript>();
 
         int nextSlot = 0;
 
@@ -129,6 +134,11 @@ public class PlayerWeaponsScript : MonoBehaviour
             CycleWeapons(-1);
         }
 
+        if (reloadAction != null && reloadAction.WasPressedThisFrame())
+        {
+            ReloadCurrentWeapon();
+        }
+
         if (attackAction != null && attackAction.WasPressedThisFrame())
         {
             Attack();
@@ -139,10 +149,32 @@ public class PlayerWeaponsScript : MonoBehaviour
             HoldAttack();
         }
 
+        if (attackAction != null && attackAction.WasReleasedThisFrame())
+        {
+            StopAttack();
+        }
+
         if (placeTrapAction != null && placeTrapAction.WasPressedThisFrame())
         {
             PlaceTrap();
         }
+    }
+
+    // Reloads the currently selected ranged weapon.
+    private void ReloadCurrentWeapon()
+    {
+        if (currentSlot < 0)
+            return;
+
+        GameObject weapon = ActiveHotbar[currentSlot];
+
+        if (weapon == null)
+            return;
+
+        RangedWeaponScript rangedWeapon = weapon.GetComponent<RangedWeaponScript>();
+
+        if (rangedWeapon != null)
+            rangedWeapon.Reload();
     }
 
     // Enables or disables weapon input when menus open or close.
@@ -157,14 +189,10 @@ public class PlayerWeaponsScript : MonoBehaviour
         int slot = FindRightmostEmptySlot(primaryHotbar);
 
         if (slot == -1)
-        {
             return;
-        }
 
         if (launchTrapWeapon == null || launchTrapPrefab == null)
-        {
             return;
-        }
 
         primaryHotbar[slot] = launchTrapWeapon;
         launchTrapCount++;
@@ -176,14 +204,10 @@ public class PlayerWeaponsScript : MonoBehaviour
         int slot = FindRightmostEmptySlot(primaryHotbar);
 
         if (slot == -1)
-        {
             return;
-        }
 
         if (pullTrapWeapon == null || pullTrapPrefab == null)
-        {
             return;
-        }
 
         primaryHotbar[slot] = pullTrapWeapon;
         pullTrapCount++;
@@ -205,7 +229,6 @@ public class PlayerWeaponsScript : MonoBehaviour
     private void ToggleHotbar()
     {
         activeHotbar = 1 - activeHotbar;
-
         SelectFirstAvailableSlot();
     }
 
@@ -233,13 +256,25 @@ public class PlayerWeaponsScript : MonoBehaviour
         if (!CanUseSlot(slot))
             return;
 
+        GameObject[] oldHotbar = ActiveHotbar;
+        GameObject currentWeapon = null;
+
+        if (currentSlot >= 0 && currentSlot < oldHotbar.Length)
+            currentWeapon = oldHotbar[currentSlot];
+
+        GameObject newWeapon = oldHotbar[slot];
+
+        if (currentWeapon != newWeapon && currentWeapon != null && currentWeapon.GetComponent<GrapplingWeaponScript>() != null && grappleController != null)
+        {
+            grappleController.OnWeaponSwitch();
+        }
+
         currentSlot = slot;
+
         DeactivateAllWeapons();
 
-        GameObject weapon = ActiveHotbar[currentSlot];
-
-        if (weapon != null)
-            weapon.SetActive(true);
+        if (newWeapon != null)
+            newWeapon.SetActive(true);
     }
 
     // Checks whether a slot contains a weapon or a trap with remaining inventory.
@@ -272,8 +307,6 @@ public class PlayerWeaponsScript : MonoBehaviour
             SelectFirstAvailableSlot();
             return;
         }
-
-        GameObject[] hotbar = ActiveHotbar;
 
         for (int i = 1; i <= HotbarSize; i++)
         {
@@ -313,6 +346,24 @@ public class PlayerWeaponsScript : MonoBehaviour
     public int GetCurrentHotbarSlot()
     {
         return currentSlot;
+    }
+
+    public RangedWeaponScript GetCurrentRangedWeapon()
+    {
+        if (currentSlot < 0)
+            return null;
+
+        GameObject[] hotbar = ActiveHotbar;
+
+        if (currentSlot >= hotbar.Length)
+            return null;
+
+        GameObject weapon = hotbar[currentSlot];
+
+        if (weapon == null)
+            return null;
+
+        return weapon.GetComponent<RangedWeaponScript>();
     }
 
     // Disables all weapon objects before another weapon is selected.
@@ -360,6 +411,23 @@ public class PlayerWeaponsScript : MonoBehaviour
 
         if (rangedWeapon != null)
             rangedWeapon.HoldAttack();
+    }
+
+    // Stops continuous firing when the attack button is released.
+    private void StopAttack()
+    {
+        if (currentSlot < 0)
+            return;
+
+        GameObject weapon = ActiveHotbar[currentSlot];
+
+        if (weapon == null)
+            return;
+
+        RangedWeaponScript rangedWeapon = weapon.GetComponent<RangedWeaponScript>();
+
+        if (rangedWeapon != null)
+            rangedWeapon.StopAttack();
     }
 
     // Starts placement using the prefab matching the selected trap type.
