@@ -262,6 +262,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7610776882174911424, guid: 9280f9160a5bf9b439d31478ea57dfd0, type: 3}
   m_PrefabInstance: {fileID: 13117555}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &37690257 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3655751871265422904, guid: 7dadf10cb3a12fb40af644d49df7b209, type: 3}
+  m_PrefabInstance: {fileID: 869035025}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4230fa4c5a496a439ef938b2ae2ac6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!4 &54310751 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7610776882174911424, guid: 9280f9160a5bf9b439d31478ea57dfd0, type: 3}
@@ -1588,6 +1599,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7610776882174911424, guid: 9280f9160a5bf9b439d31478ea57dfd0, type: 3}
   m_PrefabInstance: {fileID: 5774207}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &396683060 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3655751871265422904, guid: 7dadf10cb3a12fb40af644d49df7b209, type: 3}
+  m_PrefabInstance: {fileID: 687561898}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4230fa4c5a496a439ef938b2ae2ac6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &397312962
 GameObject:
   m_ObjectHideFlags: 0
@@ -7345,6 +7367,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1906036792 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3655751871265422904, guid: 7dadf10cb3a12fb40af644d49df7b209, type: 3}
+  m_PrefabInstance: {fileID: 1149286449}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4230fa4c5a496a439ef938b2ae2ac6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!4 &1909641986 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7610776882174911424, guid: 9280f9160a5bf9b439d31478ea57dfd0, type: 3}
@@ -9122,6 +9155,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: 'spawners.Array.data[0]'
+      value: 
+      objectReference: {fileID: 396683060}
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: 'spawners.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1906036792}
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: 'spawners.Array.data[2]'
+      value: 
+      objectReference: {fileID: 37690257}
     - target: {fileID: 464295828613810119, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
       propertyPath: m_Name
       value: GameManager

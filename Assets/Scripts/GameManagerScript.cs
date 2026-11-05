@@ -49,7 +49,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Start()
     {
-        playerHP = 100; // Test variable
+        playerHP = 100000; // Test variable
     }
 
     void Update()
