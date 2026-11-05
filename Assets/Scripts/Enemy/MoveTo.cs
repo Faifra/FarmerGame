@@ -10,9 +10,18 @@ public class MoveTo : MonoBehaviour
     private bool isMovingSpecial;
     private bool isDestroyed;
 
+    private float originalSpeed;
+    private float slowTimer;
+    private float currentSlowMultiplier = 1f;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        if (agent != null)
+        {
+            originalSpeed = agent.speed;
+        }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
@@ -31,6 +40,37 @@ public class MoveTo : MonoBehaviour
         {
             agent.destination = goal.position;
         }
+
+        if (slowTimer > 0f)
+        {
+            slowTimer -= Time.fixedDeltaTime;
+
+            if (slowTimer <= 0f)
+            {
+                slowTimer = 0f;
+                currentSlowMultiplier = 1f;
+
+                if (agent != null)
+                    agent.speed = originalSpeed;
+            }
+        }
+    }
+
+    public void ApplySlow(float multiplier, float duration)
+    {
+        if (agent == null)
+            return;
+
+        multiplier = Mathf.Clamp(multiplier, 0.1f, 1f);
+
+        currentSlowMultiplier = Mathf.Min(
+            currentSlowMultiplier,
+            multiplier
+        );
+
+        slowTimer = Mathf.Max(slowTimer, duration);
+
+        agent.speed = originalSpeed * currentSlowMultiplier;
     }
 
     public IEnumerator Knockback(Vector3 direction, float speed, float duration)
