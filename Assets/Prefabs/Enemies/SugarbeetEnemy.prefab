@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 4669020605040790038}
   - component: {fileID: 8763984447735584}
   - component: {fileID: 9123358559013487249}
+  - component: {fileID: 6722803776033660783}
+  - component: {fileID: 7496189725551747925}
   m_Layer: 0
   m_Name: SugarbeetEnemy
   m_TagString: Untagged
@@ -131,6 +133,37 @@ MonoBehaviour:
   attackRange: 15
   chargeSpeed: 15
   chargeCooldown: 3
+  chargeDamage: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 128
+  currentState: 0
+--- !u!114 &6722803776033660783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
+  maxHealth: 10
+  damageNumberPrefab: {fileID: 0}
+  damageNumberForwardOffset: 0.75
+  damageNumberHeight: 2
+  damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &7496189725551747925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6b19cf3cc53dfb3980ef8e78364f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyScript
