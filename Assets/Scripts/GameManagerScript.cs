@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class GameManagerScript : MonoBehaviour
 {
     private static int playerHP;
+    [SerializeField] public const int MaxHP = 100;
     private static float playerStamina;
     
     public static GameManagerScript instance { get; private set; }
@@ -29,6 +30,11 @@ public class GameManagerScript : MonoBehaviour
     public static int GetHP()
     {
         return playerHP;
+    }
+
+    public static void RestoreHP(int amount)
+    {
+        playerHP = Mathf.Min(playerHP + amount, MaxHP);
     }
 
     public static void SetStamina(float newsp)

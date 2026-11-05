@@ -14,6 +14,7 @@ public class PlayerInteractionScript : MonoBehaviour
 
     [Header("Menu")]
     [SerializeField] private UpgradeMenuScript upgradeMenu;
+    [SerializeField] private HealthStationMenuScript healthStationMenu;
 
     private InputAction interactAction;
     private IInteractableScript currentInteractable;
@@ -34,12 +35,20 @@ public class PlayerInteractionScript : MonoBehaviour
             return;
         }
 
-        if (upgradeMenu != null && upgradeMenu.IsMenuOpen)
+        bool menuOpen = (upgradeMenu != null && upgradeMenu.IsMenuOpen) || (healthStationMenu != null && healthStationMenu.IsMenuOpen);
+
+        if (menuOpen)
         {
             HidePrompt();
 
             if (interactAction.WasPressedThisFrame())
-                upgradeMenu.CloseMenu();
+            {
+                if (upgradeMenu != null && upgradeMenu.IsMenuOpen)
+                    upgradeMenu.CloseMenu();
+
+                if (healthStationMenu != null && healthStationMenu.IsMenuOpen)
+                    healthStationMenu.CloseMenu();
+            }
 
             return;
         }
