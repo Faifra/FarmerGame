@@ -3,28 +3,36 @@ using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
+    [Header("Player Health")]
+    [SerializeField] private int maxHP = 100;
+    [SerializeField] private int startingHP = 100;
+
     private static int playerHP;
-    [SerializeField] public const int MaxHP = 100;
+    private static int maximumHP;
+
     private static float playerStamina;
-    
+
     public static GameManagerScript instance { get; private set; }
 
-    private void Awake() 
-    { 
+    public static int MaxHP => maximumHP;
 
-        if (instance != null && instance != this) 
-        { 
-            Destroy(this); 
-        } 
-        else 
-        { 
-            instance = this; 
-        } 
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+
+        maximumHP = Mathf.Max(1, maxHP);
+        playerHP = Mathf.Clamp(startingHP, 0, maximumHP);
     }
-    
+
     public static void SetHP(int newhp)
     {
-        playerHP = newhp;
+        playerHP = Mathf.Clamp(newhp, 0, maximumHP);
     }
 
     public static int GetHP()
@@ -34,7 +42,7 @@ public class GameManagerScript : MonoBehaviour
 
     public static void RestoreHP(int amount)
     {
-        playerHP = Mathf.Min(playerHP + amount, MaxHP);
+        playerHP = Mathf.Min(playerHP + amount, maximumHP);
     }
 
     public static void SetStamina(float newsp)
@@ -45,11 +53,6 @@ public class GameManagerScript : MonoBehaviour
     public static float GetStamina()
     {
         return playerStamina;
-    }
-
-    void Start()
-    {
-        playerHP = 100000; // Test variable
     }
 
     void Update()

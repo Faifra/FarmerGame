@@ -5147,7 +5147,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &492754315939193888
 Transform:
   m_ObjectHideFlags: 0
@@ -5190,12 +5190,6 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 145
-  playerCamera: {fileID: 0}
-  interactionRange: 5
-  interactionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  interactionPrompt: {fileID: 0}
 --- !u!1 &6187809600568824627
 GameObject:
   m_ObjectHideFlags: 0
