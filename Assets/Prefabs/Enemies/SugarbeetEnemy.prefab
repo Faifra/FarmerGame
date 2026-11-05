@@ -125,3 +125,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43ec97d6c19f59478c7bfff35726ab3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  targetAltitude: 10
+  altitudeThreshold: 3
+  flyingSpeed: 4
+  attackRange: 15
+  chargeSpeed: 15
+  chargeCooldown: 3
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128

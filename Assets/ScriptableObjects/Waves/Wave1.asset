@@ -15,3 +15,5 @@ MonoBehaviour:
   enemies:
   - enemyPrefab: {fileID: 7487730756968861998, guid: 7ba6cfec6dbf4b747926497e3d57f23a, type: 3}
     amount: 0
+  - enemyPrefab: {fileID: 8384746767767502866, guid: ff7c59a222ff3344e997ef709c363b6e, type: 3}
+    amount: 3
