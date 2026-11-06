@@ -17,7 +17,9 @@ GameObject:
   - component: {fileID: 955958096981731233}
   - component: {fileID: -7761138156180558892}
   - component: {fileID: -317896775728013634}
-  m_Layer: 0
+  - component: {fileID: -8170497334880178310}
+  - component: {fileID: -5615983722535484021}
+  m_Layer: 6
   m_Name: CornEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,6 +138,7 @@ MonoBehaviour:
   reloadTime: 5
   throwForce: 10
   attackRange: 15
+  reloadTimer: 0
 --- !u!195 &-6879643092216625662
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -183,8 +186,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
-  maxHealth: 10
-  damageNumberPrefab: {fileID: 0}
+  maxHealth: 90
+  damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
@@ -200,6 +203,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e6b19cf3cc53dfb3980ef8e78364f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyScript
+--- !u!114 &-8170497334880178310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667211483588175294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
+  drops:
+  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 20
+  burstDistance: 1.5
+  burstHeight: 0.5
+--- !u!54 &-5615983722535484021
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667211483588175294}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &5994070368883293422
 GameObject:
   m_ObjectHideFlags: 0

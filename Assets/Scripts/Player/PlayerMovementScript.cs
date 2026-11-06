@@ -117,7 +117,7 @@ public class PlayerMovementScript : MonoBehaviour
 
         jumpTimer += Time.deltaTime;
 
-        if (grounded && playerRigidBody.linearVelocity.y <= 0)
+        if (grounded && playerRigidBody.linearVelocity.y <= 0  || PlayerCollisionScript.playerWallRunning && playerRigidBody.linearVelocity.y <= 0.05f)
         {
             jumpsLeft = maxJumps;
         }
