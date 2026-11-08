@@ -11,4 +11,6 @@ public class PowerUpSO : ScriptableObject
 public enum PowerUpType
 {
     SuperMegaJump,
+    BluePill,
+    XtremeSpeed
 }

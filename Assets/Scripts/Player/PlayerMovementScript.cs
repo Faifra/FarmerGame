@@ -297,6 +297,12 @@ public class PlayerMovementScript : MonoBehaviour
             case PowerUpType.SuperMegaJump:
                 maxJumps++;
                 break;
+            case PowerUpType.BluePill:
+                maxStamina += 100;
+                break;
+            case PowerUpType.XtremeSpeed:
+                sprintMultiplier += 0.4f;
+                break;
         }
     }
 
