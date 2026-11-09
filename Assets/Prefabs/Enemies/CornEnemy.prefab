@@ -191,6 +191,7 @@ MonoBehaviour:
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  enemyType: 4
 --- !u!114 &-317896775728013634
 MonoBehaviour:
   m_ObjectHideFlags: 0

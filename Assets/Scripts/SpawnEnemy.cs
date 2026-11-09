@@ -37,13 +37,15 @@ public class SpawnEnemy : MonoBehaviour
         //}
     }
 
-    public void Spawn(GameObject enemyPrefab) //skapa en fiende i taget
+    public GameObject Spawn(GameObject enemyPrefab) //skapa en fiende i taget
     {
         Vector2 randomPoint = Random.insideUnitCircle * spawnRadius; //random point in circle (spawnradius).
 
         Vector3 spawnPosition = transform.position + new Vector3(randomPoint.x, 0f, randomPoint.y); 
 
-        Instantiate(enemyPrefab, spawnPosition, transform.rotation); //skapa enemy på spawners position och rotation.
+        GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, transform.rotation); //skapa enemy på spawners position och rotation.
+
+        return spawnedEnemy;
     }
 
     //void SpawnWaves()
