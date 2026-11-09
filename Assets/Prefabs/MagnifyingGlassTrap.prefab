@@ -486,11 +486,15 @@ MonoBehaviour:
   detectionRange: 14
   lensPivot: {fileID: 2009143144194970884}
   beamStart: {fileID: 8921391622136084262}
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
   sunlightBeam: {fileID: 5105458518618809462}
   beamWidth: 0.12
   targetHeight: 1
   damagePerTick: 5
   damageInterval: 1
+  maximumTotalDamage: 250
   slowMultiplier: 0.5
   slowDuration: 1.2
 --- !u!65 &7944887997337415734
