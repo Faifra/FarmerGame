@@ -13,5 +13,6 @@ public class UIPlayerStaminaScript : MonoBehaviour
     void Update()
     {
         slider.value = GameManagerScript.GetStamina();
+        slider.maxValue = GameManagerScript.GetMaxStamina();
     }
 }

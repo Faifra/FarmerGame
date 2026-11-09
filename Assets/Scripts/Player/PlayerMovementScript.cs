@@ -89,6 +89,7 @@ public class PlayerMovementScript : MonoBehaviour
 
         jumpsLeft = maxJumps;
         GameManagerScript.SetStamina(maxStamina);
+        GameManagerScript.SetMaxStamina(maxStamina);
         maxFOV = playerFOV;
     }
 
@@ -297,6 +298,12 @@ public class PlayerMovementScript : MonoBehaviour
             case PowerUpType.SuperMegaJump:
                 maxJumps++;
                 break;
+            case PowerUpType.BluePill:
+                GameManagerScript.SetStamina(GameManagerScript.GetMaxStamina() + 100);
+                break;
+            case PowerUpType.XtremeSpeed:
+                sprintMultiplier += 0.4f;
+                break;
         }
     }
 
@@ -345,7 +352,7 @@ public class PlayerMovementScript : MonoBehaviour
         else 
         {
 
-            if (GameManagerScript.GetStamina() < maxStamina)
+            if (GameManagerScript.GetStamina() < GameManagerScript.GetMaxStamina())
             {
                 GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
             }

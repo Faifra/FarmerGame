@@ -182,6 +182,18 @@ public abstract class EnemyHealthScript : MonoBehaviour
         {
             waveManager.EnemyDied();
         }
+
+        if (GetComponent<BossUIHelperScript>())
+        {
+            GetComponent<BossUIHelperScript>().RemoveHealthBar();
+        }
+
         Destroy(gameObject);
     }
+
+    public int CurrentHealth()
+    {
+        return currentHealth;
+    }
+
 }

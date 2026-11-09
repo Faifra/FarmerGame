@@ -11,6 +11,7 @@ public class GameManagerScript : MonoBehaviour
     private static int maximumHP;
 
     private static float playerStamina;
+    private static float maxStamina;
 
     public static GameManagerScript instance { get; private set; }
 
@@ -55,6 +56,16 @@ public class GameManagerScript : MonoBehaviour
         return playerStamina;
     }
 
+    public static void SetMaxStamina(float newsp)
+    {
+        maxStamina = newsp;
+    }
+
+    public static float GetMaxStamina()
+    {
+        return maxStamina;
+    }
+
     void Update()
     {
         if(playerHP <= 0) // Reload level when we die
@@ -73,6 +84,11 @@ public class GameManagerScript : MonoBehaviour
             Application.Quit();
             
         #endif
+    }
+
+    public static void LoadScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
     }
 
 }
