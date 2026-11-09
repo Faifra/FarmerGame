@@ -136,6 +136,7 @@ MonoBehaviour:
   reloadTime: 5
   throwForce: 10
   attackRange: 15
+  reloadTimer: 0
 --- !u!195 &-6879643092216625662
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -188,6 +189,7 @@ MonoBehaviour:
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  enemyType: 4
 --- !u!114 &-317896775728013634
 MonoBehaviour:
   m_ObjectHideFlags: 0
