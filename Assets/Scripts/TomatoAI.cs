@@ -11,7 +11,8 @@ public class TomatoAI : MonoBehaviour
     public TomatoState state; //represent the current state of the tomato. 
     private PotatoAI leader; //represent the leader potato, assigned in SearchForLeader() method.
     private MoveTo movement;
-    [SerializeField] private int searchRange = 30; //search range, can be modified.
+    [SerializeField] private float searchRange = 30; //search range, can be modified.
+    [SerializeField] private float attackRange = 10;
 
     void Start()
     {
@@ -58,8 +59,7 @@ public class TomatoAI : MonoBehaviour
             movement.goal = GameObject.FindGameObjectWithTag("Player").transform;
             return;
         }
-
-        movement.goal = leader.transform;
         
+        movement.goal = leader.transform;
     }
 }
