@@ -3131,6 +3131,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1891651282766926111, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1891651282766926111, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1891651282766926111, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1891651282766926111, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: totalText
       value: 
@@ -3139,6 +3155,30 @@ PrefabInstance:
       propertyPath: pendingText
       value: 
       objectReference: {fileID: 2112886185}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -481.0879
+      objectReference: {fileID: 0}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -10.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -547.02454
+      objectReference: {fileID: 0}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3070602655284253759, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7037807460559071716, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -5020,17 +5060,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2068462362}
-  m_LocalRotation: {x: -0, y: -0, z: 0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1432227616}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2068462364
 MonoBehaviour:
@@ -5052,7 +5092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: +
+  m_text: "\u2022"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5061,8 +5101,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 1073741823
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.24705882}
+    rgba: 1646848814
+  m_fontColor: {r: 0.18028848, g: 0.92156863, b: 0.15699539, a: 0.38431373}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5079,15 +5119,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52
-  m_fontSizeBase: 52
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
