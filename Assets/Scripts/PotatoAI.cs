@@ -4,7 +4,7 @@ public class PotatoAI : MonoBehaviour
 {
     [SerializeField] private int maxFollowers = 4;
 
-    private int followerCount = 0;
+    [SerializeField] private int followerCount = 0;
 
     public bool HasAvailableSlots => followerCount < maxFollowers;
     void Start()

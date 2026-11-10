@@ -157,6 +157,7 @@ MonoBehaviour:
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
   enemyType: 6
+  currentHealth: 0
 --- !u!114 &7496189725551747925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,5 +195,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
