@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -16,6 +15,9 @@ public class GrappleControllerScript : MonoBehaviour
     [Header("Damage Window")]
     [SerializeField] private float damageMultiplier = 2f;
     [SerializeField] private float vulnerabilityDuration = 0.75f;
+
+    [Header("Upgrade")]
+    [SerializeField] private GrappleUpgradeScript grappleUpgrades;
 
     [Header("Visuals")]
     [SerializeField] private LineRenderer tetherLine;
@@ -131,7 +133,9 @@ public class GrappleControllerScript : MonoBehaviour
         if (direction.sqrMagnitude < 0.01f)
             return;
 
-        Vector3 pullVelocity = direction.normalized * playerPullSpeed;
+        float speedMultiplier = grappleUpgrades != null ? grappleUpgrades.PullSpeedMultiplier : 1f;
+
+        Vector3 pullVelocity = direction.normalized * playerPullSpeed * speedMultiplier;
         Vector3 sidewaysVelocity = playerMovement.GetGrappleSidewaysVelocity();
 
         playerBody.linearVelocity = pullVelocity + sidewaysVelocity;
@@ -146,18 +150,22 @@ public class GrappleControllerScript : MonoBehaviour
 
         direction.Normalize();
 
+        float speedMultiplier = grappleUpgrades != null ? grappleUpgrades.PullSpeedMultiplier : 1f;
+
+        float effectiveEnemyPullSpeed = enemyPullSpeed * speedMultiplier;
+
         if (enemyAgent != null && enemyAgent.enabled && enemyAgent.isOnNavMesh)
         {
-            enemyAgent.velocity = direction * enemyPullSpeed;
-            enemyAgent.Move(direction * enemyPullSpeed * Time.fixedDeltaTime);
+            enemyAgent.velocity = direction * effectiveEnemyPullSpeed;
+            enemyAgent.Move(direction * effectiveEnemyPullSpeed * Time.fixedDeltaTime);
         }
         else if (enemyBody != null && !enemyBody.isKinematic)
         {
-            enemyBody.linearVelocity = direction * enemyPullSpeed;
+            enemyBody.linearVelocity = direction * effectiveEnemyPullSpeed;
         }
         else
         {
-            tetheredEnemy.transform.position += direction * enemyPullSpeed * Time.fixedDeltaTime;
+            tetheredEnemy.transform.position += direction * effectiveEnemyPullSpeed * Time.fixedDeltaTime;
         }
     }
 
@@ -224,7 +232,21 @@ public class GrappleControllerScript : MonoBehaviour
 
         if (switchedWeapon && previousEnemy != null)
         {
-            previousEnemy.ApplyTemporaryDamageMultiplier(damageMultiplier, vulnerabilityDuration);
+            float durationMultiplier = grappleUpgrades != null ? grappleUpgrades.VulnerabilityDurationMultiplier : 1f;
+
+            previousEnemy.ApplyTemporaryDamageMultiplier(damageMultiplier, vulnerabilityDuration * durationMultiplier);
+
+            if (grappleUpgrades != null && grappleUpgrades.GrapplerMomentum)
+            {
+                int healthToRestore = Mathf.Max(1, Mathf.RoundToInt(GameManagerScript.MaxHP * grappleUpgrades.HealthRestoredPercentage));
+
+                GameManagerScript.RestoreHP(healthToRestore);
+
+                if (playerMovement != null)
+                {
+                    playerMovement.ApplyTemporaryMovementSpeedMultiplier(grappleUpgrades.MovementSpeedMultiplier, grappleUpgrades.MovementSpeedDuration);
+                }
+            }
         }
 
         enemyBody = null;

@@ -19,22 +19,39 @@ public class LiquidStreamScript : MonoBehaviour
     [SerializeField] private int damagePerTick = 2;
     [SerializeField] private float tickInterval = 0.2f;
 
+    [Header("Upgrades")]
+    [SerializeField] private BasicSprayUpgradeScript sprayUpgrades;
+    [SerializeField] private ShotgunSprayUpgradeScript shotgunUpgrades;
+
     [Header("Visual Effect")]
     [SerializeField] private ParticleSystem streamEffect;
 
-    // Tracks whether the stream is currently being fired.
     private bool isActive;
     private float tickTimer;
 
-    // Tracks whether the burst is currently being fired.
     private float burstTimer;
     private bool burstActive;
 
-    // Prevents enemies with multiple colliders from taking duplicate damage per tick.
+    // Tracks enemies currently being sprayed and how long they have been sprayed.
+    private readonly Dictionary<EnemyHealthScript, float> enemyExposureTimes = new Dictionary<EnemyHealthScript, float>();
+
+    private readonly HashSet<EnemyWallScript> hitWalls = new();
+
+    // Tracks which enemies have already received knockback during this exposure.
+    private readonly HashSet<EnemyHealthScript> knockedBackEnemies = new HashSet<EnemyHealthScript>();
+
+    // Tracks enemies currently inside the stream during a damage tick.
     private readonly HashSet<EnemyHealthScript> hitEnemies = new HashSet<EnemyHealthScript>();
+
+    private readonly List<EnemyHealthScript> enemiesToRemove = new List<EnemyHealthScript>();
 
     public void SetStreamActive(bool active)
     {
+        if (!active)
+        {
+            FinishAllExposures();
+        }
+
         if (isActive == active && !burstActive)
             return;
 
@@ -81,25 +98,38 @@ public class LiquidStreamScript : MonoBehaviour
         }
     }
 
-    // Damages each enemy currently inside the stream cone.
+    // Damages enemies inside the stream and tracks their exposure.
     private void ApplyDamageTick()
     {
-        Collider[] hits = Physics.OverlapSphere(muzzle.position, range, Physics.AllLayers, QueryTriggerInteraction.Collide);
+        float currentRange = range;
+
+        if (sprayUpgrades != null)
+            currentRange += sprayUpgrades.AdditionalRange;
+
+        Collider[] hits = Physics.OverlapSphere(muzzle.position, currentRange, Physics.AllLayers, QueryTriggerInteraction.Collide);
 
         hitEnemies.Clear();
+        hitWalls.Clear();
 
         foreach (Collider hit in hits)
         {
             EnemyHealthScript health = hit.GetComponentInParent<EnemyHealthScript>();
+            EnemyWallScript wall = hit.GetComponentInParent<EnemyWallScript>();
 
-            if (health == null || hitEnemies.Contains(health))
+            if (health == null && wall == null)
+                continue;
+
+            if (health != null && (health.IsDead || hitEnemies.Contains(health)))
+                continue;
+
+            if (wall != null && health == null && hitWalls.Contains(wall))
                 continue;
 
             Vector3 targetPoint = hit.ClosestPoint(muzzle.position);
             Vector3 direction = targetPoint - muzzle.position;
             float distance = direction.magnitude;
 
-            if (distance > range)
+            if (distance > currentRange)
                 continue;
 
             if (distance > closeRangeRadius)
@@ -110,10 +140,94 @@ public class LiquidStreamScript : MonoBehaviour
                     continue;
             }
 
-            if (hitEnemies.Add(health))
+            float damageMultiplier = sprayUpgrades != null ? sprayUpgrades.DamageMultiplier : 1f;
+
+            if (shotgunUpgrades != null)
             {
-                health.TakeDamage(damagePerTick);
+                damageMultiplier *= shotgunUpgrades.GetDamageMultiplier(distance, currentRange);
             }
+
+            int finalDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerTick * damageMultiplier));
+
+            if (health != null)
+            {
+                hitEnemies.Add(health);
+
+                if (!enemyExposureTimes.ContainsKey(health))
+                    enemyExposureTimes.Add(health, 0f);
+
+                health.TakeDamage(finalDamage);
+
+                enemyExposureTimes[health] += tickInterval;
+
+                if (sprayUpgrades != null && sprayUpgrades.Knockback && !knockedBackEnemies.Contains(health) && enemyExposureTimes[health] >= sprayUpgrades.KnockbackThreshold)
+                {
+                    Vector3 knockbackDirection = health.transform.position - muzzle.position;
+                    knockbackDirection.y = 0f;
+
+                    if (knockbackDirection.sqrMagnitude > 0.001f)
+                    {
+                        health.ApplyKnockback(knockbackDirection, sprayUpgrades.KnockbackSpeed, sprayUpgrades.KnockbackDuration);
+
+                        knockedBackEnemies.Add(health);
+                    }
+                }
+            }
+            else if (wall != null)
+            {
+                hitWalls.Add(wall);
+                wall.TakeDamage(finalDamage);
+            }
+        }
+
+        enemiesToRemove.Clear();
+
+        foreach (KeyValuePair<EnemyHealthScript, float> exposure in enemyExposureTimes)
+        {
+            if (exposure.Key == null || !hitEnemies.Contains(exposure.Key))
+            {
+                enemiesToRemove.Add(exposure.Key);
+            }
+        }
+
+        foreach (EnemyHealthScript enemy in enemiesToRemove)
+        {
+            FinishExposure(enemy);
+        }
+    }
+
+    // Applies bonus damage and removes an enemy's exposure tracking.
+    private void FinishExposure(EnemyHealthScript enemy)
+    {
+        if (ReferenceEquals(enemy, null))
+            return;
+
+        if (enemyExposureTimes.ContainsKey(enemy))
+        {
+            if (enemy != null && sprayUpgrades != null && !enemy.IsDead)
+            {
+                enemy.TakePercentageDamage(sprayUpgrades.BonusDamagePercentage);
+            }
+
+            enemyExposureTimes.Remove(enemy);
+        }
+
+        knockedBackEnemies.Remove(enemy);
+    }
+
+    // Finishes exposure for every enemy when spraying stops.
+    private void FinishAllExposures()
+    {
+        enemiesToRemove.Clear();
+
+        foreach (EnemyHealthScript enemy in enemyExposureTimes.Keys)
+        {
+            enemiesToRemove.Add(enemy);
+        }
+
+        foreach (EnemyHealthScript enemy in enemiesToRemove)
+        {
+            FinishExposure(enemy);
         }
     }
 
@@ -122,6 +236,8 @@ public class LiquidStreamScript : MonoBehaviour
     {
         if (muzzle == null)
             return;
+
+        FinishAllExposures();
 
         burstActive = true;
         burstTimer = 0f;
@@ -137,6 +253,12 @@ public class LiquidStreamScript : MonoBehaviour
 
     private void OnDisable()
     {
-        SetStreamActive(false);
+        FinishAllExposures();
+
+        isActive = false;
+        burstActive = false;
+
+        if (streamEffect != null)
+            streamEffect.Stop();
     }
 }

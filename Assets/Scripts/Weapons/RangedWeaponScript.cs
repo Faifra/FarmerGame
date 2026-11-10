@@ -9,16 +9,37 @@ public class RangedWeaponScript : WeaponScript
     public enum FireMode
     {
         Projectile,
-        LiquidStream
+        LiquidStream,
+        RestorativeGas
     }
 
     [Header("Firing Mode")]
     [SerializeField] private FireMode fireMode = FireMode.Projectile;
 
+    [Header("Restorative Gas")]
+    [SerializeField] private RestorativeGasCloudScript gasCloudPrefab;
+    [SerializeField] private float gasFireInterval = 0.1f;
+    [SerializeField] private RestorativeGasUpgradeScript restorativeGasUpgrades;
+
+    [Header("Crosshair Aiming")]
+    [SerializeField] private Camera aimCamera;
+    [SerializeField] private float aimDistance = 1000f;
+    [SerializeField] private LayerMask aimLayers = ~0;
+
     [Header("Projectile")]
     [SerializeField] private ProjectileScript projectilePrefab;
     [SerializeField] private Transform muzzle;
     [SerializeField] private float muzzleVelocity;
+
+    [Header("Water Balloon")]
+    [SerializeField] private bool waterBalloonLauncher;
+    [SerializeField] private WaterBalloonProjectileScript waterBalloonPrefab;
+    [SerializeField] private WaterBalloonUpgradeScript waterBalloonUpgrades;
+
+    [Header("Milk Churn")]
+    [SerializeField] private bool milkChurn;
+    [SerializeField] private BlobProjectileScript blobPrefab;
+    [SerializeField] private MilkChurnUpgradeScript milkChurnUpgrades;
 
     [Header("Fire")]
     [SerializeField] private bool automatic = false;
@@ -28,6 +49,14 @@ public class RangedWeaponScript : WeaponScript
     [SerializeField] private bool shotgun = false;
     [SerializeField] private int projectileCount = 6;
     [SerializeField] private float spreadAngle = 15f;
+
+    [Header("Shotgun Spray Upgrades")]
+    [SerializeField] private ShotgunSprayUpgradeScript shotgunUpgrades;
+    [SerializeField] private float shotgunBurstInterval = 0.25f;
+
+    [Header("Sniper Upgrades")]
+    [SerializeField] private bool sniperWeapon;
+    [SerializeField] private SniperUpgradeScript sniperUpgrades;
 
     [Header("Liquid Stream")]
     [SerializeField] private LiquidStreamScript liquidStream;
@@ -43,18 +72,31 @@ public class RangedWeaponScript : WeaponScript
     private float streamAmmoTimer;
     private bool streamFiring;
     private bool isReloading;
+    private bool shotgunBurstInProgress;
+
     private Coroutine reloadCoroutine;
+    private Coroutine shotgunBurstCoroutine;
 
     public int CurrentAmmo => currentAmmo;
     public int ReserveAmmo => reserveAmmo;
     public int MagazineSize => magazineSize;
     public bool IsReloading => isReloading;
 
-    public bool IsAutomatic => automatic || (fireMode == FireMode.LiquidStream && !shotgun);
+    public bool IsAutomatic => automatic || (fireMode == FireMode.LiquidStream && !shotgun || fireMode == FireMode.RestorativeGas);
 
     private void Awake()
     {
+        if (aimCamera == null)
+            aimCamera = Camera.main;
+
         magazineSize = Mathf.Max(1, magazineSize);
+
+        if (fireMode == FireMode.RestorativeGas &&
+            restorativeGasUpgrades != null)
+        {
+            magazineSize = Mathf.Max(1, Mathf.RoundToInt(magazineSize * restorativeGasUpgrades.MagazineSizeMultiplier));
+        }
+
         currentAmmo = magazineSize;
         reserveAmmo = int.MaxValue;
     }
@@ -80,11 +122,65 @@ public class RangedWeaponScript : WeaponScript
         }
     }
 
+    private bool HasValidProjectilePrefab()
+    {
+        if (waterBalloonLauncher)
+            return waterBalloonPrefab != null;
+
+        if (milkChurn)
+            return blobPrefab != null;
+
+        return projectilePrefab != null;
+    }
+
+    private Vector3 GetAimDirection()
+    {
+        if (aimCamera == null || muzzle == null)
+            return muzzle != null ? muzzle.forward : transform.forward;
+
+        Ray aimRay = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        Vector3 aimPoint;
+
+        if (Physics.Raycast(aimRay, out RaycastHit hit, aimDistance, aimLayers, QueryTriggerInteraction.Collide))
+        {
+            aimPoint = hit.point;
+        }
+        else
+        {
+            aimPoint = aimRay.GetPoint(aimDistance);
+        }
+
+        return (aimPoint - muzzle.position).normalized;
+    }
+
     // Fires repeatedly while automatic fire input is held.
     public void HoldAttack()
     {
         if (isReloading)
             return;
+
+        if (fireMode == FireMode.RestorativeGas)
+        {
+            if (currentAmmo <= 0)
+            {
+                TryAutoReload();
+                return;
+            }
+
+            if (Time.time < nextFireTime)
+                return;
+
+            if (gasCloudPrefab == null || muzzle == null)
+                return;
+
+            currentAmmo--;
+
+            FireRestorativeGas();
+
+            nextFireTime = Time.time + gasFireInterval;
+            return;
+        }
 
         if (fireMode == FireMode.LiquidStream)
         {
@@ -117,7 +213,7 @@ public class RangedWeaponScript : WeaponScript
             return;
         }
 
-        if (projectilePrefab == null || muzzle == null)
+        if (!HasValidProjectilePrefab() || muzzle == null)
             return;
 
         currentAmmo--;
@@ -134,8 +230,32 @@ public class RangedWeaponScript : WeaponScript
     // Handles a single attack.
     public override void Attack()
     {
-        if (isReloading)
+        if (isReloading || shotgunBurstInProgress)
             return;
+
+        if (fireMode == FireMode.RestorativeGas)
+        {
+            if (currentAmmo <= 0)
+            {
+                TryAutoReload();
+                return;
+            }
+
+            if (Time.time < nextFireTime || !CanAttack())
+                return;
+
+            if (gasCloudPrefab == null || muzzle == null)
+                return;
+
+            currentAmmo--;
+
+            StartAttackCooldown();
+
+            FireRestorativeGas();
+
+            nextFireTime = Time.time + gasFireInterval;
+            return;
+        }
 
         if (fireMode == FireMode.LiquidStream)
         {
@@ -153,15 +273,16 @@ public class RangedWeaponScript : WeaponScript
                 if (!CanAttack())
                     return;
 
-                currentAmmo--;
-                StartAttackCooldown();
-                FireLiquidBurst();
+                int burstsToFire = shotgunUpgrades != null ? shotgunUpgrades.BurstsPerPress : 1;
 
-                if (currentAmmo <= 0)
-                {
-                    currentAmmo = 0;
-                    TryAutoReload();
-                }
+                burstsToFire = Mathf.Min(burstsToFire, currentAmmo);
+
+                currentAmmo -= burstsToFire;
+
+                StartAttackCooldown();
+
+                shotgunBurstInProgress = true;
+                shotgunBurstCoroutine = StartCoroutine(FireShotgunBursts(burstsToFire));
             }
             else
             {
@@ -194,7 +315,7 @@ public class RangedWeaponScript : WeaponScript
         if (!CanAttack())
             return;
 
-        if (projectilePrefab == null || muzzle == null)
+        if (!HasValidProjectilePrefab() || muzzle == null)
             return;
 
         currentAmmo--;
@@ -208,10 +329,36 @@ public class RangedWeaponScript : WeaponScript
         }
     }
 
+    // Fires the shotgun bursts consecutively.
+    private IEnumerator FireShotgunBursts(int burstCount)
+    {
+        for (int i = 0; i < burstCount; i++)
+        {
+            if (liquidStream == null)
+                break;
+
+            liquidStream.FireBurst();
+
+            if (i < burstCount - 1)
+            {
+                yield return new WaitForSeconds(Mathf.Max(0.01f, shotgunBurstInterval));
+            }
+        }
+
+        shotgunBurstInProgress = false;
+        shotgunBurstCoroutine = null;
+
+        if (currentAmmo <= 0)
+        {
+            currentAmmo = 0;
+            TryAutoReload();
+        }
+    }
+
     // Reloads the weapon using available reserve ammunition.
     public void Reload()
     {
-        if (isReloading || currentAmmo >= magazineSize || reserveAmmo <= 0)
+        if (isReloading || shotgunBurstInProgress || currentAmmo >= magazineSize || reserveAmmo <= 0)
             return;
 
         StopAttack();
@@ -229,7 +376,29 @@ public class RangedWeaponScript : WeaponScript
         isReloading = true;
         StopAttack();
 
-        yield return new WaitForSeconds(reloadDuration);
+        float finalReloadDuration = reloadDuration;
+
+        if (shotgunUpgrades != null)
+        {
+            finalReloadDuration *= shotgunUpgrades.ReloadDurationMultiplier;
+        }
+
+        if (sniperWeapon && sniperUpgrades != null)
+        {
+            finalReloadDuration *= sniperUpgrades.ReloadDurationMultiplier;
+        }
+
+        if (milkChurn && milkChurnUpgrades != null)
+        {
+            finalReloadDuration *= milkChurnUpgrades.ReloadDurationMultiplier;
+        }
+
+        if (fireMode == FireMode.RestorativeGas && restorativeGasUpgrades != null)
+        {
+            finalReloadDuration *= restorativeGasUpgrades.ReloadDurationMultiplier;
+        }
+
+        yield return new WaitForSeconds(finalReloadDuration);
 
         int ammoNeeded = magazineSize - currentAmmo;
         currentAmmo += ammoNeeded;
@@ -251,6 +420,18 @@ public class RangedWeaponScript : WeaponScript
     // Chooses between a single projectile and a shotgun spread.
     private void Fire()
     {
+        if (waterBalloonLauncher)
+        {
+            FireWaterBalloon();
+            return;
+        }
+
+        if (milkChurn)
+        {
+            FireMilkChurn();
+            return;
+        }
+
         if (projectilePrefab == null || muzzle == null)
             return;
 
@@ -269,38 +450,89 @@ public class RangedWeaponScript : WeaponScript
     // Spawns and launches one projectile.
     private void FireSingle()
     {
-        ProjectileScript projectile = Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+        Vector3 direction = GetAimDirection();
+
+        ProjectileScript projectile = Instantiate(projectilePrefab, muzzle.position, Quaternion.LookRotation(direction));
+
+        projectile.Initialize(sniperWeapon, sniperWeapon && sniperUpgrades != null && sniperUpgrades.RicochetShot);
 
         Rigidbody projectileBody = projectile.GetComponent<Rigidbody>();
 
         if (projectileBody != null)
-            projectileBody.linearVelocity = muzzle.forward * muzzleVelocity;
+            projectileBody.linearVelocity = direction * muzzleVelocity;
     }
 
     // Spawns multiple projectiles with randomized directions.
     private void FireShotgun()
     {
+        Vector3 aimDirection = GetAimDirection();
+
         for (int i = 0; i < projectileCount; i++)
         {
-            Vector3 direction = GetSpreadDirection();
+            Vector3 direction = GetSpreadDirection(aimDirection);
 
             ProjectileScript projectile = Instantiate(projectilePrefab, muzzle.position, Quaternion.LookRotation(direction));
 
-            Rigidbody projectileBody = projectile.GetComponent<Rigidbody>();
+            projectile.Initialize(sniperWeapon, sniperWeapon && sniperUpgrades != null && sniperUpgrades.RicochetShot);
 
+            Rigidbody projectileBody = projectile.GetComponent<Rigidbody>();
+            
             if (projectileBody != null)
                 projectileBody.linearVelocity = direction * muzzleVelocity;
         }
     }
 
-    private Vector3 GetSpreadDirection()
+    private void FireMilkChurn()
+    {
+        if (blobPrefab == null || muzzle == null)
+            return;
+
+        Vector3 aimDirection = GetAimDirection();
+
+        for (int i = 0; i < projectileCount; i++)
+        {
+            Vector3 direction = GetSpreadDirection(aimDirection);
+
+            BlobProjectileScript blob = Instantiate(blobPrefab, muzzle.position, Quaternion.LookRotation(direction));
+
+            blob.Initialize(direction * muzzleVelocity, transform.root, milkChurnUpgrades);
+        }
+    }
+
+    private Vector3 GetSpreadDirection(Vector3 aimDirection)
     {
         float horizontalAngle = Random.Range(-spreadAngle, spreadAngle);
         float verticalAngle = Random.Range(-spreadAngle, spreadAngle);
 
+        Quaternion aimRotation = Quaternion.LookRotation(aimDirection);
+
         Quaternion spreadRotation = Quaternion.Euler(verticalAngle, horizontalAngle, 0f);
 
-        return spreadRotation * muzzle.forward;
+        return aimRotation * spreadRotation * Vector3.forward;
+    }
+
+    private void FireWaterBalloon()
+    {
+        if (waterBalloonPrefab == null || muzzle == null)
+            return;
+
+        Vector3 direction = GetAimDirection();
+
+        WaterBalloonProjectileScript projectile = Instantiate(waterBalloonPrefab, muzzle.position, Quaternion.LookRotation(direction));
+
+        projectile.Initialize(direction * muzzleVelocity, transform.root, waterBalloonUpgrades);
+    }
+
+    private void FireRestorativeGas()
+    {
+        if (gasCloudPrefab == null || muzzle == null)
+            return;
+
+        Vector3 direction = GetAimDirection();
+
+        RestorativeGasCloudScript cloud = Instantiate(gasCloudPrefab, muzzle.position, Quaternion.LookRotation(direction));
+
+        cloud.Initialize(direction, restorativeGasUpgrades);
     }
 
     private void OnDisable()
@@ -310,7 +542,13 @@ public class RangedWeaponScript : WeaponScript
         if (reloadCoroutine != null)
             StopCoroutine(reloadCoroutine);
 
+        if (shotgunBurstCoroutine != null)
+            StopCoroutine (shotgunBurstCoroutine);
+
         reloadCoroutine = null;
+        shotgunBurstCoroutine = null;
+
         isReloading = false;
+        shotgunBurstInProgress = false;
     }
 }

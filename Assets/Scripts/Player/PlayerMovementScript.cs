@@ -76,6 +76,9 @@ public class PlayerMovementScript : MonoBehaviour
 
     private float fovTimer = 0;
 
+    private float temporaryMovementSpeedMultiplier = 1f;
+    private Coroutine movementSpeedBoostCoroutine;
+
     // ==========================================//
 
     void Start()
@@ -173,7 +176,7 @@ public class PlayerMovementScript : MonoBehaviour
         }
 
         Vector3 velocity = playerRigidBody.linearVelocity;
-        Vector3 targetVelocity = finalMoveVector.normalized * moveForce;
+        Vector3 targetVelocity = finalMoveVector.normalized * moveForce * temporaryMovementSpeedMultiplier;
 
         StaminaCalculation();
         if(shouldSprint && shouldCrouch)shouldSlide = true;
@@ -352,5 +355,24 @@ public class PlayerMovementScript : MonoBehaviour
             CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
 
         }
+    }
+
+    // ==========================================//
+
+    public void ApplyTemporaryMovementSpeedMultiplier(float multiplier, float duration)
+    {
+        if (movementSpeedBoostCoroutine != null)StopCoroutine(movementSpeedBoostCoroutine);
+
+        temporaryMovementSpeedMultiplier = Mathf.Max(1f, multiplier);
+
+        movementSpeedBoostCoroutine = StartCoroutine(ResetMovementSpeedMultiplier(duration));
+    }
+
+    private IEnumerator ResetMovementSpeedMultiplier(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryMovementSpeedMultiplier = 1f;
+        movementSpeedBoostCoroutine = null;
     }
 }
