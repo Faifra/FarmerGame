@@ -5033,6 +5033,10 @@ GameObject:
   - component: {fileID: -1260601196073960439}
   - component: {fileID: 8827327480464963579}
   - component: {fileID: 2430233110075703854}
+  - component: {fileID: 3230378375632017716}
+  - component: {fileID: 1351186636298356341}
+  - component: {fileID: 269083434324932462}
+  - component: {fileID: 8243881121568147767}
   m_Layer: 6
   m_Name: WheatEnemy
   m_TagString: BossBarCollection
@@ -5200,3 +5204,64 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3230378375632017716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
+  maxHealth: 10
+  damageNumberPrefab: {fileID: 0}
+  damageNumberForwardOffset: 0.75
+  damageNumberHeight: 2
+  damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  bodyCollider: {fileID: 0}
+  enemyType: 0
+  currentHealth: 0
+--- !u!114 &1351186636298356341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6b19cf3cc53dfb3980ef8e78364f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyScript
+--- !u!114 &269083434324932462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
+  drops: []
+  burstDistance: 1.5
+  burstHeight: 1
+--- !u!114 &8243881121568147767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20592a8acb5609030a6f271fe7f76c4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoveTo
+  goal: {fileID: 0}
+  increaseSpeedRange: 50
