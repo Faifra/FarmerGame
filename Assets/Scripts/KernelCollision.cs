@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class KernelCollision : MonoBehaviour
@@ -27,7 +28,15 @@ public class KernelCollision : MonoBehaviour
     private void PopKernel()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
-        GameManagerScript.SetHP(GameManagerScript.GetHP() - explosionDamage);
-        Debug.Log($"popped kernel: {GameManagerScript.GetHP()}");
+
+        foreach (Collider hit in hitColliders)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                GameManagerScript.SetHP(GameManagerScript.GetHP() - explosionDamage);
+                Debug.Log($"popped kernel: {GameManagerScript.GetHP()}");
+                break;
+            }
+        }
     }
 }

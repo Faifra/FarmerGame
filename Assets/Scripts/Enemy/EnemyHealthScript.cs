@@ -36,8 +36,8 @@ public abstract class EnemyHealthScript : MonoBehaviour
     }
 
     // Current health shared with derived enemy classes.
-    protected int currentHealth;
-    public int MaxHealth => maxHealth;
+    [SerializeField] protected int currentHealth;
+
     public bool IsDead => isDead;
 
     // References to additional enemy components.
@@ -73,6 +73,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
         currentHealth -= finalDamage;
 
         ShowDamageNumber(finalDamage);
+        Debug.Log($"current health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
