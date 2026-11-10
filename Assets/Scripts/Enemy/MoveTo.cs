@@ -6,8 +6,6 @@ public class MoveTo : MonoBehaviour
 {
     public Transform goal;
 
-    public Transform playerRef;
-
     private NavMeshAgent agent;
     private bool isMovingSpecial;
     private bool isDestroyed;
@@ -50,7 +48,11 @@ public class MoveTo : MonoBehaviour
 
         if (distanceToPlayer >= increaseSpeedRange) //increase speed if enemy is really far away. (more than N units)
         {
-            agent.speed = 10; 
+            agent.speed = 10;
+        }
+        else
+        {
+            agent.speed = originalSpeed;
         }
 
         if (slowTimer > 0f)
