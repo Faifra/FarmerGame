@@ -250,7 +250,7 @@ MonoBehaviour:
   - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
     amount: 10
   burstDistance: 1.5
-  burstHeight: 0.5
+  burstHeight: 1
 --- !u!1 &4521431129721483636
 GameObject:
   m_ObjectHideFlags: 0

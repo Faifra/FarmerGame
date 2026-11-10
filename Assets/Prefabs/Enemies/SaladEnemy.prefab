@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6246604471223908316}
   - component: {fileID: 1451020435858994154}
   - component: {fileID: -158287713145094259}
+  - component: {fileID: -4141438080958329568}
   m_Layer: 6
   m_Name: SaladEnemy
   m_TagString: BossBarCollection
@@ -141,6 +142,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-4141438080958329568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544742821626740193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
+  drops: []
+  burstDistance: 1.5
+  burstHeight: 1
 --- !u!1 &1480007600254720431
 GameObject:
   m_ObjectHideFlags: 0
