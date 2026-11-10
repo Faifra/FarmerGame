@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7697568819595070351}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 5289073641183115058, guid: ff7b8f150db56054e92bb12891ae84d4, type: 3}
 --- !u!23 &4359286690277098014
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -3264205285286561041, guid: ff7b8f150db56054e92bb12891ae84d4, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -129,6 +129,8 @@ MonoBehaviour:
   beeSwarmPrefab: {fileID: 7697568819595070351}
   detectionRange: 12
   targetCheckInterval: 0.2
+  maximumTotalDamage: 150
+  trapUpgrades: {fileID: 0}
 --- !u!114 &-7061096629536242410
 MonoBehaviour:
   m_ObjectHideFlags: 0

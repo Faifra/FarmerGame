@@ -2684,17 +2684,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
---- !u!114 &709576043 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4615189122463323317, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
-  m_PrefabInstance: {fileID: 709576042}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383e8b438c1276245bab4bca38cc0a1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerWeapons
 --- !u!114 &709576044 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
@@ -2777,7 +2766,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 547593d912850ce42bb84c2dec68dbbd, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: a4fc4ce4e9e99514dba47eafb7ad8e09, type: 2}
   m_BuildHeightMesh: 0
 --- !u!154 &717447930
 TerrainCollider:
@@ -6114,16 +6103,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4023225ca04fa3c43aad81cda9643015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeMenuScript
+  hotbarUI: {fileID: 0}
+  ammoTextUI: {fileID: 0}
   upgradeMenu: {fileID: 632861874}
+  purchaseTrapsTabButton: {fileID: 0}
+  upgradeTrapsTabButton: {fileID: 0}
+  upgradeWeaponsTabButton: {fileID: 0}
+  purchaseTrapsPanel: {fileID: 0}
+  upgradeTrapsPanel: {fileID: 0}
+  upgradeWeaponsPanel: {fileID: 0}
+  selectedTabColor: {r: 0.7176471, g: 0.4745098, b: 0.21176471, a: 1}
+  normalTabColor: {r: 0.20392157, g: 0.27450982, b: 0.30980393, a: 1}
   playerResources: {fileID: 709576044}
   playerLook: {fileID: 709576045}
-  playerWeapons: {fileID: 709576043}
+  playerWeapons: {fileID: 0}
   launchTrapCost: 10
   launchTrapButton: {fileID: 2085307745}
   launchTrapCostText: {fileID: 166429636}
   pullTrapCost: 5
   pullTrapButton: {fileID: 1017650036}
   pullTrapCostText: {fileID: 2062633906}
+  beehiveTrapCost: 10
+  beehiveTrapButton: {fileID: 0}
+  beehiveTrapCostText: {fileID: 0}
+  magnifyingGlassTrapCost: 10
+  magnifyingGlassTrapButton: {fileID: 0}
+  magnifyingGlassTrapCostText: {fileID: 0}
+  sprinklerTrapCost: 10
+  sprinklerTrapButton: {fileID: 0}
+  sprinklerTrapCostText: {fileID: 0}
 --- !u!114 &1794876130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6999,6 +7007,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: waveInterval
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: waves.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
+      propertyPath: 'waves.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 8d4511423c101d8469bf9c12d47de9ab, type: 2}
     - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
       propertyPath: 'spawners.Array.data[0]'
       value: 

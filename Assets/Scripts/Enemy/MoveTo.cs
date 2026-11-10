@@ -14,6 +14,8 @@ public class MoveTo : MonoBehaviour
     private float slowTimer;
     private float currentSlowMultiplier = 1f;
 
+    [SerializeField] private float increaseSpeedRange = 50f; //outside this range their speed will increase
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -39,6 +41,18 @@ public class MoveTo : MonoBehaviour
         if (!isDestroyed && !isMovingSpecial && agent != null && agent.enabled && agent.isOnNavMesh && goal != null)
         {
             agent.destination = goal.position;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+
+        if (distanceToPlayer >= increaseSpeedRange) //increase speed if enemy is really far away. (more than N units)
+        {
+            agent.speed = 10;
+        }
+        else
+        {
+            agent.speed = originalSpeed; //reset to original speed if within range.
         }
 
         if (slowTimer > 0f)
