@@ -178,7 +178,7 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce * temporaryMovementSpeedMultiplier;
 
         StaminaCalculation();
-        if(shouldSprint && shouldCrouch)shouldSlide = true;
+        if(shouldSprint && shouldCrouch && PlayerCollisionScript.isGrounded())shouldSlide = true;
         else shouldSlide = false;
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
