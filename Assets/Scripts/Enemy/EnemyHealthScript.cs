@@ -37,7 +37,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
     // Current health shared with derived enemy classes.
     protected int currentHealth;
-    public int MaxHealth => maxHealth;
     public bool IsDead => isDead;
 
     // References to additional enemy components.

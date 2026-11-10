@@ -79,6 +79,12 @@ public class PlayerMovementScript : MonoBehaviour
     private float temporaryMovementSpeedMultiplier = 1f;
     private Coroutine movementSpeedBoostCoroutine;
 
+    private float temporaryStaminaDepletionMultiplier = 1f;
+    private float temporaryStaminaRecoveryMultiplier = 1f;
+
+    private Coroutine staminaDepletionBoostCoroutine;
+    private Coroutine staminaRecoveryBoostCoroutine;
+
     // ==========================================//
 
     void Start()
@@ -338,30 +344,70 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void StaminaCalculation()
     {
-        // Stamina
         if (shouldSprint)
         {
             if (GameManagerScript.GetStamina() <= 0)
             {
                 shouldSprint = false;
+
                 CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
             else
             {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate - (shouldSlide ? slideRemovalRate : 0));
+                float staminaDepletion = (staminaRemovalRate + (shouldSlide ? slideRemovalRate : 0f)) * temporaryStaminaDepletionMultiplier;
+
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaDepletion);
+
                 CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
         }
-        else 
+        else
         {
-
-            if (GameManagerScript.GetStamina() < GameManagerScript.GetMaxStamina())
+            if (GameManagerScript.GetStamina() < maxStamina)
             {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
-            }
-            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
+                float staminaRecovery = staminaRecoveryRate * temporaryStaminaRecoveryMultiplier;
 
+                GameManagerScript.SetStamina(Mathf.Min(GameManagerScript.GetStamina() + staminaRecovery, maxStamina));
+            }
+
+            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
         }
+    }
+
+    public void ApplyTemporaryStaminaDepletionMultiplier(float multiplier, float duration)
+    {
+        if (staminaDepletionBoostCoroutine != null)
+            StopCoroutine(staminaDepletionBoostCoroutine);
+
+        temporaryStaminaDepletionMultiplier = Mathf.Max(0.1f, multiplier);
+
+        staminaDepletionBoostCoroutine = StartCoroutine(ResetStaminaDepletionMultiplier(duration));
+    }
+
+    private IEnumerator ResetStaminaDepletionMultiplier(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryStaminaDepletionMultiplier = 1f;
+        staminaDepletionBoostCoroutine = null;
+    }
+
+    public void ApplyTemporaryStaminaRecoveryMultiplier(float multiplier, float duration)
+    {
+        if (staminaRecoveryBoostCoroutine != null)
+            StopCoroutine(staminaRecoveryBoostCoroutine);
+
+        temporaryStaminaRecoveryMultiplier = Mathf.Max(0.1f, multiplier);
+
+        staminaRecoveryBoostCoroutine = StartCoroutine(ResetStaminaRecoveryMultiplier(duration));
+    }
+
+    private IEnumerator ResetStaminaRecoveryMultiplier(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryStaminaRecoveryMultiplier = 1f;
+        staminaRecoveryBoostCoroutine = null;
     }
 
     // ==========================================//
