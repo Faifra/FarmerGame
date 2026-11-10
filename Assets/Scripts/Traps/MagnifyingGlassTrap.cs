@@ -23,13 +23,18 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
     [SerializeField] private int maximumTotalDamage = 250;
 
     [Header("Slow")]
-    [SerializeField, Range(0.1f, 1f)] private float slowMultiplier = 0.5f;
+    [SerializeField, Range(0.1f, 1f)]
+    private float slowMultiplier = 0.5f;
     [SerializeField] private float slowDuration = 1.2f;
 
+    [Header("Upgrades")]
+    [SerializeField] private MagnifyingGlassTrapUpgradeScript trapUpgrades;
+
     private EnemyHealthScript currentTarget;
+    private EnemyHealthScript secondTarget;
+
     private float damageTimer;
     private bool trapPlaced;
-
     private int totalDamageDealt;
 
     public void InitializePlacedTrap()
@@ -53,9 +58,10 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
         if (!trapPlaced)
             return;
 
-        if (currentTarget == null || !IsTargetInRange() || !IsTargetVisible(currentTarget))
+        if (currentTarget == null || currentTarget.IsDead || !IsTargetInRange(currentTarget) || !IsTargetVisible(currentTarget))
         {
             currentTarget = null;
+            secondTarget = null;
             FindNewTarget();
         }
 
@@ -68,6 +74,8 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
             return;
         }
 
+        FindSecondTarget();
+
         TrackTarget();
         UpdateSunlightBeam();
 
@@ -76,7 +84,7 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
         if (damageTimer >= damageInterval)
         {
             damageTimer = 0f;
-            DamageTarget();
+            DamageTargets();
         }
     }
 
@@ -89,7 +97,7 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
 
         foreach (EnemyHealthScript enemy in enemies)
         {
-            if (enemy == null)
+            if (enemy == null || enemy.IsDead || !IsTargetVisible(enemy))
                 continue;
 
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
@@ -99,21 +107,55 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
                 closestDistance = distance;
                 closestEnemy = enemy;
             }
-
-            if (!IsTargetVisible(enemy))
-                continue;
         }
 
         currentTarget = closestEnemy;
+        secondTarget = null;
         damageTimer = 0f;
     }
 
-    private bool IsTargetInRange()
+    private void FindSecondTarget()
     {
+        secondTarget = null;
+
+        if (trapUpgrades == null || !trapUpgrades.RefractedBeam)
+            return;
+
         if (currentTarget == null)
+            return;
+
+        EnemyHealthScript[] enemies = FindObjectsByType<EnemyHealthScript>(FindObjectsSortMode.None);
+
+        float closestDistance = float.MaxValue;
+
+        Vector3 firstTargetPosition = currentTarget.transform.position + Vector3.up * targetHeight;
+
+        foreach (EnemyHealthScript enemy in enemies)
+        {
+            if (enemy == null || enemy.IsDead || enemy == currentTarget || !IsTargetInRange(enemy))
+                continue;
+
+            Vector3 secondTargetPosition = enemy.transform.position + Vector3.up * targetHeight;
+
+            float distance = Vector3.Distance(currentTarget.transform.position, enemy.transform.position);
+
+            if (distance >= closestDistance)
+                continue;
+
+            if (!IsBeamSegmentVisible(firstTargetPosition, secondTargetPosition))
+                continue;
+
+            closestDistance = distance;
+            secondTarget = enemy;
+        }
+    }
+
+    private bool IsTargetInRange(EnemyHealthScript enemy)
+    {
+        if (enemy == null)
             return false;
 
-        return Vector3.Distance(transform.position, currentTarget.transform.position) <= detectionRange;
+        return Vector3.Distance(transform.position, enemy.transform.position) <= detectionRange;
     }
 
     private bool IsTargetVisible(EnemyHealthScript enemy)
@@ -125,13 +167,18 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
 
         Vector3 targetPosition = enemy.transform.position + Vector3.up * targetHeight;
 
-        Vector3 direction = targetPosition - origin;
+        return IsBeamSegmentVisible(origin, targetPosition);
+    }
+
+    private bool IsBeamSegmentVisible(Vector3 start, Vector3 end)
+    {
+        Vector3 direction = end - start;
         float distance = direction.magnitude;
 
         if (distance <= 0.001f)
             return true;
 
-        return !Physics.Raycast(origin, direction.normalized, distance, obstacleLayers, QueryTriggerInteraction.Ignore);
+        return !Physics.Raycast(start, direction.normalized, distance, obstacleLayers, QueryTriggerInteraction.Ignore);
     }
 
     private void TrackTarget()
@@ -144,9 +191,7 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
         Vector3 direction = targetPosition - lensPivot.position;
 
         if (direction.sqrMagnitude > 0.001f)
-        {
             lensPivot.rotation = Quaternion.LookRotation(direction);
-        }
     }
 
     private void UpdateSunlightBeam()
@@ -154,42 +199,72 @@ public class MagnifyingGlassTrapScript : TrapBaseScript
         if (sunlightBeam == null || beamStart == null || currentTarget == null)
             return;
 
-        Vector3 targetPosition = currentTarget.transform.position + Vector3.up * targetHeight;
+        Vector3 firstPosition = currentTarget.transform.position + Vector3.up * targetHeight;
 
         sunlightBeam.SetPosition(0, beamStart.position);
-        sunlightBeam.SetPosition(1, targetPosition);
+        sunlightBeam.SetPosition(1, firstPosition);
+
+        if (secondTarget != null)
+        {
+            Vector3 secondPosition = secondTarget.transform.position + Vector3.up * targetHeight;
+
+            sunlightBeam.positionCount = 3;
+            sunlightBeam.SetPosition(2, secondPosition);
+        }
+        else
+        {
+            sunlightBeam.positionCount = 2;
+        }
+
         sunlightBeam.enabled = true;
     }
 
-    private void DamageTarget()
+    private void DamageTargets()
     {
         if (currentTarget == null)
+            return;
+
+        int damage = Mathf.Max(1, Mathf.RoundToInt(damagePerTick * (trapUpgrades != null ? trapUpgrades.DamageMultiplier : 1f)));
+
+        DamageEnemy(currentTarget, damage);
+
+        if (totalDamageDealt >= maximumTotalDamage)
+        {
+            DestroyTrap();
+            return;
+        }
+
+        if (secondTarget != null && !secondTarget.IsDead)
+        {
+            DamageEnemy(secondTarget, damage);
+        }
+
+        if (totalDamageDealt >= maximumTotalDamage)
+            DestroyTrap();
+    }
+
+    private void DamageEnemy(EnemyHealthScript enemy, int damage)
+    {
+        if (enemy == null || enemy.IsDead)
             return;
 
         int remainingDamage = maximumTotalDamage - totalDamageDealt;
 
         if (remainingDamage <= 0)
-        {
-            DestroyTrap();
             return;
-        }
 
-        int damage = Mathf.Min(damagePerTick, remainingDamage);
+        int actualDamage = Mathf.Min(damage, remainingDamage);
 
-        currentTarget.TakeDamage(damage);
+        enemy.TakeDamage(actualDamage);
+        totalDamageDealt += actualDamage;
 
-        totalDamageDealt += damage;
-
-        MoveTo enemyMovement = currentTarget.GetComponent<MoveTo>();
+        MoveTo enemyMovement = enemy.GetComponent<MoveTo>();
 
         if (enemyMovement != null)
         {
-            enemyMovement.ApplySlow(slowMultiplier, slowDuration);
-        }
+            float finalSlowMultiplier = slowMultiplier * (trapUpgrades != null ? trapUpgrades.SlowMultiplier : 1f);
 
-        if (totalDamageDealt >= maximumTotalDamage)
-        {
-            DestroyTrap();
+            enemyMovement.ApplySlow(finalSlowMultiplier, slowDuration);
         }
     }
 

@@ -17,22 +17,25 @@ public class SniperScopeScript : MonoBehaviour
 
     private void Awake()
     {
+        aimAction = InputSystem.actions.FindAction("Aim");
+
         if (cinemachineCamera == null)
             cinemachineCamera = FindFirstObjectByType<CinemachineCamera>();
 
-        if (cinemachineCamera == null)
-        {
-            return;
-        }
-
-        normalFieldOfView = cinemachineCamera.Lens.FieldOfView;
-
-        aimAction = InputSystem.actions.FindAction("Aim");
+        if (cinemachineCamera != null)
+            normalFieldOfView = cinemachineCamera.Lens.FieldOfView;
     }
 
     private void Update()
     {
-        if (cinemachineCamera == null || aimAction == null)
+        if (aimAction == null)
+            return;
+
+        bool isAiming = aimAction.IsPressed();
+
+        WeakPointScript.SetScoped(isAiming);
+
+        if (cinemachineCamera == null)
             return;
 
         float targetFieldOfView = aimAction.IsPressed() ? zoomFieldOfView : normalFieldOfView;
@@ -45,6 +48,8 @@ public class SniperScopeScript : MonoBehaviour
 
     private void OnDisable()
     {
+        WeakPointScript.SetScoped(false);
+
         if (cinemachineCamera == null)
             return;
 

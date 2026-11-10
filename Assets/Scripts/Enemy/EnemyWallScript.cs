@@ -12,13 +12,17 @@ public class EnemyWallScript : MonoBehaviour
         currentHealth = maxHealth;
     }
 
+    public void SetHealthMultiplier(float multiplier)
+    {
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * multiplier));
+        currentHealth = maxHealth;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
 
         if (currentHealth <= 0)
-        {
             Destroy(gameObject);
-        }
     }
 }

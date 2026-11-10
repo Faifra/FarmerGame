@@ -16,6 +16,8 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float waveInterval = 5f;
     [SerializeField] private float waveTimer = 0f;
 
+
+
     private HashSet<EnemyType> firstEncounters = new(); //hashset has "unique" values so it can keep track of each unique type.
     //each time a unique enemy is added they become a "boss":
     public int CurrentWave => currentWaveIndex;
@@ -101,6 +103,9 @@ public class WaveManager : MonoBehaviour
             return;
 
         health.MaxHealth *= 3;
+        
+        enemy.AddComponent<BossUIHelperScript>();
+
     }
 
 }

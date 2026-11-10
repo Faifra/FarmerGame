@@ -447,6 +447,7 @@ GameObject:
   - component: {fileID: 236512756412498891}
   - component: {fileID: 3045603880810477711}
   - component: {fileID: 7944887997337415734}
+  - component: {fileID: 5506280790430447993}
   m_Layer: 0
   m_Name: MagnifyingGlassTrap
   m_TagString: Untagged
@@ -486,13 +487,18 @@ MonoBehaviour:
   detectionRange: 14
   lensPivot: {fileID: 2009143144194970884}
   beamStart: {fileID: 8921391622136084262}
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
   sunlightBeam: {fileID: 5105458518618809462}
   beamWidth: 0.12
   targetHeight: 1
-  damagePerTick: 5
+  damagePerTick: 10
   damageInterval: 1
+  maximumTotalDamage: 250
   slowMultiplier: 0.5
   slowDuration: 1.2
+  trapUpgrades: {fileID: 5506280790430447993}
 --- !u!65 &7944887997337415734
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -514,6 +520,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: -1.5, y: 1.1, z: -0.5}
+--- !u!114 &5506280790430447993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091032920731417136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e5c8b43e91a6241a0a7b4b41cb722e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagnifyingGlassTrapUpgradeScript
+  focusedSunlight: 0
+  intensifiedHeat: 0
+  refractedBeam: 0
+  damageMultiplier: 2
+  slowMultiplier: 0.8
 --- !u!1 &7683619314322548002
 GameObject:
   m_ObjectHideFlags: 0

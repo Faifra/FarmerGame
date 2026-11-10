@@ -155,3 +155,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileScript
   damage: 10
   lifetime: 5
+  hitDetectionRadius: 0.05
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  weakPointLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 512

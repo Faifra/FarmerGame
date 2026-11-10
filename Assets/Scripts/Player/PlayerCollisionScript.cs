@@ -25,7 +25,6 @@ public class PlayerCollisionScript : MonoBehaviour
 
     // ==========================================//
 
-    private Rigidbody playerRigidBody;
     private static Vector3 playerPosition;
     private static bool playerCollidingWithWall = false;
 
@@ -39,7 +38,6 @@ public class PlayerCollisionScript : MonoBehaviour
 
     void Start()
     {
-        playerRigidBody = GetComponent<Rigidbody>();
         playerPosition = gameObject.transform.position;
     }
 
@@ -146,8 +144,8 @@ public class PlayerCollisionScript : MonoBehaviour
     public static bool isGrounded()
     {
         RaycastHit hit;
-        int layerMask = ~(1 << 3);
-        
+        int layerMask = ~(1 << 3 | 1 << LayerMask.NameToLayer("GasCloud"));
+
         if (Physics.Raycast(playerPosition, Vector3.down, out hit, groundCheckLength, layerMask))
         {
             if(toggleDebug)

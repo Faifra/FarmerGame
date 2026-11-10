@@ -37,6 +37,23 @@ public class EnemyDropsScript : MonoBehaviour
         }
     }
 
+    // Adds bonus drops to each configured drop entry.
+    public void Drop(int bonusAmount)
+    {
+        foreach (DropEntry drop in drops)
+        {
+            if (drop.prefab == null || drop.amount <= 0)
+                continue;
+
+            int totalAmount = drop.amount + Mathf.Max(0, bonusAmount);
+
+            for (int i = 0; i < totalAmount; i++)
+            {
+                SpawnDrop(drop.prefab);
+            }
+        }
+    }
+
     // Spawns a drop in a random direction and launches it outward.
     private void SpawnDrop(GameObject prefab)
     {

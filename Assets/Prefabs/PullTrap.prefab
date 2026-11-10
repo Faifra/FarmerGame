@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2630283949184511072}
   - component: {fileID: 2151887241515057811}
   - component: {fileID: 2501993135582268251}
+  - component: {fileID: -3091547525791502759}
   m_Layer: 0
   m_Name: PullTrap
   m_TagString: Untagged
@@ -141,8 +142,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124ae07cd13e45e448eb4f59fafa1dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PullTrapScript
-  pullDistance: 3
+  pullRange: 3
   pullDuration: 0.5
   launchDistance: 7
   launchDuration: 0.4
   damage: 20
+  trapUpgrades: {fileID: -3091547525791502759}
+--- !u!114 &-3091547525791502759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032703039311401411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad7889c4684587941bc54402c8c835fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PullTrapUpgradeScript
+  expandedVacuum: 0
+  extendedReach: 0
+  forcefulLaunch: 0
+  maximumEnemies: 5
+  pullRangeMultiplier: 1.33
+  pullDurationMultiplier: 0.75
+  launchDistanceMultiplier: 1.5
+  damageMultiplier: 1.5

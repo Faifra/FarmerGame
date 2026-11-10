@@ -63,10 +63,7 @@ public class MoveTo : MonoBehaviour
 
         multiplier = Mathf.Clamp(multiplier, 0.1f, 1f);
 
-        currentSlowMultiplier = Mathf.Min(
-            currentSlowMultiplier,
-            multiplier
-        );
+        currentSlowMultiplier = Mathf.Min(currentSlowMultiplier, multiplier);
 
         slowTimer = Mathf.Max(slowTimer, duration);
 
@@ -219,6 +216,39 @@ public class MoveTo : MonoBehaviour
         {
             agent.Warp(transform.position);
             agent.updatePosition = true;
+        }
+
+        isMovingSpecial = false;
+    }
+
+    public void Stun(float duration)
+    {
+        if (isDestroyed || isMovingSpecial)
+            return;
+
+        StartCoroutine(StunRoutine(duration));
+    }
+
+    private IEnumerator StunRoutine(float duration)
+    {
+        isMovingSpecial = true;
+
+        bool wasStopped = false;
+
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            wasStopped = agent.isStopped;
+            agent.isStopped = true;
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        if (isDestroyed)
+            yield break;
+
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = wasStopped;
         }
 
         isMovingSpecial = false;

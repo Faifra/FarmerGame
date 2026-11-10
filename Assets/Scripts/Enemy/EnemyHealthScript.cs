@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,6 +23,8 @@ public abstract class EnemyHealthScript : MonoBehaviour
     private float temporaryDamageMultiplier = 1f;
     private Coroutine damageMultiplierCoroutine;
 
+    [SerializeField] private Collider bodyCollider;
+    public Collider BodyCollider => bodyCollider;
     [Header("Enemy Information")]
     [SerializeField] private EnemyType enemyType;
 
@@ -37,6 +40,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
     // References to additional enemy components.
     private EnemyDropsScript dropsScript;
+    private int bonusDropsOnDeath;
     private WaveManager waveManager;
     private MoveTo moveTo;
 
@@ -45,6 +49,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     private Coroutine knockbackCoroutine;
 
     private GameObject rootedWallPrefab;
+    private float rootedWallHealthMultiplier = 1f;
 
     // Initializes health and caches component references.
     protected virtual void Start()
@@ -74,7 +79,23 @@ public abstract class EnemyHealthScript : MonoBehaviour
         }
     }
 
-    public void TakeDamageFromSprinkler(int damage, GameObject wallPrefab)
+    // Applies charged thrust damage and adds bonus drops only if it kills the enemy.
+    public void TakeDamageFromChargedThrust(int damage, Vector3 knockbackDirection, float knockbackSpeed, float knockbackDuration, int bonusDrops)
+    {
+        if (isDead)
+            return;
+
+        bonusDropsOnDeath = Mathf.Max(0, bonusDrops);
+
+        TakeDamage(damage, knockbackDirection, knockbackSpeed, knockbackDuration);
+
+        if (!isDead)
+        {
+            bonusDropsOnDeath = 0;
+        }
+    }
+
+    public void TakeDamageFromSprinkler(int damage, GameObject wallPrefab, float wallHealthMultiplier = 1f)
     {
         if (isDead)
             return;
@@ -88,6 +109,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
         if (currentHealth <= 0)
         {
             rootedWallPrefab = wallPrefab;
+            rootedWallHealthMultiplier = wallHealthMultiplier;
             Die();
         }
     }
@@ -140,6 +162,30 @@ public abstract class EnemyHealthScript : MonoBehaviour
         knockbackCoroutine = StartCoroutine(moveTo.Knockback(knockbackDirection, knockbackSpeed, knockbackDuration));
     }
 
+    // Applies knockback without dealing damage.
+    public void ApplyKnockback(Vector3 direction, float speed, float duration)
+    {
+        if (isDead || moveTo == null)
+            return;
+
+        if (knockbackCoroutine != null)
+            StopCoroutine(knockbackCoroutine);
+
+        knockbackCoroutine = StartCoroutine(moveTo.Knockback(direction, speed, duration));
+    }
+
+    // Applies damage based on a percentage of maximum health.
+    public void TakePercentageDamage(float percentage)
+    {
+        if (isDead)
+            return;
+
+        int damage = Mathf.RoundToInt(maxHealth * percentage);
+
+        if (damage > 0)
+            TakeDamage(damage);
+    }
+
     // Increases damage taken temporarily, replacing any previous vulnerability timer.
     public void ApplyTemporaryDamageMultiplier(float multiplier, float duration)
     {
@@ -148,9 +194,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         temporaryDamageMultiplier = Mathf.Max(1f, multiplier);
 
-        damageMultiplierCoroutine = StartCoroutine(
-            ResetDamageMultiplierAfterDelay(duration)
-        );
+        damageMultiplierCoroutine = StartCoroutine(ResetDamageMultiplierAfterDelay(duration));
     }
 
     private IEnumerator ResetDamageMultiplierAfterDelay(float duration)
@@ -171,18 +215,35 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         if (rootedWallPrefab != null)
         {
-            Instantiate(rootedWallPrefab, transform.position, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+            GameObject wallObject = Instantiate(rootedWallPrefab, transform.position, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+
+            EnemyWallScript wallHealth = wallObject.GetComponent<EnemyWallScript>();
+
+            if (wallHealth != null)
+                wallHealth.SetHealthMultiplier(rootedWallHealthMultiplier);
         }
 
         if (dropsScript != null)
         {
-            dropsScript.Drop();
+            dropsScript.Drop(bonusDropsOnDeath);
         }
 
         if (waveManager != null)
         {
             waveManager.EnemyDied();
         }
+
+        if (GetComponent<BossUIHelperScript>())
+        {
+            GetComponent<BossUIHelperScript>().RemoveHealthBar();
+        }
+
         Destroy(gameObject);
     }
+
+    public int CurrentHealth()
+    {
+        return currentHealth;
+    }
+
 }

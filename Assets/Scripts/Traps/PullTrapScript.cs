@@ -7,23 +7,24 @@ using System.Collections.Generic;
 /// </summary>
 public class PullTrapScript : TrapBaseScript
 {
-    // Controls the pull and launch distances, durations, and damage dealt.
+    [Header("Pull and Launch")]
+    [SerializeField] private float pullRange = 5f;
     [SerializeField] private float pullDuration = 0.5f;
     [SerializeField] private float launchDistance = 7f;
     [SerializeField] private float launchDuration = 0.4f;
     [SerializeField] private int damage = 0;
 
-    // Tracks how many enemies have been hit and whether the trap is finished.
+    [Header("Upgrades")]
+    [SerializeField] private PullTrapUpgradeScript trapUpgrades;
+
     private int enemiesHit = 0;
     private bool trapFinished = false;
 
-    // Prevents the same enemy from being processed more than once at a time.
-    private HashSet<MoveTo> enemiesBeingProcessed = new HashSet<MoveTo>();
+    private readonly HashSet<MoveTo> enemiesBeingProcessed = new HashSet<MoveTo>();
 
-    // Activates the trap on valid enemies in front of it.
     public override void Activate(GameObject target)
     {
-        if (trapFinished)
+        if (trapFinished || target == null)
             return;
 
         MoveTo enemyMovement = target.GetComponentInParent<MoveTo>();
@@ -34,9 +35,19 @@ public class PullTrapScript : TrapBaseScript
         if (enemiesBeingProcessed.Contains(enemyMovement))
             return;
 
-        Vector3 directionToEnemy = target.transform.position - transform.position;
+        int maximumEnemies = trapUpgrades != null
+            ? trapUpgrades.MaximumEnemies
+            : 3;
 
+        if (enemiesHit >= maximumEnemies)
+            return;
+
+        Vector3 directionToEnemy = target.transform.position - transform.position;
         directionToEnemy.y = 0f;
+
+        if (directionToEnemy.sqrMagnitude <= 0.001f)
+            return;
+
         directionToEnemy.Normalize();
 
         float dot = Vector3.Dot(transform.forward, directionToEnemy);
@@ -44,51 +55,111 @@ public class PullTrapScript : TrapBaseScript
         if (dot <= 0f)
             return;
 
-        enemiesBeingProcessed.Add(enemyMovement);
+        float distanceToEnemy = Vector3.Distance(
+            transform.position,
+            target.transform.position
+        );
 
+        if (distanceToEnemy > GetPullRange())
+            return;
+
+        EnemyHealthScript health = enemyMovement.GetComponent<EnemyHealthScript>();
+
+        if (health != null && health.IsDead)
+            return;
+
+        enemiesBeingProcessed.Add(enemyMovement);
         enemiesHit++;
 
-        EnemyHealthScript health = target.GetComponentInParent<EnemyHealthScript>();
+        float damageMultiplier = trapUpgrades != null
+            ? trapUpgrades.DamageMultiplier
+            : 1f;
 
-        if (health != null)
-        {
-            health.TakeDamage(damage);
-        }
+        int finalDamage = Mathf.Max(0, Mathf.RoundToInt(damage * damageMultiplier));
+
+        if (health != null && finalDamage > 0)
+            health.TakeDamage(finalDamage);
 
         Vector3 trapPosition = transform.position;
         Vector3 launchDirection = -transform.forward;
 
-        StartCoroutine(PullAndLaunch(enemyMovement, trapPosition, launchDirection));
+        float finalPullDuration = pullDuration * (
+            trapUpgrades != null ? trapUpgrades.PullDurationMultiplier : 1f
+        );
 
-        if (enemiesHit >= 3)
-        {
+        float finalLaunchDistance = launchDistance * (
+            trapUpgrades != null ? trapUpgrades.LaunchDistanceMultiplier : 1f
+        );
+
+        StartCoroutine(PullAndLaunch(
+            enemyMovement,
+            trapPosition,
+            launchDirection,
+            finalPullDuration,
+            finalLaunchDistance
+        ));
+
+        if (enemiesHit >= maximumEnemies)
             trapFinished = true;
+    }
+
+    private IEnumerator PullAndLaunch(
+        MoveTo enemy,
+        Vector3 trapPosition,
+        Vector3 launchDirection,
+        float finalPullDuration,
+        float finalLaunchDistance)
+    {
+        yield return enemy.PullTo(trapPosition, finalPullDuration);
+
+        if (enemy != null)
+        {
+            yield return enemy.LaunchDirection(
+                launchDirection,
+                finalLaunchDistance,
+                launchDuration
+            );
+        }
+
+        if (enemy != null)
+            enemiesBeingProcessed.Remove(enemy);
+
+        if (trapFinished && enemiesBeingProcessed.Count == 0)
+            Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        if (trapFinished)
+            return;
+
+        int maximumEnemies = trapUpgrades != null
+            ? trapUpgrades.MaximumEnemies
+            : 3;
+
+        if (enemiesHit >= maximumEnemies)
+            return;
+
+        Collider[] nearbyEnemies = Physics.OverlapSphere(
+            transform.position,
+            GetPullRange()
+        );
+
+        foreach (Collider nearbyCollider in nearbyEnemies)
+        {
+            if (trapFinished)
+                break;
+
+            Activate(nearbyCollider.gameObject);
         }
     }
 
-    // Pulls the enemy to the trap, launches it away, and cleans up when finished.
-    private IEnumerator PullAndLaunch(MoveTo enemy, Vector3 trapPosition, Vector3 launchDirection)
+    private float GetPullRange()
     {
-        yield return enemy.PullTo(trapPosition, pullDuration
-        );
+        float multiplier = trapUpgrades != null
+            ? trapUpgrades.PullRangeMultiplier
+            : 1f;
 
-        if (enemy == null)
-        {
-            yield break;
-        }
-
-        yield return enemy.LaunchDirection(launchDirection, launchDistance, launchDuration);
-
-        if (enemy == null)
-        {
-            yield break;
-        }
-
-        enemiesBeingProcessed.Remove(enemy);
-
-        if (trapFinished)
-        {
-            Destroy(gameObject);
-        }
+        return pullRange * multiplier;
     }
 }
