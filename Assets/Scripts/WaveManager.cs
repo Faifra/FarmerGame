@@ -67,6 +67,13 @@ public class WaveManager : MonoBehaviour
                 waveTimer = 0f; //reset wave timer to prevent it from continuing to count during prep phase.
             }
         }
+
+        if (currentWaveIndex >= waves.Count && enemiesRemaining <= 0)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            GameManagerScript.LoadScene("Main");
+        }
     }
 
     private void StartWave()
