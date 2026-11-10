@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,8 @@ public class GameManagerScript : MonoBehaviour
     public static GameManagerScript instance { get; private set; }
 
     private UpgradeManagerScript upgradeManager;
+
+    private Coroutine healthRegenerationCoroutine;
     public static int MaxHP => maximumHP;
 
     private void Awake()
@@ -67,6 +70,30 @@ public class GameManagerScript : MonoBehaviour
     public static float GetMaxStamina()
     {
         return maxStamina;
+    }
+
+    public void ApplyTemporaryHealthRegeneration(int healthPerSecond, float duration)
+    {
+        if (healthRegenerationCoroutine != null)
+            StopCoroutine(healthRegenerationCoroutine);
+
+        healthRegenerationCoroutine = StartCoroutine(HealthRegenerationRoutine(healthPerSecond, duration));
+    }
+
+    private IEnumerator HealthRegenerationRoutine(int healthPerSecond, float duration)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            yield return new WaitForSeconds(1f);
+
+            elapsedTime += 1f;
+
+            RestoreHP(healthPerSecond);
+        }
+
+        healthRegenerationCoroutine = null;
     }
 
     void Update()
