@@ -11,11 +11,9 @@ public class GarlicAI : MonoBehaviour
     [SerializeField] private float trailInterval = 1f; 
     [SerializeField] private float trailTimer = 0f;
 
-    [Header("Explosion Settings")] //explosion stuff, radius, damage. lingeringcloud is a cloud that spawns after explosion that does DoT.
+    [Header("Explosion Settings")] //explosion stuff, radius, damage.
     [SerializeField] private float explosionRadius = 5f;
     [SerializeField] private float explosionDamage = 25f;
-    [SerializeField] private float lingeringCloudDuration = 14f;
-    [SerializeField] private float lingeringCloudTimer = 0f;
     [SerializeField] private float rangeToExplode = 3f; //distance from player to explode garlic.
 
     private void Start()

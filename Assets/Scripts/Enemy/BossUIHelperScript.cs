@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class BossUIHelperScript : MonoBehaviour
 {
 
-    private GameObject bossBarCollection;
+    [SerializeField] private GameObject bossBarCollection;
     private GameObject bossBarUIOBject;
     private TMPro.TMP_Text bossText;
     private Slider bossHPBar;

@@ -191,14 +191,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
   attackCooldown: 1.5
   fireMode: 0
+  gasCloudPrefab: {fileID: 0}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 0}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   projectilePrefab: {fileID: 5145554731025938043, guid: ac680ca48d0d2bf499546f65a818da9e, type: 3}
   muzzle: {fileID: 8488179139451678606}
   muzzleVelocity: 200
+  waterBalloonLauncher: 0
+  waterBalloonPrefab: {fileID: 0}
+  waterBalloonUpgrades: {fileID: 0}
+  milkChurn: 0
+  blobPrefab: {fileID: 0}
+  milkChurnUpgrades: {fileID: 0}
   automatic: 0
   fireRate: 0.1
   shotgun: 0
   projectileCount: 6
   spreadAngle: 15
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
   liquidStream: {fileID: 0}
   streamAmmoInterval: 0.1
   magazineSize: 5
@@ -347,18 +365,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
   attackCooldown: 0.5
   fireMode: 1
+  gasCloudPrefab: {fileID: 0}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 0}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   projectilePrefab: {fileID: 607015218365864330, guid: 8d0e43a23428c394f8a61872b1287906, type: 3}
   muzzle: {fileID: 6990779175965331239}
   muzzleVelocity: 150
+  waterBalloonLauncher: 0
+  waterBalloonPrefab: {fileID: 0}
+  waterBalloonUpgrades: {fileID: 0}
+  milkChurn: 0
+  blobPrefab: {fileID: 0}
+  milkChurnUpgrades: {fileID: 0}
   automatic: 1
   fireRate: 0.1
   shotgun: 0
   projectileCount: 6
   spreadAngle: 15
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
   liquidStream: {fileID: 6761224998641575531}
   streamAmmoInterval: 0.1
   magazineSize: 40
   reloadDuration: 1.5
+--- !u!1 &976800307967764221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2640032704780962394}
+  m_Layer: 0
+  m_Name: muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2640032704780962394
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976800307967764221}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.12, y: -0.01, z: 0.623}
+  m_LocalScale: {x: 5.086705, y: 4.066722, z: 1.0084902}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2440268688238558849}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1173874783800451189
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,10 +551,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124ae07cd13e45e448eb4f59fafa1dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PullTrapScript
+  pullRange: 5
   pullDuration: 0
   launchDistance: 0
   launchDuration: 0
   damage: 0
+  trapUpgrades: {fileID: 0}
 --- !u!1 &1245390586380744622
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,6 +591,185 @@ Transform:
   - {fileID: 3070602655284253759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1460897428948198595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1125583775587470089}
+  - component: {fileID: 5838079145024072658}
+  - component: {fileID: 8188396934108960606}
+  - component: {fileID: 5780960645048344829}
+  - component: {fileID: 425912085977649037}
+  - component: {fileID: 2219218913454779828}
+  m_Layer: 0
+  m_Name: WaterBalloonLauncher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1125583775587470089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -480.6319, y: -13.778001, z: -546.2196}
+  m_LocalScale: {x: 0.19658999, y: 0.24589999, z: 0.99157995}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6353730116898360348}
+  m_Father: {fileID: 3070602655284253759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &5838079145024072658
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &8188396934108960606
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5780960645048344829
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &425912085977649037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b9b0a2dea269d84287d680f5799c288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
+  attackCooldown: 0.5
+  fireMode: 0
+  gasCloudPrefab: {fileID: 0}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 0}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 1023
+  projectilePrefab: {fileID: 0}
+  muzzle: {fileID: 6353730116898360348}
+  muzzleVelocity: 70
+  waterBalloonLauncher: 1
+  waterBalloonPrefab: {fileID: 6767208691716653682, guid: 0d5741da99e4db040ba3c4df3d53eeac, type: 3}
+  waterBalloonUpgrades: {fileID: 2219218913454779828}
+  milkChurn: 0
+  blobPrefab: {fileID: 0}
+  milkChurnUpgrades: {fileID: 0}
+  automatic: 0
+  fireRate: 0.1
+  shotgun: 0
+  projectileCount: 6
+  spreadAngle: 15
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
+  liquidStream: {fileID: 0}
+  streamAmmoInterval: 0.1
+  magazineSize: 5
+  reloadDuration: 2
+--- !u!114 &2219218913454779828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460897428948198595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae96581d25e13c46bd9d30428300780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterBalloonUpgradeScript
+  expandedSplash: 0
+  rubberizedBalloon: 0
+  concussiveAftershock: 0
+  explosionRadiusMultiplier: 1.5
+  secondaryRadiusMultiplier: 0.5
+  secondaryExplosionDelay: 0.25
+  stunDuration: 1.5
+  secondaryEffectScale: 0.6
 --- !u!1 &2061102676841849405
 GameObject:
   m_ObjectHideFlags: 0
@@ -5358,6 +5606,37 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!1 &2537133046481703972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8552812175938340023}
+  m_Layer: 0
+  m_Name: muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8552812175938340023
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537133046481703972}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.725}
+  m_LocalScale: {x: 6.294399, y: 3.8896885, z: 2.9683459}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2242787213860431562}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2560429174293376395
 GameObject:
   m_ObjectHideFlags: 0
@@ -5389,6 +5668,197 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5149200258246731323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3192140908030121375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2242787213860431562}
+  - component: {fileID: 6840706535013066806}
+  - component: {fileID: 8647535186261821587}
+  - component: {fileID: 5262564923838892005}
+  - component: {fileID: 1516022433099758396}
+  - component: {fileID: 7996715538106076796}
+  - component: {fileID: 2568979342319007}
+  m_Layer: 0
+  m_Name: MilkChurn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2242787213860431562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -480.6499, y: -13.78687, z: -546.5614}
+  m_LocalScale: {x: 0.15887, y: 0.25709, z: 0.33688998}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8552812175938340023}
+  m_Father: {fileID: 3070602655284253759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &6840706535013066806
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &8647535186261821587
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5262564923838892005
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1516022433099758396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b9b0a2dea269d84287d680f5799c288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
+  attackCooldown: 1
+  fireMode: 0
+  gasCloudPrefab: {fileID: 0}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 0}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 1023
+  projectilePrefab: {fileID: 0}
+  muzzle: {fileID: 8552812175938340023}
+  muzzleVelocity: 12
+  waterBalloonLauncher: 0
+  waterBalloonPrefab: {fileID: 0}
+  waterBalloonUpgrades: {fileID: 0}
+  milkChurn: 1
+  blobPrefab: {fileID: 6084248633897062639, guid: 5040d477679a10545bd58741484e37fc, type: 3}
+  milkChurnUpgrades: {fileID: 2568979342319007}
+  automatic: 0
+  fireRate: 0.1
+  shotgun: 0
+  projectileCount: 10
+  spreadAngle: 30
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
+  liquidStream: {fileID: 0}
+  streamAmmoInterval: 0.1
+  magazineSize: 5
+  reloadDuration: 1.7
+--- !u!114 &7996715538106076796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 997745d1de15a77468f8eb35e76bd79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlobStackScript
+  overloadThreshold: 10
+--- !u!114 &2568979342319007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192140908030121375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff795f11b42e22e4f879f5fa58bfa3ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MilkChurnUpgradeScript
+  rapidChurning: 0
+  largerSplatter: 0
+  unstableMixture: 0
+  reloadDurationMultiplier: 0.75
+  popRadiusMultiplier: 2
+  overloadThresholdMultiplier: 0.7
 --- !u!1 &3273507072915926526
 GameObject:
   m_ObjectHideFlags: 0
@@ -5441,6 +5911,8 @@ MonoBehaviour:
   burstDuration: 0.05
   damagePerTick: 25
   tickInterval: 0.03
+  sprayUpgrades: {fileID: 0}
+  shotgunUpgrades: {fileID: 0}
   streamEffect: {fileID: 6723344927157432817}
 --- !u!1 &3607454517268560474
 GameObject:
@@ -5928,7 +6400,13 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3967423579386004736, guid: fe1366b0a29dc354592aa7b899f77bb5, type: 3}
   muzzle: {fileID: 1465552985978248783}
   projectileSpeed: 50
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   grappleController: {fileID: 0}
+  grappleUpgrades: {fileID: 0}
 --- !u!1 &5405579229288959034
 GameObject:
   m_ObjectHideFlags: 0
@@ -6058,18 +6536,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
   attackCooldown: 0.5
   fireMode: 1
+  gasCloudPrefab: {fileID: 0}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 0}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   projectilePrefab: {fileID: 3232269117819786408, guid: 5040d477679a10545bd58741484e37fc, type: 3}
   muzzle: {fileID: 7906829137438394786}
   muzzleVelocity: 20
+  waterBalloonLauncher: 0
+  waterBalloonPrefab: {fileID: 0}
+  waterBalloonUpgrades: {fileID: 0}
+  milkChurn: 0
+  blobPrefab: {fileID: 0}
+  milkChurnUpgrades: {fileID: 0}
   automatic: 0
   fireRate: 0.1
   shotgun: 1
   projectileCount: 10
   spreadAngle: 15
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
   liquidStream: {fileID: 3428594504957908632}
   streamAmmoInterval: 0.1
   magazineSize: 12
   reloadDuration: 1.5
+--- !u!1 &5462671702890717739
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6353730116898360348}
+  m_Layer: 0
+  m_Name: muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6353730116898360348
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5462671702890717739}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.12, y: -0.01, z: 0.586}
+  m_LocalScale: {x: 5.086705, y: 4.066722, z: 1.0084902}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1125583775587470089}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5649037734000670264
 GameObject:
   m_ObjectHideFlags: 0
@@ -10958,6 +11485,8 @@ MonoBehaviour:
   burstDuration: 0.2
   damagePerTick: 10
   tickInterval: 0.2
+  sprayUpgrades: {fileID: 0}
+  shotgunUpgrades: {fileID: 0}
   streamEffect: {fileID: 3272262795210961974}
 --- !u!1 &6191799044892472880
 GameObject:
@@ -10993,6 +11522,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6205568762467212906}
+  - {fileID: 1125583775587470089}
+  - {fileID: 2242787213860431562}
+  - {fileID: 2440268688238558849}
   - {fileID: 8209798190121580767}
   - {fileID: 5149200258246731323}
   - {fileID: 2988719742776971904}
@@ -11445,6 +11977,7 @@ MonoBehaviour:
   launchHeight: 0
   launchDuration: 0
   damage: 0
+  trapUpgrades: {fileID: 0}
 --- !u!1 &7130178805001215683
 GameObject:
   m_ObjectHideFlags: 0
@@ -11532,6 +12065,9 @@ MonoBehaviour:
   - {fileID: 3153657080449132314}
   launchTrapPrefab: {fileID: 4243481506648788781, guid: aab5f57602033094ca7f5cc8ac1ebedb, type: 3}
   pullTrapPrefab: {fileID: 1032703039311401411, guid: 846ef6b237eec2d4aa246ad63f956638, type: 3}
+  beehiveTrapPrefab: {fileID: 0}
+  magnifyingGlassTrapPrefab: {fileID: 0}
+  sprinklerTrapPrefab: {fileID: 0}
 --- !u!114 &109991008391739241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11620,6 +12156,184 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeHitboxScript
   meleeWeapon: {fileID: 3628469831461196161}
+--- !u!1 &8638875763038079504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2440268688238558849}
+  - component: {fileID: 3631405912706304358}
+  - component: {fileID: 5446985891785947274}
+  - component: {fileID: 3479386044736928698}
+  - component: {fileID: 2862086520294798227}
+  - component: {fileID: 5490053215765698392}
+  m_Layer: 0
+  m_Name: RestorativeGasThrower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2440268688238558849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -480.6319, y: -13.778001, z: -546.2196}
+  m_LocalScale: {x: 0.19658999, y: 0.24589999, z: 0.99157995}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2640032704780962394}
+  m_Father: {fileID: 3070602655284253759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &3631405912706304358
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &5446985891785947274
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3479386044736928698
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2862086520294798227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b9b0a2dea269d84287d680f5799c288, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponScript
+  attackCooldown: 0.5
+  fireMode: 2
+  gasCloudPrefab: {fileID: 3020133399429850915, guid: 06d1aadf70e900f4e9e298eadae91dbb, type: 3}
+  gasFireInterval: 0.1
+  restorativeGasUpgrades: {fileID: 5490053215765698392}
+  aimCamera: {fileID: 0}
+  aimDistance: 1000
+  aimLayers:
+    serializedVersion: 2
+    m_Bits: 1023
+  projectilePrefab: {fileID: 0}
+  muzzle: {fileID: 2640032704780962394}
+  muzzleVelocity: 0
+  waterBalloonLauncher: 0
+  waterBalloonPrefab: {fileID: 0}
+  waterBalloonUpgrades: {fileID: 0}
+  milkChurn: 0
+  blobPrefab: {fileID: 0}
+  milkChurnUpgrades: {fileID: 0}
+  automatic: 0
+  fireRate: 0.1
+  shotgun: 0
+  projectileCount: 6
+  spreadAngle: 15
+  shotgunUpgrades: {fileID: 0}
+  shotgunBurstInterval: 0.25
+  sniperWeapon: 0
+  sniperUpgrades: {fileID: 0}
+  liquidStream: {fileID: 0}
+  streamAmmoInterval: 0.1
+  magazineSize: 70
+  reloadDuration: 3
+--- !u!114 &5490053215765698392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638875763038079504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc9818817e810754699ead3ec7fda5a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RestorativeGasUpgradeScript
+  extendedCanister: 0
+  rapidRefill: 0
+  lingeringTonic: 0
+  magazineSizeMultiplier: 1.2
+  reloadDurationMultiplier: 0.75
+  damageMultiplier: 2
+  lingerDuration: 2
 --- !u!1 &9081661362629551288
 GameObject:
   m_ObjectHideFlags: 0
@@ -11769,6 +12483,16 @@ MonoBehaviour:
   swingReference: {fileID: 0}
   knockbackSpeed: 10
   knockbackDuration: 0.2
+  enableChargeAttack: 0
+  chargeDuration: 1.5
+  chargePullbackDistance: 0.4
+  wobbleAngle: 3
+  wobbleFrequency: 12
+  chargedDamageMultiplier: 2
+  chargedKnockbackSpeedMultiplier: 2
+  chargedKnockbackDurationMultiplier: 1.5
+  pitchforkUpgrades: {fileID: 0}
+  scytheUpgrades: {fileID: 0}
 --- !u!1001 &6199624176920156829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11879,3 +12603,13 @@ MonoBehaviour:
   swingReference: {fileID: 0}
   knockbackSpeed: 20
   knockbackDuration: 0.2
+  enableChargeAttack: 0
+  chargeDuration: 1.5
+  chargePullbackDistance: 0.4
+  wobbleAngle: 3
+  wobbleFrequency: 12
+  chargedDamageMultiplier: 2
+  chargedKnockbackSpeedMultiplier: 2
+  chargedKnockbackDurationMultiplier: 1.5
+  pitchforkUpgrades: {fileID: 0}
+  scytheUpgrades: {fileID: 0}
