@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -13,10 +14,17 @@ public class WaveManager : MonoBehaviour
 {
     [SerializeField] private List<WaveSO> waves; //list of all waves, they are scriptable objects
     [SerializeField] private List<SpawnEnemy> spawners; //list of spawners scattered throughout the map. 
-    [SerializeField] private float waveInterval = 5f;
+    [SerializeField] private float waveInterval = 120f;
     [SerializeField] private float waveTimer = 0f;
 
+    [SerializeField] private float prepPhaseTime = 30f;
+    [SerializeField] private float prepTimer = 0f;
+    [SerializeField] private bool isPrepPhase = false;
 
+    public bool IsPrepPhase
+    {
+        get => isPrepPhase;
+    }
 
     private HashSet<EnemyType> firstEncounters = new(); //hashset has "unique" values so it can keep track of each unique type.
     //each time a unique enemy is added they become a "boss":
@@ -27,18 +35,37 @@ public class WaveManager : MonoBehaviour
     private int enemiesRemaining; //enemies remaining of current wave
 
     private void Start()
-    {
-
+    {   
+        StartWave(); //start first wave immediately
     }
 
     private void Update()
     {
-        waveTimer += Time.deltaTime;
-
-        if (waveTimer >= waveInterval)
+        
+        if (isPrepPhase) //if is prep phase     
         {
-            StartWave();
-            waveTimer = 0f;
+            waveTimer = 0f; //reset wave timer so it doesnt continue during prep phase
+
+            prepTimer += Time.deltaTime; //start prep timer
+
+            if (prepTimer >= prepPhaseTime) //once prep timer reaches prep phase time:
+            {
+                isPrepPhase = false; //prep phase is over
+                prepTimer = 0f; //reset prep timer
+                StartWave(); //start wave
+            }
+        }
+        else //when prep phase = false, we're in "wave phase" or something :P
+        {
+            prepTimer = 0f; //we already reset prep timer, but doing it again for safety measures i suppose
+
+            waveTimer += Time.deltaTime; //start wave timer
+
+            if (waveTimer >= waveInterval) //when wave timer reaches wave interval: 
+            {
+                isPrepPhase = true; //start prep phase
+                waveTimer = 0f; //reset wave timer to prevent it from continuing to count during prep phase.
+            }
         }
     }
 
@@ -65,6 +92,7 @@ public class WaveManager : MonoBehaviour
                 //we do this because this script uses the EnemyType enum to identify which type of enemy is spawning. 
                 //this allows us to track unique encounters, hashset is only able to store one of each unique type, so if a new type is added to hashset
                 //we can turn that enemy into a boss, if it already exists nothing will happen.
+                Debug.Log($"enemies left of current wave: {currentWave.enemies.Count}");
 
                 if (enemyHealth != null)
                 {
@@ -92,6 +120,16 @@ public class WaveManager : MonoBehaviour
         if (enemiesRemaining > 0)
         {
             enemiesRemaining--;
+            Debug.Log($"total enemies left: {enemiesRemaining}");
+
+            if (enemiesRemaining <= 0) //this works two ways. 
+                //if player is behind, prep phase will start once all enemies are dead.
+                //if player is "ahead", prep phase will start early. works the same way, prep phase starts regardless when all enemies are dead.
+            {
+                Debug.Log("starting prep phase");
+                isPrepPhase = true;
+                waveTimer = 0f;
+            }
         }
     }
 
