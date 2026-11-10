@@ -4873,7 +4873,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 519.5761, y: 7.2751, z: 545.35693}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2978150134406234934}
   m_Father: {fileID: 0}
@@ -4885,7 +4885,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1426844584999519986}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 6329158148709259305, guid: 85f28936c1729804287112f58b5daa1f, type: 3}
 --- !u!23 &3830918449607999833
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4911,7 +4911,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -8876429951165359728, guid: 85f28936c1729804287112f58b5daa1f, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5010,7 +5010,7 @@ MonoBehaviour:
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
-  bodyCollider: {fileID: 0}
+  bodyCollider: {fileID: 1667571800918076872}
   enemyType: 0
   currentHealth: 0
 --- !u!114 &298646653621758668
