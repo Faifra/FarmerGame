@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 /// <summary>
@@ -14,17 +13,19 @@ public class BeeSwarmScript : MonoBehaviour
     [Header("Damage")]
     [SerializeField] private int damagePerTick = 1;
     [SerializeField] private float damageInterval = 0.5f;
-    [SerializeField] private int maximumTotalDamage = 150;
 
     private BeehiveTrapScript hive;
     private EnemyHealthScript currentTarget;
 
     private Vector3 hivePosition;
     private float damageTimer;
-    private int totalDamageDealt;
+    private float fractionalDamage;
 
     private bool returning;
-    private bool damageLimitReached;
+    private bool stopped;
+    private bool returnedToHive;
+
+    public EnemyHealthScript CurrentTarget => currentTarget;
 
     public void SetHive(BeehiveTrapScript beehive)
     {
@@ -34,22 +35,12 @@ public class BeeSwarmScript : MonoBehaviour
 
     public void SetTarget(EnemyHealthScript target)
     {
-        if (damageLimitReached)
+        if (stopped || target == null || currentTarget != null)
             return;
 
-        if (currentTarget != null)
-            return;
-
-        if (target != null)
-        {
-            currentTarget = target;
-            returning = false;
-            damageTimer = 0f;
-        }
-        else
-        {
-            returning = true;
-        }
+        currentTarget = target;
+        returning = false;
+        damageTimer = 0f;
     }
 
     public bool IsTargetInRange(float range)
@@ -57,14 +48,19 @@ public class BeeSwarmScript : MonoBehaviour
         if (currentTarget == null || hive == null)
             return false;
 
-        float distance = Vector3.Distance(hive.transform.position, currentTarget.transform.position);
-
-        return distance <= range;
+        return Vector3.Distance(hive.transform.position, currentTarget.transform.position) <= range;
     }
 
     public bool HasTarget()
     {
-        return currentTarget != null;
+        return currentTarget != null && !currentTarget.IsDead;
+    }
+
+    public void StopAttacking()
+    {
+        stopped = true;
+        currentTarget = null;
+        returning = true;
     }
 
     private void Update()
@@ -75,49 +71,44 @@ public class BeeSwarmScript : MonoBehaviour
             return;
         }
 
-        if (damageLimitReached)
+        if (hive.RemainingDamage <= 0)
+            StopAttacking();
+
+        if (stopped || currentTarget == null || currentTarget.IsDead)
         {
-            currentTarget = null;
-            returning = true;
+            if (currentTarget != null && currentTarget.IsDead)
+                currentTarget = null;
+
+            ReturnToHive();
+            return;
         }
 
-        if (currentTarget != null)
-        {
-            FollowTarget();
-        }
-        else
-        {
-            ReturnToHive();
-        }
+        FollowTarget();
     }
 
     private void FollowTarget()
     {
-        if (currentTarget == null)
-        {
-            returning = true;
-            return;
-        }
-
         Vector3 targetPosition = currentTarget.transform.position;
 
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * hive.SwarmMovementMultiplier * Time.deltaTime);
 
         Vector3 direction = targetPosition - transform.position;
 
         if (direction.sqrMagnitude > 0.001f)
             transform.forward = direction.normalized;
 
-        float distance = Vector3.Distance(transform.position, targetPosition);
-
-        if (distance <= attackDistance)
-        {
+        if (Vector3.Distance(transform.position, targetPosition) <= attackDistance)
             DealDamage();
-        }
     }
 
     private void DealDamage()
     {
+        if (hive.RemainingDamage <= 0)
+        {
+            StopAttacking();
+            return;
+        }
+
         damageTimer += Time.deltaTime;
 
         if (damageTimer < damageInterval)
@@ -125,37 +116,40 @@ public class BeeSwarmScript : MonoBehaviour
 
         damageTimer = 0f;
 
-        int remainingDamage = maximumTotalDamage - totalDamageDealt;
+        float damageToApply = damagePerTick * hive.SwarmDamageMultiplier + fractionalDamage;
 
-        if (remainingDamage <= 0)
-        {
-            damageLimitReached = true;
-            currentTarget = null;
-            returning = true;
+        int damage = Mathf.FloorToInt(damageToApply);
+
+        fractionalDamage = damageToApply - damage;
+
+        if (damage <= 0)
             return;
-        }
 
-        int damage = Mathf.Min(damagePerTick, remainingDamage);
+        damage = Mathf.Min(damage, hive.RemainingDamage);
 
-        if (currentTarget != null)
+        Vector3 enemyPosition = currentTarget.transform.position;
+
+        currentTarget.TakeDamage(damage);
+
+        bool enemyKilled = currentTarget.IsDead;
+
+        bool limitReached = hive.RegisterDamage(damage);
+
+        if (enemyKilled)
         {
-            currentTarget.TakeDamage(damage);
-            totalDamageDealt += damage;
-        }
-
-        if (totalDamageDealt >= maximumTotalDamage)
-        {
-            damageLimitReached = true;
             currentTarget = null;
-            returning = true;
+            hive.SwarmKilledEnemy(enemyPosition);
         }
+
+        if (limitReached)
+            StopAttacking();
     }
 
     private void ReturnToHive()
     {
         returning = true;
 
-        transform.position = Vector3.MoveTowards(transform.position, hivePosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, hivePosition, moveSpeed * hive.SwarmMovementMultiplier * Time.deltaTime);
 
         Vector3 direction = hivePosition - transform.position;
 
@@ -166,9 +160,10 @@ public class BeeSwarmScript : MonoBehaviour
         {
             transform.position = hivePosition;
 
-            if (damageLimitReached)
+            if (stopped && !returnedToHive)
             {
-                hive.SwarmReturned(true);
+                returnedToHive = true;
+                hive.SwarmReturned(this);
                 Destroy(gameObject);
             }
         }

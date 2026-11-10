@@ -22,10 +22,18 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
     [Header("Damage")]
     [SerializeField] private int damagePerTick = 1;
     [SerializeField] private float damageInterval = 1f;
+    [SerializeField] private int maximumTotalDamage = 350;
+
+    private int totalDamageDealt;
+    private bool trapDestroyed;
+
     [SerializeField] private GameObject enemyWallPrefab;
 
     [Header("Visibility")]
     [SerializeField] private LayerMask obstacleLayers;
+
+    [Header("Upgrades")]
+    [SerializeField] private SprinklerTrapUpgradeScript trapUpgrades;
 
     private float spinDirection = 1f;
     private float damageTimer;
@@ -44,7 +52,7 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
 
     private void Update()
     {
-        if (!trapPlaced)
+        if (!trapPlaced || trapDestroyed)
             return;
 
         RotateSprinkler();
@@ -63,15 +71,25 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
         if (rotatingHead == null)
             return;
 
-        rotatingHead.Rotate(Vector3.up, rotationSpeed * spinDirection * Time.deltaTime, Space.World);
+        float finalRotationSpeed = rotationSpeed * (trapUpgrades != null ? trapUpgrades.RotationSpeedMultiplier : 1f);
+
+        rotatingHead.Rotate(Vector3.up, finalRotationSpeed * spinDirection * Time.deltaTime, Space.World);
     }
 
     private void DamageEnemies()
     {
-        if (enemyWallPrefab == null)
+        if (enemyWallPrefab == null || trapDestroyed)
             return;
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, sprayRange + 2f, ~0, QueryTriggerInteraction.Ignore);
+        if (totalDamageDealt >= maximumTotalDamage)
+        {
+            DestroySprinkler();
+            return;
+        }
+
+        float finalSprayRange = sprayRange * (trapUpgrades != null ? trapUpgrades.RangeMultiplier : 1f);
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, finalSprayRange + 2f, ~0, QueryTriggerInteraction.Ignore);
 
         HashSet<EnemyHealthScript> damagedEnemies = new HashSet<EnemyHealthScript>();
 
@@ -79,13 +97,34 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
         {
             EnemyHealthScript enemy = hit.GetComponentInParent<EnemyHealthScript>();
 
-            if (enemy == null || !damagedEnemies.Add(enemy))
+            if (enemy == null || enemy.IsDead || !damagedEnemies.Add(enemy))
                 continue;
 
             if (!IsInWaterSpray(enemy))
                 continue;
 
-            enemy.TakeDamageFromSprinkler(damagePerTick, enemyWallPrefab);
+            int finalDamage = Mathf.Max(1, Mathf.RoundToInt(damagePerTick * (trapUpgrades != null ? trapUpgrades.DamageMultiplier : 1f)));
+
+            int remainingDamage = maximumTotalDamage - totalDamageDealt;
+            int actualDamage = Mathf.Min(finalDamage, remainingDamage);
+
+            if (actualDamage <= 0)
+            {
+                DestroySprinkler();
+                return;
+            }
+
+            float wallHealthMultiplier = trapUpgrades != null ? trapUpgrades.WallHealthMultiplier : 1f;
+
+            enemy.TakeDamageFromSprinkler(actualDamage, enemyWallPrefab, wallHealthMultiplier);
+
+            totalDamageDealt += actualDamage;
+
+            if (totalDamageDealt >= maximumTotalDamage)
+            {
+                DestroySprinkler();
+                return;
+            }
         }
     }
 
@@ -119,8 +158,10 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
         float distanceA = toEnemyA.magnitude;
         float distanceB = toEnemyB.magnitude;
 
-        bool inRangeA = distanceA <= sprayRange;
-        bool inRangeB = distanceB <= sprayRange;
+        float finalSprayRange = sprayRange * (trapUpgrades != null ? trapUpgrades.RangeMultiplier : 1f);
+
+        bool inRangeA = distanceA <= finalSprayRange;
+        bool inRangeB = distanceB <= finalSprayRange;
 
         if (!inRangeA && !inRangeB)
             return false;
@@ -167,5 +208,21 @@ public class SprinklerTrapScript : TrapBaseScript, IInteractableScript
             return;
 
         spinDirection *= -1f;
+    }
+
+    private void DestroySprinkler()
+    {
+        if (trapDestroyed)
+            return;
+
+        trapDestroyed = true;
+
+        if (waterSprayA != null)
+            waterSprayA.Stop();
+
+        if (waterSprayB != null)
+            waterSprayB.Stop();
+
+        Destroy(gameObject);
     }
 }

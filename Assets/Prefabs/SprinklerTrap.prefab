@@ -5141,6 +5141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 492754315939193888}
   - component: {fileID: 8730964206436792459}
+  - component: {fileID: -4913680310183341190}
   m_Layer: 0
   m_Name: SprinklerTrap
   m_TagString: Untagged
@@ -5186,10 +5187,31 @@ MonoBehaviour:
   sprayAngle: 15
   damagePerTick: 10
   damageInterval: 1
+  maximumTotalDamage: 350
   enemyWallPrefab: {fileID: 324497087205363628, guid: c418158d6a08977409bb7590ed92df2f, type: 3}
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 145
+  trapUpgrades: {fileID: 0}
+--- !u!114 &-4913680310183341190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765813157588543071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d270511f8d68c924f882d7247d30acb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SprinklerTrapUpgradeScript
+  pressurizedSpray: 0
+  rapidRotation: 0
+  reinforcedBarriers: 0
+  damageMultiplier: 1.75
+  rangeMultiplier: 1.05
+  rotationSpeedMultiplier: 1.25
+  wallHealthMultiplier: 1.5
 --- !u!1 &6187809600568824627
 GameObject:
   m_ObjectHideFlags: 0

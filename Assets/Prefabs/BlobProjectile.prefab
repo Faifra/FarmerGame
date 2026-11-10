@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 777010606068309125}
   - component: {fileID: 884213200177861138}
   - component: {fileID: 5740248498085905756}
-  - component: {fileID: 3232269117819786408}
+  - component: {fileID: 6084248633897062639}
   m_Layer: 0
-  m_Name: ShotgunBullet
+  m_Name: BlobProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 5002627582096560312}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.44056, y: 3.4001, z: -1.20502}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalPosition: {x: -4.35387, y: -0, z: 8.97776}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,7 +112,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.4
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5740248498085905756
 Rigidbody:
@@ -141,7 +141,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3232269117819786408
+--- !u!114 &6084248633897062639
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,8 +150,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5002627582096560312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d93d61cdf1ad04dbd846fe424aa447, type: 3}
+  m_Script: {fileID: 11500000, guid: 79bdf2d532f89a741ac5bb6399d54a89, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileScript
-  damage: 7
-  lifetime: 1
+  m_EditorClassIdentifier: Assembly-CSharp::BlobProjectileScript
+  impactDamage: 1
+  popDamage: 3
+  overloadDamage: 15
+  popRadius: 2
+  fuseDuration: 3
+  lifetime: 6
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  environmentLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  popEffectPrefab: {fileID: 8218707869583844120, guid: 2912860e799f12b498f5e99653ac3842, type: 3}

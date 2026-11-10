@@ -15,6 +15,7 @@ public class GameManagerScript : MonoBehaviour
 
     public static GameManagerScript instance { get; private set; }
 
+    private UpgradeManagerScript upgradeManager;
     public static int MaxHP => maximumHP;
 
     private void Awake()
@@ -26,6 +27,8 @@ public class GameManagerScript : MonoBehaviour
         }
 
         instance = this;
+
+        upgradeManager = FindFirstObjectByType<UpgradeManagerScript>();
 
         maximumHP = Mathf.Max(1, maxHP);
         playerHP = Mathf.Clamp(startingHP, 0, maximumHP);
@@ -70,6 +73,9 @@ public class GameManagerScript : MonoBehaviour
     {
         if(playerHP <= 0) // Reload level when we die
         {
+            if (upgradeManager != null)
+                upgradeManager.ResetUpgrades();
+
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }

@@ -512,6 +512,14 @@ public class PlayerWeaponsScript : MonoBehaviour
 
         if (rangedWeapon != null)
             rangedWeapon.StopAttack();
+
+        MeleeWeaponScript meleeWeapon = weapon.GetComponent<MeleeWeaponScript>();
+
+        if (meleeWeapon != null)
+        {
+            meleeWeapon.ReleaseChargeAttack();
+            return;
+        }
     }
 
     // Starts placement using the prefab matching the selected trap type.
