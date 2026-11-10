@@ -36,7 +36,6 @@ public abstract class EnemyHealthScript : MonoBehaviour
     }
 
     // Current health shared with derived enemy classes.
-    protected int currentHealth;
     [SerializeField] protected int currentHealth;
 
     public bool IsDead => isDead;
