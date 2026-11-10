@@ -52,7 +52,7 @@ public class MoveTo : MonoBehaviour
         }
         else
         {
-            agent.speed = originalSpeed;
+            agent.speed = originalSpeed; //reset to original speed if within range.
         }
 
         if (slowTimer > 0f)
