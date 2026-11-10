@@ -74,8 +74,6 @@ public class PlayerMovementScript : MonoBehaviour
 
     private bool grappleMovementActive;
 
-    private float fovTimer = 0;
-
     private float temporaryMovementSpeedMultiplier = 1f;
     private Coroutine movementSpeedBoostCoroutine;
 
