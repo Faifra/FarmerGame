@@ -157,6 +157,7 @@ MonoBehaviour:
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  enemyType: 6
 --- !u!114 &7496189725551747925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +196,7 @@ Rigidbody:
   m_GameObject: {fileID: 8384746767767502866}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 0.5
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -211,5 +212,5 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0

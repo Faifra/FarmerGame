@@ -25,7 +25,6 @@ public class PlayerCollisionScript : MonoBehaviour
 
     // ==========================================//
 
-    private Rigidbody playerRigidBody;
     private static Vector3 playerPosition;
     private static bool playerCollidingWithWall = false;
 
@@ -39,7 +38,6 @@ public class PlayerCollisionScript : MonoBehaviour
 
     void Start()
     {
-        playerRigidBody = GetComponent<Rigidbody>();
         playerPosition = gameObject.transform.position;
     }
 

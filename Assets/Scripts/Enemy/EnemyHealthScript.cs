@@ -10,7 +10,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
 {
     // Health configuration.
     [Header("Health")]
-    [SerializeField] protected int maxHealth = 10;
+    [SerializeField] private int maxHealth = 10;
 
     // Controls the spawn position and appearance of floating damage numbers.
     [Header("Damage Numbers")]
@@ -25,6 +25,15 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
     [SerializeField] private Collider bodyCollider;
     public Collider BodyCollider => bodyCollider;
+    [Header("Enemy Information")]
+    [SerializeField] private EnemyType enemyType;
+
+    public EnemyType Type => enemyType;
+    public int MaxHealth
+    {
+        get => maxHealth;
+        set => maxHealth = value;
+    }
 
     // Current health shared with derived enemy classes.
     protected int currentHealth;
@@ -224,6 +233,18 @@ public abstract class EnemyHealthScript : MonoBehaviour
         {
             waveManager.EnemyDied();
         }
+
+        if (GetComponent<BossUIHelperScript>())
+        {
+            GetComponent<BossUIHelperScript>().RemoveHealthBar();
+        }
+
         Destroy(gameObject);
     }
+
+    public int CurrentHealth()
+    {
+        return currentHealth;
+    }
+
 }
