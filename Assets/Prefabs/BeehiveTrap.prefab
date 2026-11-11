@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a17597d7fff98ca45916dfea75281097, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BeehiveTrapScript
-  beeSwarmPrefab: {fileID: 7697568819595070351}
+  beeSwarmPrefab: {fileID: 7856712806071245474, guid: 1547b0dd1af6a45448aa586bfadacb0f, type: 3}
   detectionRange: 12
   targetCheckInterval: 0.2
   maximumTotalDamage: 150

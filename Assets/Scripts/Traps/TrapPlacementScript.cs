@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +24,10 @@ public class TrapPlacementScript : MonoBehaviour
     // Tracks the preview object and current placement state.
     private GameObject previewTrap;
 
+    private Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
+
+    private Dictionary<Renderer, Material[]> previewMaterials = new Dictionary<Renderer, Material[]>();
+
     private bool placingTrap = false;
     private float currentRotation = 0f;
 
@@ -34,14 +39,11 @@ public class TrapPlacementScript : MonoBehaviour
     // Retrieves the configured placement input actions.
     private void Start()
     {
-        confirmAction =
-            InputSystem.actions.FindAction("PlaceTrap");
+        confirmAction = InputSystem.actions.FindAction("PlaceTrap");
 
-        cancelAction =
-            InputSystem.actions.FindAction("CancelTrap");
+        cancelAction = InputSystem.actions.FindAction("CancelTrap");
 
-        rotateAction =
-            InputSystem.actions.FindAction("RotateTrap");
+        rotateAction = InputSystem.actions.FindAction("RotateTrap");
     }
 
     // Updates the preview and handles placement input while active.
@@ -78,6 +80,19 @@ public class TrapPlacementScript : MonoBehaviour
             return false;
 
         previewTrap = Instantiate(trapPrefab);
+
+        originalMaterials.Clear();
+        previewMaterials.Clear();
+
+        Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
+
+        foreach (Renderer renderer in renderers)
+        {
+            if (renderer is LineRenderer || renderer is ParticleSystemRenderer)
+                continue;
+
+            originalMaterials[renderer] = renderer.sharedMaterials;
+        }
 
         TrapBaseScript trap = previewTrap.GetComponent<TrapBaseScript>();
 
@@ -157,17 +172,13 @@ public class TrapPlacementScript : MonoBehaviour
 
             Bounds bounds = renderer.localBounds;
 
-            // Check all 8 corners of the renderer's local bounds.
             for (int x = -1; x <= 1; x += 2)
             {
                 for (int y = -1; y <= 1; y += 2)
                 {
                     for (int z = -1; z <= 1; z += 2)
                     {
-                        Vector3 corner = bounds.center + Vector3.Scale(
-                            bounds.extents,
-                            new Vector3(x, y, z)
-                        );
+                        Vector3 corner = bounds.center + Vector3.Scale(bounds.extents, new Vector3(x, y, z));
 
                         Vector3 worldCorner = renderer.transform.TransformPoint(corner);
 
@@ -192,10 +203,12 @@ public class TrapPlacementScript : MonoBehaviour
 
         foreach (Renderer renderer in renderers)
         {
-            if (renderer is LineRenderer)
+            if (renderer is LineRenderer || renderer is ParticleSystemRenderer)
                 continue;
 
             Material[] materials = renderer.materials;
+
+            previewMaterials[renderer] = materials;
 
             foreach (Material material in materials)
             {
@@ -339,24 +352,27 @@ public class TrapPlacementScript : MonoBehaviour
     // Destroys the preview's instantiated materials to release them.
     private void RestoreMaterials()
     {
-        Renderer[] renderers = previewTrap.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
+        foreach (KeyValuePair<Renderer, Material[]> entry in originalMaterials)
         {
-            if (renderer is LineRenderer)
+            Renderer renderer = entry.Key;
+
+            if (renderer == null)
                 continue;
 
-            if (renderer is ParticleSystemRenderer)
-                continue;
+            renderer.sharedMaterials = entry.Value;
+        }
 
-            foreach (Material material in renderer.materials)
+        foreach (KeyValuePair<Renderer, Material[]> entry in previewMaterials)
+        {
+            foreach (Material material in entry.Value)
             {
                 if (material != null)
-                {
                     Destroy(material);
-                }
             }
         }
+
+        originalMaterials.Clear();
+        previewMaterials.Clear();
     }
 
     // Cancels placement and removes the preview object.
@@ -364,6 +380,7 @@ public class TrapPlacementScript : MonoBehaviour
     {
         if (previewTrap != null)
         {
+            RestoreMaterials();
             Destroy(previewTrap);
         }
 
