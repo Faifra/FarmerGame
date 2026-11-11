@@ -138,7 +138,7 @@ MonoBehaviour:
   kernelSP: {fileID: 7663458972886849893}
   reloadTime: 5
   throwForce: 10
-  attackRange: 15
+  attackRange: 20
   reloadTimer: 0
 --- !u!195 &-6879643092216625662
 NavMeshAgent:
@@ -150,7 +150,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 3.5
+  m_Speed: 4.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveTo
   goal: {fileID: 0}
+  increaseSpeedRange: 50
 --- !u!114 &-7761138156180558892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +233,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &6763776674638068047
 MonoBehaviour:
@@ -5258,8 +5259,8 @@ Transform:
   m_GameObject: {fileID: 8519729488055269109}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.569}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.498, z: 0.202}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1909054310898670248}
