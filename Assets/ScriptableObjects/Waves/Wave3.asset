@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveSO
   enemies:
   - enemyPrefab: {fileID: 1426844584999519986, guid: df9bda36feb11b346ac4668de9a04c42, type: 3}
-    amount: 10
+    amount: 12
   - enemyPrefab: {fileID: 1121012404598033921, guid: 51c1229affd890341b9eba1bd5968c94, type: 3}
-    amount: 1
-  - enemyPrefab: {fileID: 8384746767767502866, guid: ff7c59a222ff3344e997ef709c363b6e, type: 3}
     amount: 2
-  - enemyPrefab: {fileID: 919132149155446097, guid: b2fcb173500b3e247af911c33a098583, type: 3}
-    amount: 10
+  - enemyPrefab: {fileID: 8384746767767502866, guid: ff7c59a222ff3344e997ef709c363b6e, type: 3}
+    amount: 3
+  - enemyPrefab: {fileID: 8384746767767502866, guid: cfab3055c60dc554fa4b6d943bf8be7e, type: 3}
+    amount: 8

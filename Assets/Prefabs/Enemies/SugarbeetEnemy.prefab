@@ -4975,14 +4975,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7867204772041170787}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.533}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.227, y: -0.541, z: -0.002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 420070587315844957}
   m_Father: {fileID: 3415831688076264428}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!135 &7151631202740934451
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5150,7 +5150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   targetAltitude: 10
   altitudeThreshold: 3
-  flyingSpeed: 4
+  flyingSpeed: 6
   attackRange: 15
   chargeSpeed: 15
   chargeCooldown: 3
@@ -5174,7 +5174,7 @@ MonoBehaviour:
   maxHealth: 45
   damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
   damageNumberForwardOffset: 0.75
-  damageNumberHeight: 2
+  damageNumberHeight: 1
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
   bodyCollider: {fileID: 8763984447735584}
   enemyType: 6
@@ -5213,10 +5213,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &-6300649277110659574
 MonoBehaviour:
@@ -5232,6 +5232,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
   - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
+    amount: 7
   burstDistance: 1.5
   burstHeight: 1
