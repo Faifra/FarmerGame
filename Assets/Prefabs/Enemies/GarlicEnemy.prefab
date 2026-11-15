@@ -132,6 +132,8 @@ GameObject:
   - component: {fileID: 1199602335117415183}
   - component: {fileID: 535606100517477740}
   - component: {fileID: -1961677085735526778}
+  - component: {fileID: -6256990618888315171}
+  - component: {fileID: 6746571765760601255}
   m_Layer: 6
   m_Name: GarlicEnemy
   m_TagString: BossBarCollection
@@ -294,6 +296,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20592a8acb5609030a6f271fe7f76c4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveTo
+  useErraticMovement: 1
+  movementRadius: 4
+  minDirectionChangeTime: 2
+  maxDirectionChangeTime: 4
+  destinationArrivalDistance: 1.5
+  navMeshSearchRadius: 5
+  directChaseDistance: 8
   goal: {fileID: 0}
   increaseSpeedRange: 50
 --- !u!114 &102943017008223841
@@ -338,7 +347,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5.5
+  m_Speed: 7
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -367,6 +376,37 @@ MonoBehaviour:
     amount: 7
   burstDistance: 1.5
   burstHeight: 1
+--- !u!114 &-6256990618888315171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3299025627106910911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbefa65573828704396667e2dd3fc627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlantVineSpawnerScript
+  vinePrefab: {fileID: 8722497302726761309, guid: 5a46a3b55ee9c1e42b9b5a15884db253, type: 3}
+  detectionRange: 20
+  arrivalDistance: 1
+  plantingDuration: 2
+  checkInterval: 1.5
+  maximumVinesToGrow: 1
+--- !u!114 &6746571765760601255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3299025627106910911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cf27caf5f8cc643a6da982f6ea6c98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VineClimbAgentScript
+  climbDuration: 2
 --- !u!1 &4148712677391560615
 GameObject:
   m_ObjectHideFlags: 0

@@ -8762,6 +8762,37 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &181560556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 181560557}
+  m_Layer: 0
+  m_Name: VineTopPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &181560557
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181560556}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.98, z: 5.44}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388520681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &181739797
 GameObject:
   m_ObjectHideFlags: 0
@@ -10712,7 +10743,7 @@ GameObject:
   - component: {fileID: 237198655}
   - component: {fileID: 237198654}
   - component: {fileID: 237198653}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11497,7 +11528,7 @@ GameObject:
   - component: {fileID: 250053802}
   - component: {fileID: 250053801}
   - component: {fileID: 250053800}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12038,6 +12069,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258487652}
   m_CullTransparentMesh: 1
+--- !u!1 &262306898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 262306899}
+  m_Layer: 0
+  m_Name: VineOutwardDirection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &262306899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262306898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.27, z: 6.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388520681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &263239510
 GameObject:
   m_ObjectHideFlags: 0
@@ -19880,7 +19942,7 @@ GameObject:
   - component: {fileID: 440886948}
   - component: {fileID: 440886947}
   - component: {fileID: 440886946}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22420,7 +22482,7 @@ GameObject:
   - component: {fileID: 500132273}
   - component: {fileID: 500132272}
   - component: {fileID: 500132271}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23809,7 +23871,7 @@ GameObject:
   - component: {fileID: 522702432}
   - component: {fileID: 522702431}
   - component: {fileID: 522702430}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24588,7 +24650,7 @@ GameObject:
   - component: {fileID: 549259731}
   - component: {fileID: 549259730}
   - component: {fileID: 549259729}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28392,7 +28454,7 @@ GameObject:
   - component: {fileID: 637834322}
   - component: {fileID: 637834321}
   - component: {fileID: 637834320}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34459,7 +34521,7 @@ GameObject:
   - component: {fileID: 760722927}
   - component: {fileID: 760722926}
   - component: {fileID: 760722925}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: WallRun
   m_Icon: {fileID: 0}
@@ -35167,7 +35229,7 @@ GameObject:
   - component: {fileID: 791977361}
   - component: {fileID: 791977360}
   - component: {fileID: 791977359}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39065,7 +39127,7 @@ GameObject:
   - component: {fileID: 878930144}
   - component: {fileID: 878930143}
   - component: {fileID: 878930142}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39439,6 +39501,37 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &883612437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 883612438}
+  m_Layer: 0
+  m_Name: VineBottomPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &883612438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883612437}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -3.61, z: 6.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1388520681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &885051405
 GameObject:
   m_ObjectHideFlags: 0
@@ -46834,7 +46927,7 @@ GameObject:
   - component: {fileID: 1062695547}
   - component: {fileID: 1062695546}
   - component: {fileID: 1062695545}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48396,7 +48489,7 @@ GameObject:
   - component: {fileID: 1088428007}
   - component: {fileID: 1088428006}
   - component: {fileID: 1088428005}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58511,7 +58604,7 @@ GameObject:
   - component: {fileID: 1307101936}
   - component: {fileID: 1307101935}
   - component: {fileID: 1307101934}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61585,12 +61678,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 883612438}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 181560557}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 262306899}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1535424654}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1535424655}
   m_SourcePrefab: {fileID: 100100000, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+--- !u!4 &1388520681 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+  m_PrefabInstance: {fileID: 1388520680}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1388784905
 GameObject:
   m_ObjectHideFlags: 0
@@ -61708,7 +61818,7 @@ GameObject:
   - component: {fileID: 1392248490}
   - component: {fileID: 1392248489}
   - component: {fileID: 1392248488}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62613,7 +62723,7 @@ GameObject:
   - component: {fileID: 1421976184}
   - component: {fileID: 1421976183}
   - component: {fileID: 1421976182}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67726,6 +67836,23 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -616816430620026901, guid: 1600203399ede714bbbef9d7572493f7, type: 3}
+--- !u!114 &1535424655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535424650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0006fe95ce9f1b8428188524f7a7eea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VineClimbAnchorScript
+  bottomPoint: {fileID: 883612438}
+  topPoint: {fileID: 181560557}
+  outwardDirection: {fileID: 262306899}
+  overhangClearance: 1
+  curveHeight: 0.75
 --- !u!1 &1537427775
 GameObject:
   m_ObjectHideFlags: 0
@@ -70032,7 +70159,7 @@ GameObject:
   - component: {fileID: 1570567233}
   - component: {fileID: 1570567232}
   - component: {fileID: 1570567231}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(-1000.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71724,7 +71851,7 @@ GameObject:
   - component: {fileID: 1605940589}
   - component: {fileID: 1605940588}
   - component: {fileID: 1605940587}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(1000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93606,7 +93733,7 @@ GameObject:
   - component: {fileID: 2033632699}
   - component: {fileID: 2033632698}
   - component: {fileID: 2033632697}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Terrain_(0.00, 0.00, -1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96470,7 +96597,7 @@ GameObject:
   - component: {fileID: 2104929367}
   - component: {fileID: 2104929366}
   - component: {fileID: 2104929365}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wallrun
   m_TagString: WallRun
   m_Icon: {fileID: 0}
