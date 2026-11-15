@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: -317896775728013634}
   - component: {fileID: 5669115084164439814}
   - component: {fileID: 6763776674638068047}
+  - component: {fileID: 283262297973948642}
+  - component: {fileID: -7231608245279810139}
   m_Layer: 6
   m_Name: CornEnemy
   m_TagString: BossBarCollection
@@ -137,9 +139,13 @@ MonoBehaviour:
   kernelPrefab: {fileID: 4240289186126941514, guid: 1e5744ed4fba8934983e61d915bf5a71, type: 3}
   kernelSP: {fileID: 7663458972886849893}
   reloadTime: 5
-  throwForce: 10
+  throwForce: 40
   attackRange: 20
-  reloadTimer: 0
+  throwingDistance: 16
+  distanceTolerance: 1.5
+  meleeEnterDistance: 4
+  meleeExitDistance: 6
+  navMeshSearchRadius: 4
 --- !u!195 &-6879643092216625662
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -150,7 +156,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 4.5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -174,6 +180,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20592a8acb5609030a6f271fe7f76c4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveTo
+  useErraticMovement: 1
+  movementRadius: 4
+  minDirectionChangeTime: 2
+  maxDirectionChangeTime: 4
+  destinationArrivalDistance: 1.5
+  navMeshSearchRadius: 5
+  directChaseDistance: 5
   goal: {fileID: 0}
   increaseSpeedRange: 50
 --- !u!114 &-7761138156180558892
@@ -252,6 +265,37 @@ MonoBehaviour:
     amount: 10
   burstDistance: 1.5
   burstHeight: 1
+--- !u!114 &283262297973948642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667211483588175294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbefa65573828704396667e2dd3fc627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlantVineSpawnerScript
+  vinePrefab: {fileID: 8722497302726761309, guid: 5a46a3b55ee9c1e42b9b5a15884db253, type: 3}
+  detectionRange: 20
+  arrivalDistance: 1
+  plantingDuration: 2
+  checkInterval: 1.5
+  maximumVinesToGrow: 1
+--- !u!114 &-7231608245279810139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667211483588175294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cf27caf5f8cc643a6da982f6ea6c98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VineClimbAgentScript
+  climbDuration: 2
 --- !u!1 &4521431129721483636
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,19 @@ using UnityEngine.AI;
 
 public class MoveTo : MonoBehaviour
 {
+    [Header("Erratic Movement")]
+    [SerializeField] private bool useErraticMovement = true;
+    [SerializeField] private float movementRadius = 4f;
+    [SerializeField] private float minDirectionChangeTime = 2f;
+    [SerializeField] private float maxDirectionChangeTime = 4f;
+    [SerializeField] private float destinationArrivalDistance = 1.5f;
+    [SerializeField] private float navMeshSearchRadius = 5f;
+    [SerializeField] private float directChaseDistance = 5f;
+
+    private float directionChangeTimer;
+    private Vector3 currentErraticDestination;
+    private bool hasErraticDestination;
+
     public Transform goal;
 
     private NavMeshAgent agent;
@@ -15,6 +28,10 @@ public class MoveTo : MonoBehaviour
     private float currentSlowMultiplier = 1f;
 
     [SerializeField] private float increaseSpeedRange = 50f; //outside this range their speed will increase
+
+    private bool hasMovementOverride;
+    private bool movementOverrideStopped;
+    private Vector3 movementOverrideDestination;
 
     void Start()
     {
@@ -38,9 +55,45 @@ public class MoveTo : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDestroyed && !isMovingSpecial && agent != null && agent.enabled && agent.isOnNavMesh && goal != null)
+        if (!isDestroyed && !isMovingSpecial && agent != null && agent.enabled && agent.isOnNavMesh && !agent.isOnOffMeshLink && goal != null)
         {
-            agent.destination = goal.position;
+            if (hasMovementOverride)
+            {
+                agent.isStopped = movementOverrideStopped;
+
+                if (!movementOverrideStopped)
+                    agent.SetDestination(movementOverrideDestination);
+            }
+            else if (goal != null)
+            {
+                agent.isStopped = false;
+
+                float distanceToGoal = Vector3.Distance(transform.position, goal.position);
+
+                if (distanceToGoal <= directChaseDistance)
+                {
+                    hasErraticDestination = false;
+                    agent.SetDestination(goal.position);
+                }
+                else if (useErraticMovement)
+                {
+                    directionChangeTimer -= Time.fixedDeltaTime;
+
+                    if (!hasErraticDestination || directionChangeTimer <= 0f || (!agent.pathPending && agent.remainingDistance <= destinationArrivalDistance))
+                    {
+                        ChooseErraticDestination();
+                    }
+
+                    if (hasErraticDestination)
+                        agent.SetDestination(currentErraticDestination);
+                    else
+                        agent.SetDestination(goal.position);
+                }
+                else
+                {
+                    agent.SetDestination(goal.position);
+                }
+            }
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -266,5 +319,51 @@ public class MoveTo : MonoBehaviour
         }
 
         isMovingSpecial = false;
+    }
+
+    public void SetMovementDestination(Vector3 destination)
+    {
+        hasMovementOverride = true;
+        movementOverrideStopped = false;
+        movementOverrideDestination = destination;
+    }
+
+    public void StopMovementOverride()
+    {
+        hasMovementOverride = true;
+        movementOverrideStopped = true;
+
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+    }
+
+    public void ClearMovementOverride()
+    {
+        hasMovementOverride = false;
+        movementOverrideStopped = false;
+
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+            agent.isStopped = false;
+    }
+
+    private void ChooseErraticDestination()
+    {
+        if (goal == null || agent == null)
+            return;
+
+        Vector2 randomCircle = Random.insideUnitCircle * movementRadius;
+
+        Vector3 randomPosition = goal.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+
+        if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, navMeshSearchRadius, agent.areaMask))
+        {
+            currentErraticDestination = hit.position;
+            hasErraticDestination = true;
+
+            directionChangeTimer = Random.Range(minDirectionChangeTime, maxDirectionChangeTime);
+        }
     }
 }

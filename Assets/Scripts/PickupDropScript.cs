@@ -18,6 +18,9 @@ public class PickupDropScript : MonoBehaviour
     [Header("Drop Movement")]
     [SerializeField] private float settleTime = 1.4f;
 
+    [Header("Ground Detection")]
+    [SerializeField] private LayerMask groundLayers;
+
     // References to the player and the drop's physics body.
     private Transform player;
     private Rigidbody body;
@@ -26,6 +29,9 @@ public class PickupDropScript : MonoBehaviour
     private bool isBeingPulled = false;
     private bool collected = false;
 
+    private bool isGrounded;
+    private bool hasSettled;
+
     // Tracks the elapsed time before the drop settles.
     private float settleTimer;
 
@@ -33,6 +39,12 @@ public class PickupDropScript : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+
+        if (body != null)
+        {
+            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            body.interpolation = RigidbodyInterpolation.Interpolate;
+        }
     }
 
     // Updates the drop's movement and checks for nearby players.
@@ -47,7 +59,19 @@ public class PickupDropScript : MonoBehaviour
             return;
         }
 
-        SettleDrop();
+        if (!hasSettled)
+        {
+            if (isGrounded)
+            {
+                settleTimer += Time.deltaTime;
+
+                if (settleTimer >= settleTime)
+                    SettleDrop();
+            }
+
+            return;
+        }
+
         FindPlayer();
     }
 
@@ -57,14 +81,44 @@ public class PickupDropScript : MonoBehaviour
         if (body == null)
             return;
 
-        settleTimer += Time.deltaTime;
+        body.linearVelocity = Vector3.zero;
+        body.angularVelocity = Vector3.zero;
+        body.isKinematic = true;
 
-        if (settleTimer >= settleTime)
+        hasSettled = true;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (hasSettled || body == null)
+            return;
+
+        int layerMask = 1 << collision.gameObject.layer;
+
+        if ((groundLayers.value & layerMask) == 0)
+            return;
+
+        foreach (ContactPoint contact in collision.contacts)
         {
-            body.linearVelocity = Vector3.zero;
-            body.angularVelocity = Vector3.zero;
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
+            {
+                isGrounded = true;
+                return;
+            }
+        }
+    }
 
-            body.isKinematic = true;
+    private void OnCollisionExit(Collision collision)
+    {
+        if (hasSettled)
+            return;
+
+        int layerMask = 1 << collision.gameObject.layer;
+
+        if ((groundLayers.value & layerMask) != 0)
+        {
+            isGrounded = false;
+            settleTimer = 0f;
         }
     }
 
@@ -76,8 +130,7 @@ public class PickupDropScript : MonoBehaviour
         if (playerObject == null)
             return;
 
-        float distance =
-            Vector3.Distance(transform.position, playerObject.transform.position);
+        float distance = Vector3.Distance(transform.position, playerObject.transform.position);
 
         if (distance <= pickupRange)
         {
@@ -97,13 +150,10 @@ public class PickupDropScript : MonoBehaviour
 
         transform.position = Vector3.MoveTowards(transform.position, player.position, pickupSpeed * Time.deltaTime);
 
-        float distance =
-            Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance <= 1f)
-        {
-            Collect();
-        }
+            Collect();    
     }
 
     // Grants the resource to the player and removes the drop.
@@ -119,9 +169,7 @@ public class PickupDropScript : MonoBehaviour
             PlayerResourceScript resources = player.GetComponent<PlayerResourceScript>();
 
             if (resources != null)
-            {
                 resources.AddDrops(amount);
-            }
         }
 
         Destroy(gameObject);

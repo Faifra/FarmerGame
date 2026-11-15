@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5385092749033225250}
   - component: {fileID: 6701872031263685134}
   - component: {fileID: -1772790810037459882}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,8 +129,11 @@ MonoBehaviour:
   materialType: Material
   amount: 1
   pickupRange: 4
-  pickupSpeed: 12
-  settleTime: 0.7
+  pickupSpeed: 15
+  settleTime: 0.01
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!54 &-1772790810037459882
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -157,4 +160,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2

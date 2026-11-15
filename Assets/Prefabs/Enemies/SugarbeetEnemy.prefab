@@ -5150,9 +5150,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   targetAltitude: 10
   altitudeThreshold: 3
-  flyingSpeed: 6
+  flyingSpeed: 8
   attackRange: 15
-  chargeSpeed: 15
+  chargeSpeed: 20
   chargeCooldown: 3
   chargeDamage: 5
   groundLayer:
