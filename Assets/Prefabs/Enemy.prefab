@@ -155,7 +155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20592a8acb5609030a6f271fe7f76c4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveTo
+  useErraticMovement: 1
+  movementRadius: 4
+  minDirectionChangeTime: 2
+  maxDirectionChangeTime: 4
+  destinationArrivalDistance: 1.5
+  navMeshSearchRadius: 5
+  directChaseDistance: 5
   goal: {fileID: 0}
+  increaseSpeedRange: 50
 --- !u!114 &2833765690499560913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +214,9 @@ MonoBehaviour:
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  bodyCollider: {fileID: 0}
+  enemyType: 0
+  currentHealth: 0
 --- !u!54 &7750758238009210116
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -246,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 5
   burstDistance: 1.5
   burstHeight: 0.5

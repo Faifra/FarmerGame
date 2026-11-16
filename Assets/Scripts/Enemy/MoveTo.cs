@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +13,14 @@ public class MoveTo : MonoBehaviour
     [SerializeField] private float destinationArrivalDistance = 1.5f;
     [SerializeField] private float navMeshSearchRadius = 5f;
     [SerializeField] private float directChaseDistance = 5f;
+
+    [Header("Flanking")]
+    [SerializeField] private float flankDistance = 8f;
+    [SerializeField] private float flankAngleVariation = 20f;
+    [SerializeField] private float flankDistanceVariation = 1.5f;
+
+    private static readonly List<MoveTo> activeEnemies = new List<MoveTo>();
+    private static float groupAngleOffset;
 
     private float directionChangeTimer;
     private Vector3 currentErraticDestination;
@@ -354,16 +363,55 @@ public class MoveTo : MonoBehaviour
         if (goal == null || agent == null)
             return;
 
-        Vector2 randomCircle = Random.insideUnitCircle * movementRadius;
+        activeEnemies.RemoveAll(enemy => enemy == null);
 
-        Vector3 randomPosition = goal.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+        int enemyCount = activeEnemies.Count;
+        int enemyIndex = activeEnemies.IndexOf(this);
+
+        if (enemyCount <= 0 || enemyIndex < 0)
+            return;
+
+        float angleBetweenEnemies = 360f / enemyCount;
+
+        float angle = groupAngleOffset + enemyIndex * angleBetweenEnemies + Random.Range(-flankAngleVariation, flankAngleVariation);
+
+        float distance = flankDistance + Random.Range(-flankDistanceVariation, flankDistanceVariation);
+
+        float radians = angle * Mathf.Deg2Rad;
+
+        Vector3 offset = new Vector3(Mathf.Sin(radians), 0f, Mathf.Cos(radians)) * distance;
+
+        Vector3 randomPosition = goal.position + offset;
+
+        directionChangeTimer = Random.Range(minDirectionChangeTime, maxDirectionChangeTime);
 
         if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, navMeshSearchRadius, agent.areaMask))
         {
             currentErraticDestination = hit.position;
             hasErraticDestination = true;
-
-            directionChangeTimer = Random.Range(minDirectionChangeTime, maxDirectionChangeTime);
         }
+        else
+        {
+            hasErraticDestination = false;
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (!activeEnemies.Contains(this))
+        {
+            if (activeEnemies.Count == 0)
+                groupAngleOffset = Random.Range(0f, 360f);
+
+            activeEnemies.Add(this);
+        }
+    }
+
+    private void OnDisable()
+    {
+        activeEnemies.Remove(this);
+
+        if (activeEnemies.Count == 0)
+            groupAngleOffset = 0f;
     }
 }

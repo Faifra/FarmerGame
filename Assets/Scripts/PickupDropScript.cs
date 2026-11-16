@@ -21,6 +21,18 @@ public class PickupDropScript : MonoBehaviour
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayers;
 
+    [Header("Pile Visual")]
+    [SerializeField] private Transform visualRoot;
+    [SerializeField] private float visualGrowthMultiplier = 1f;
+
+    [Header("Distance Rendering")]
+    [SerializeField] private float renderDistance = 35f;
+    [SerializeField] private float renderCheckInterval = 0.5f;
+
+    private Renderer[] visualRenderers;
+    private float renderCheckTimer;
+    private bool isVisible = true;
+
     // References to the player and the drop's physics body.
     private Transform player;
     private Rigidbody body;
@@ -34,16 +46,59 @@ public class PickupDropScript : MonoBehaviour
 
     // Tracks the elapsed time before the drop settles.
     private float settleTimer;
+    public bool HasSettled => hasSettled;
+
+    private Vector3 originalVisualScale;
 
     // Caches the Rigidbody component.
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
 
-        if (body != null)
+        if (visualRoot != null)
         {
-            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-            body.interpolation = RigidbodyInterpolation.Interpolate;
+            originalVisualScale = visualRoot.localScale;
+        }
+
+        if (visualRoot != null)
+            visualRenderers = visualRoot.GetComponentsInChildren<Renderer>(true);
+    }
+
+    private void UpdateVisibility()
+    {
+        if (visualRenderers == null || visualRenderers.Length == 0)
+            return;
+
+        renderCheckTimer -= Time.deltaTime;
+
+        if (renderCheckTimer > 0f)
+            return;
+
+        renderCheckTimer = renderCheckInterval;
+
+        if (player == null)
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
+            if (playerObject == null)
+                return;
+
+            player = playerObject.transform;
+        }
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        bool shouldBeVisible = distance <= renderDistance;
+
+        if (shouldBeVisible == isVisible)
+            return;
+
+        isVisible = shouldBeVisible;
+
+        foreach (Renderer visualRenderer in visualRenderers)
+        {
+            if (visualRenderer != null)
+                visualRenderer.enabled = isVisible;
         }
     }
 
@@ -52,6 +107,9 @@ public class PickupDropScript : MonoBehaviour
     {
         if (collected)
             return;
+
+        if (hasSettled && !isBeingPulled)
+            UpdateVisibility();
 
         if (isBeingPulled)
         {
@@ -78,7 +136,7 @@ public class PickupDropScript : MonoBehaviour
     // Stops the drop's physics movement after the settle time.
     private void SettleDrop()
     {
-        if (body == null)
+        if (body == null || hasSettled)
             return;
 
         body.linearVelocity = Vector3.zero;
@@ -86,6 +144,11 @@ public class PickupDropScript : MonoBehaviour
         body.isKinematic = true;
 
         hasSettled = true;
+
+        if (DropManagerScript.Instance != null)
+        {
+            DropManagerScript.Instance.RegisterSettledDrop(this);
+        }
     }
 
     private void OnCollisionStay(Collision collision)
@@ -120,6 +183,40 @@ public class PickupDropScript : MonoBehaviour
             isGrounded = false;
             settleTimer = 0f;
         }
+    }
+
+    public bool CanMergeWith(PickupDropScript other, float distance)
+    {
+        if (other == null || !hasSettled || !other.hasSettled)
+            return false;
+
+        if (materialType != other.materialType)
+            return false;
+
+        return Vector3.Distance(transform.position, other.transform.position) <= distance;
+    }
+
+    public void AbsorbDrop(PickupDropScript other)
+    {
+        if (other == null || other == this)
+            return;
+
+        amount += other.amount;
+
+        UpdatePileVisual();
+
+        other.collected = true;
+        Destroy(other.gameObject);
+    }
+
+    private void UpdatePileVisual()
+    {
+        if (visualRoot == null)
+            return;
+
+        float growth = Mathf.Pow(Mathf.Max(1, amount), 1f / 3f);
+
+        visualRoot.localScale = originalVisualScale * growth * visualGrowthMultiplier;
     }
 
     // Finds the player and starts pulling the drop when in range.

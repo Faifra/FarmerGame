@@ -218,12 +218,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.6652222, y: 2.5602074, z: 1.2855225}
-  m_Center: {x: -0.002532959, y: 1.2719798, z: -0.14276123}
+  m_Size: {x: 1.6652222, y: 2.5602074, z: 1.6340332}
+  m_Center: {x: -0.002532959, y: 1.2719798, z: -0.16113281}
 --- !u!114 &9012557904221427481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
-  maxHealth: 120
+  maxHealth: 350
   damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 2
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
     amount: 15
   burstDistance: 1.5
   burstHeight: 1

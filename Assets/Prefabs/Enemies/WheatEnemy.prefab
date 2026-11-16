@@ -5035,7 +5035,6 @@ GameObject:
   - component: {fileID: 2430233110075703854}
   - component: {fileID: 3230378375632017716}
   - component: {fileID: 1351186636298356341}
-  - component: {fileID: 269083434324932462}
   - component: {fileID: 8243881121568147767}
   - component: {fileID: 7704197567055368873}
   - component: {fileID: -3414131078223760326}
@@ -5180,8 +5179,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 5
   burstDistance: 1.5
   burstHeight: 1
 --- !u!195 &2430233110075703854
@@ -5218,7 +5217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
-  maxHealth: 50
+  maxHealth: 65
   damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
   damageNumberForwardOffset: 0.75
   damageNumberHeight: 1
@@ -5238,23 +5237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e6b19cf3cc53dfb3980ef8e78364f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyScript
---- !u!114 &269083434324932462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8384746767767502866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e05ca2270eee24147a838a9aea73d744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
-  drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 5
-  burstDistance: 1.5
-  burstHeight: 1
 --- !u!114 &8243881121568147767
 MonoBehaviour:
   m_ObjectHideFlags: 0
