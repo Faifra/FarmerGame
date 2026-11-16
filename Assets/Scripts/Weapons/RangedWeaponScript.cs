@@ -68,6 +68,8 @@ public class RangedWeaponScript : WeaponScript
 
     private int currentAmmo;
     private int reserveAmmo;
+    private int baseMagazineSize;
+    private float appliedMagazineSizeMultiplier = 1f;
     private float nextFireTime;
     private float streamAmmoTimer;
     private bool streamFiring;
@@ -89,12 +91,13 @@ public class RangedWeaponScript : WeaponScript
         if (aimCamera == null)
             aimCamera = Camera.main;
 
-        magazineSize = Mathf.Max(1, magazineSize);
+        baseMagazineSize = Mathf.Max(1, magazineSize);
 
-        if (fireMode == FireMode.RestorativeGas &&
-            restorativeGasUpgrades != null)
+        if (fireMode == FireMode.RestorativeGas && restorativeGasUpgrades != null)
         {
-            magazineSize = Mathf.Max(1, Mathf.RoundToInt(magazineSize * restorativeGasUpgrades.MagazineSizeMultiplier));
+            appliedMagazineSizeMultiplier = restorativeGasUpgrades.MagazineSizeMultiplier;
+
+            magazineSize = Mathf.Max(1, Mathf.RoundToInt(baseMagazineSize * appliedMagazineSizeMultiplier));
         }
 
         currentAmmo = magazineSize;
@@ -103,6 +106,8 @@ public class RangedWeaponScript : WeaponScript
 
     private void Update()
     {
+        RefreshRestorativeGasMagazineSize();
+
         if (isReloading || !streamFiring || fireMode != FireMode.LiquidStream || shotgun)
             return;
 
@@ -533,6 +538,35 @@ public class RangedWeaponScript : WeaponScript
         RestorativeGasCloudScript cloud = Instantiate(gasCloudPrefab, muzzle.position, Quaternion.LookRotation(direction));
 
         cloud.Initialize(direction, restorativeGasUpgrades);
+    }
+
+    private void RefreshRestorativeGasMagazineSize()
+    {
+        if (fireMode != FireMode.RestorativeGas ||
+            restorativeGasUpgrades == null)
+            return;
+
+        float newMultiplier = restorativeGasUpgrades.MagazineSizeMultiplier;
+
+        if (Mathf.Approximately(newMultiplier, appliedMagazineSizeMultiplier))
+            return;
+
+        int previousMagazineSize = magazineSize;
+
+        magazineSize = Mathf.Max(1, Mathf.RoundToInt(baseMagazineSize * newMultiplier));
+
+        int capacityIncrease = magazineSize - previousMagazineSize;
+
+        if (capacityIncrease > 0)
+        {
+            currentAmmo = Mathf.Min(magazineSize, currentAmmo + capacityIncrease);
+        }
+        else
+        {
+            currentAmmo = Mathf.Min(currentAmmo, magazineSize);
+        }
+
+        appliedMagazineSizeMultiplier = newMultiplier;
     }
 
     private void OnDisable()

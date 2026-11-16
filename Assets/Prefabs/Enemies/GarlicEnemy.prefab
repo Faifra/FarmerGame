@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
     amount: 7
   burstDistance: 1.5
   burstHeight: 1
