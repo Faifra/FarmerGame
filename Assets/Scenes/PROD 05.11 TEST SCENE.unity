@@ -29636,11 +29636,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
   - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
-  - {fileID: 11400000, guid: a4c0ae5766c9bf146a1d9d73a4d47295, type: 2}
-  - {fileID: 11400000, guid: d568de24985795c4a9fe74399be36698, type: 2}
-  - {fileID: 11400000, guid: 99640837d397227478a5b53badbdf2ae, type: 2}
-  - {fileID: 11400000, guid: 8d4511423c101d8469bf9c12d47de9ab, type: 2}
-  - {fileID: 11400000, guid: a7b0999fd3cafef4b9e328471e81796e, type: 2}
+  - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
+  - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
+  - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
+  - {fileID: 11400000, guid: 3542a45946198ea4596974dc7f86dce9, type: 2}
   spawners:
   - {fileID: 1088458346}
   - {fileID: 632265797}
@@ -68919,6 +68918,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3153657080449132314, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 3336707254128455307, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: trapUpgrades
       value: 
@@ -68931,6 +68934,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 1694355265216816617, guid: 2160b96521784f145b08d14d8ee1f6e9, type: 3}
+    - target: {fileID: 3607454517268560474, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_TagString
+      value: LeafBreaker
+      objectReference: {fileID: 0}
     - target: {fileID: 3628469831461196161, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: swingReference
       value: 
@@ -69014,6 +69021,10 @@ PrefabInstance:
     - target: {fileID: 5405579229288959034, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5405579229288959034, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 5490405055722965011, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: cinemachineCamera
@@ -69326,6 +69337,10 @@ PrefabInstance:
     - target: {fileID: 8285159367990345512, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612378074722891235, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      propertyPath: m_TagString
+      value: LeafBreaker
       objectReference: {fileID: 0}
     - target: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       propertyPath: dashForce

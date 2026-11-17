@@ -15,6 +15,12 @@ public class PlayerMovementScript : MonoBehaviour
     [Space, SerializeField]private float sprintMultiplier = 2f;
     [SerializeField] private float slideSpeedMultiplier = 1.2f;
 
+    public float MoveForce
+    {
+        get => moveForce;
+        set => moveForce = value;
+    }
+
     [Header("Stamina")]
     [SerializeField] private int maxStamina = 100;
     [SerializeField] private int staminaRemovalRate = 1;
@@ -67,6 +73,18 @@ public class PlayerMovementScript : MonoBehaviour
     private float dashTimer;
     private float dashCooldownTimer;
     private Vector3 dashDirection;
+
+    public bool IsDashing
+    {
+        get => isDashing;
+        set => isDashing = value;
+    }
+
+    public bool ShouldJump
+    {
+        get => shouldJump;
+        set => shouldJump = value;
+    }
 
     private bool keepMomentum;
     private float dashMomentumSpeed;
@@ -130,7 +148,7 @@ public class PlayerMovementScript : MonoBehaviour
             jumpsLeft = maxJumps;
         }
 
-        if (jumpAction.WasPressedThisFrame() && jumpsLeft > 0)
+        if (jumpAction.WasPressedThisFrame() && jumpsLeft > 0 && !GameManagerScript.instance.IsStunned)
         {
             shouldJump = true;
         }
@@ -150,7 +168,7 @@ public class PlayerMovementScript : MonoBehaviour
         }
 
         // Dash input
-        if (dashAction.WasPressedThisFrame() && dashCooldownTimer <= 0f && !isDashing)
+        if (dashAction.WasPressedThisFrame() && dashCooldownTimer <= 0f && !isDashing && !GameManagerScript.instance.IsStunned)
         {
             StartDash(moveValue);
         }
