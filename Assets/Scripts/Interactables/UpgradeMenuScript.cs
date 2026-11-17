@@ -30,6 +30,22 @@ public class UpgradeMenuScript : MonoBehaviour
     [SerializeField] private Color selectedTabColor = new Color(183f / 255f, 121f / 255f, 54f / 255f);
     [SerializeField] private Color normalTabColor = new Color(52f / 255f, 70f / 255f, 79f / 255f);
 
+    [Header("Item Button Outlines")]
+    [SerializeField] private Outline basicSprayOutline;
+    [SerializeField] private Outline shotgunSprayOutline;
+    [SerializeField] private Outline pitchforkOutline;
+    [SerializeField] private Outline scytheOutline;
+    [SerializeField] private Outline grappleOutline;
+    [SerializeField] private Outline sniperOutline;
+    [SerializeField] private Outline waterBalloonOutline;
+    [SerializeField] private Outline milkChurnOutline;
+    [SerializeField] private Outline restorativeGasOutline;
+    [SerializeField] private Outline launchTrapOutline;
+    [SerializeField] private Outline pullTrapOutline;
+    [SerializeField] private Outline beehiveTrapOutline;
+    [SerializeField] private Outline sprinklerTrapOutline;
+    [SerializeField] private Outline magnifyingGlassTrapOutline;
+
     // Player components affected by opening and using the menu.
     [Header("Player")]
     [SerializeField] private PlayerResourceScript playerResources;
@@ -834,6 +850,18 @@ public class UpgradeMenuScript : MonoBehaviour
     // ITEM SELECTION
     // -----------------------------------------------------------------------
 
+    private void UpdateItemButtonOutlines(Outline selectedOutline)
+    {
+        Outline[] outlines = {basicSprayOutline, shotgunSprayOutline, pitchforkOutline, scytheOutline, grappleOutline, sniperOutline, waterBalloonOutline, milkChurnOutline,
+            restorativeGasOutline, launchTrapOutline, pullTrapOutline, beehiveTrapOutline, sprinklerTrapOutline, magnifyingGlassTrapOutline};
+
+        foreach (Outline outline in outlines)
+        {
+            if (outline != null)
+                outline.enabled = (outline == selectedOutline);
+        }
+    }
+
     private void CloseAllUpgradePanels()
     {
         if (basicSprayUpgradePanel != null)
@@ -881,6 +909,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowBasicSprayUpgrades()
     {
+        UpdateItemButtonOutlines(basicSprayOutline);
         CloseAllUpgradePanels();
 
         if (basicSprayUpgradePanel != null)
@@ -897,6 +926,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowShotgunSprayUpgrades()
     {
+        UpdateItemButtonOutlines(shotgunSprayOutline);
         CloseAllUpgradePanels();
 
         if (shotgunSprayUpgradePanel != null)
@@ -913,6 +943,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowPitchforkUpgrades()
     {
+        UpdateItemButtonOutlines(pitchforkOutline);
         CloseAllUpgradePanels();
 
         if (pitchforkUpgradePanel != null)
@@ -929,6 +960,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowScytheUpgrades()
     {
+        UpdateItemButtonOutlines(scytheOutline);
         CloseAllUpgradePanels();
 
         if (scytheUpgradePanel != null)
@@ -945,6 +977,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowGrappleUpgrades()
     {
+        UpdateItemButtonOutlines(grappleOutline);
         CloseAllUpgradePanels();
 
         if (grappleUpgradePanel != null)
@@ -961,6 +994,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowSniperUpgrades()
     {
+        UpdateItemButtonOutlines(sniperOutline);
         CloseAllUpgradePanels();
 
         if (sniperUpgradePanel != null)
@@ -977,6 +1011,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowWaterBallonLauncherUpgrades()
     {
+        UpdateItemButtonOutlines(waterBalloonOutline);
         CloseAllUpgradePanels();
 
         if (waterBalloonUpgradePanel != null)
@@ -993,6 +1028,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowMilkChurnLauncherUpgrades()
     {
+        UpdateItemButtonOutlines(milkChurnOutline);
         CloseAllUpgradePanels();
 
         if (milkChurnUpgradePanel != null)
@@ -1009,6 +1045,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowRestorativeGasThrowerUpgrades()
     {
+        UpdateItemButtonOutlines(restorativeGasOutline);
         CloseAllUpgradePanels();
 
         if (restorativeGasUpgradePanel != null)
@@ -1025,6 +1062,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowLaunchTrapUpgrades()
     {
+        UpdateItemButtonOutlines(launchTrapOutline);
         CloseAllUpgradePanels();
 
         if (launchTrapUpgradePanel != null)
@@ -1041,6 +1079,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowPullTrapUpgrades()
     {
+        UpdateItemButtonOutlines(pullTrapOutline);
         CloseAllUpgradePanels();
 
         if (pullTrapUpgradePanel != null)
@@ -1057,6 +1096,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowBeehiveTrapUpgrades()
     {
+        UpdateItemButtonOutlines(beehiveTrapOutline);
         CloseAllUpgradePanels();
 
         if (beehiveTrapUpgradePanel != null)
@@ -1073,6 +1113,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowSprinklerTrapUpgrades()
     {
+        UpdateItemButtonOutlines(sprinklerTrapOutline);
         CloseAllUpgradePanels();
 
         if (sprinklerTrapUpgradePanel != null)
@@ -1089,6 +1130,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     public void ShowMagnifyingGlassTrapUpgrades()
     {
+        UpdateItemButtonOutlines(magnifyingGlassTrapOutline);
         CloseAllUpgradePanels();
 
         if (magnifyingGlassTrapUpgradePanel != null)
