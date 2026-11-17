@@ -4857,6 +4857,7 @@ GameObject:
   - component: {fileID: 3182323409239326452}
   - component: {fileID: 1995786313983535724}
   - component: {fileID: -2397154126260646088}
+  - component: {fileID: -7990935935313904965}
   m_Layer: 6
   m_Name: TomatoEnemy
   m_TagString: BossBarCollection
@@ -5046,6 +5047,9 @@ MonoBehaviour:
   destinationArrivalDistance: 1.5
   navMeshSearchRadius: 5
   directChaseDistance: 8
+  flankDistance: 8
+  flankAngleVariation: 20
+  flankDistanceVariation: 1.5
   goal: {fileID: 0}
   increaseSpeedRange: 50
 --- !u!54 &1020916795804590473
@@ -5123,6 +5127,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VineClimbAgentScript
   climbDuration: 2
+--- !u!114 &-7990935935313904965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426844584999519986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c269c24d29938e545bce49922c418970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMarkerSpawnerScript
+  markerPrefab: {fileID: 7493753560536211224, guid: d333690cd38a0a14ba47e1bc47eb8049, type: 3}
+  enemyIcon: {fileID: 1215296530120796333, guid: 0e9df4971272c624087a0cd922546c8f, type: 3}
 --- !u!1 &1722571274558697815
 GameObject:
   m_ObjectHideFlags: 0
