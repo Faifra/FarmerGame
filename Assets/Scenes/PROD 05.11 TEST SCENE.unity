@@ -8724,7 +8724,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8786290955130515017, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 1554113959}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 963408904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6567bc5d242c0511f84f5fcce6ab3254, type: 3}
@@ -29586,6 +29586,7 @@ GameObject:
   - component: {fileID: 658591891}
   - component: {fileID: 658591892}
   - component: {fileID: 658591893}
+  - component: {fileID: 658591894}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -29690,6 +29691,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropManagerScript
   mergeDistance: 1.5
+--- !u!114 &658591894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658591888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a067ba9a8c792e949b5bbb2dda055b8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
 --- !u!1 &659592640 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7433150504041319689, guid: 1de67abbdd75618449e1ca938719e845, type: 3}
@@ -43062,6 +43075,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 70, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &963408904 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4226127632634856397, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+  m_PrefabInstance: {fileID: 1554113959}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &965085021
 GameObject:
   m_ObjectHideFlags: 0
@@ -69394,6 +69412,9 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 278537263}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4226127632634856397, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1750207872}
     - targetCorrespondingSourceObject: {fileID: 263064433614677235, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1950859234}
@@ -69477,7 +69498,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4931457231616748399, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 1554113959}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 963408904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: efa1fb31c3e165b4394b92c60c514cdd, type: 3}
@@ -78490,7 +78511,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4348695818364076343, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 1554113959}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 963408904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c897686f3f1a416b3cda1bd0d32210, type: 3}
@@ -78501,12 +78522,26 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4040055113021664364, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
   m_PrefabInstance: {fileID: 1554113959}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 963408904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e3c30dedf55c244e866293688e805e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerResourceScript
+--- !u!114 &1750207872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963408904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a61980539afda1d40b2a38fb43ae293d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepsScript
+  footStepSFX: {fileID: 8300000, guid: 43860b1a41b13ae439f80a51a38b8621, type: 3}
+  TimeInBetweenSteps: 0.35
 --- !u!1001 &1752227398
 PrefabInstance:
   m_ObjectHideFlags: 0
