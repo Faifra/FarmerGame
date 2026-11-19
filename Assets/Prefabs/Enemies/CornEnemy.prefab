@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 283262297973948642}
   - component: {fileID: -7231608245279810139}
   - component: {fileID: -8493083844142635324}
+  - component: {fileID: -7333721208196779576}
   m_Layer: 6
   m_Name: CornEnemy
   m_TagString: BossBarCollection
@@ -314,6 +315,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMarkerSpawnerScript
   markerPrefab: {fileID: 7493753560536211224, guid: d333690cd38a0a14ba47e1bc47eb8049, type: 3}
   enemyIcon: {fileID: 1215296530120796333, guid: 0e9df4971272c624087a0cd922546c8f, type: 3}
+--- !u!114 &-7333721208196779576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667211483588175294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aeb5597a90eab44aa1fb703df20414b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBarScript
+  healthBarPrefab: {fileID: 8261764444921352098, guid: b15eb04c9390faf4b91154e70bfde15e, type: 3}
+  heightOffset: 0.3
+  visibleDistance: 34
+  fadeEndDistance: 42
 --- !u!1 &4521431129721483636
 GameObject:
   m_ObjectHideFlags: 0

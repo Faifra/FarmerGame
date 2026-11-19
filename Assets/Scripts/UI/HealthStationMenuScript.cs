@@ -43,40 +43,57 @@ public class HealthStationMenuScript : MonoBehaviour
         {
             itemName = "Kanelbulle",
             description = "A classic cinnamon bun. Restores 20 health.",
-            cost = 5,
+            cost = 15,
             healing = 20
         },
         new FikaItem
         {
             itemName = "Chokladboll",
             description = "A chocolate treat. Restores 35 health.",
-            cost = 8,
+            cost = 27,
             healing = 35
         },
         new FikaItem
         {
-            itemName = "Semla",
-            description = "A generous cream-filled bun. Restores 60 health.",
-            cost = 14,
+            itemName = "Spettekaka",
+            description = "A local dessert. Restores 60 health.",
+            cost = 50,
             healing = 60
         },
         new FikaItem
         {
             itemName = "Prinsesstårta",
             description = "A slice of princess cake. Restores 100 health.",
-            cost = 22,
+            cost = 95,
             healing = 100
         },
-        new FikaItem {itemName = "Bryggkaffe", description = "Reduces stamina depletion by 50% for 20 seconds.", cost = 12, effect = FikaEffect.StaminaDepletion, effectMultiplier = 0.5f, effectDuration = 20f},
-        new FikaItem {itemName = "Varm choklad", description = "Doubles stamina recovery for 20 seconds.", cost = 10, effect = FikaEffect.StaminaRecovery, effectMultiplier = 2f, effectDuration = 20f},
+        new FikaItem 
+        {
+            itemName = "Bryggkaffe",
+            description = "Reduces stamina depletion by 50% for 20 seconds.",
+            cost = 12,
+            effect = FikaEffect.StaminaDepletion,
+            effectMultiplier = 0.5f,
+            effectDuration = 20f
+        },
+        new FikaItem 
+        {
+            itemName = "Varm choklad",
+            description = "Doubles stamina recovery for 20 seconds.",
+            cost = 10,
+            effect = FikaEffect.StaminaRecovery,
+            effectMultiplier = 2f,
+            effectDuration = 20f
+        },
         new FikaItem
-{
-    itemName = "Kardemummabulle",
-    description = "Slowly restores 2 HP per second for 10 seconds.",
-    cost = 15,
-    effect = FikaEffect.HealthRegeneration,
-    effectMultiplier = 2f,
-    effectDuration = 10f}};
+        {
+            itemName = "Bulle Med Bulle",
+            description = "Slowly restores 2 HP per second for 10 seconds.",
+            cost = 15,
+            effect = FikaEffect.HealthRegeneration,
+            effectMultiplier = 2f,
+            effectDuration = 10f
+        }};
 
     [Header("Player")]
     [SerializeField] private PlayerResourceScript playerResources;
