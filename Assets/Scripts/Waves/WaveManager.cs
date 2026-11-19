@@ -21,6 +21,13 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float prepTimer = 0f;
     [SerializeField] private bool isPrepPhase = false;
 
+    [Header("Enemy Health Scaling")]
+    [SerializeField] private int healthIncreasePerWave = 10;
+
+    [Header("Extra Health Layers")]
+    [SerializeField] private int wavesPerExtraLayer = 8;
+    [SerializeField] private int healthPerExtraLayer = 70;
+
     public bool IsPrepPhase
     {
         get => isPrepPhase;
@@ -28,6 +35,8 @@ public class WaveManager : MonoBehaviour
 
     private HashSet<EnemyType> firstEncounters = new(); //hashset has "unique" values so it can keep track of each unique type.
     //each time a unique enemy is added they become a "boss":
+
+    private Dictionary<EnemyType, int> enemyWaveAppearances = new(); //tracks how many waves each enemy type has appeared in.
     public int CurrentWave => currentWaveIndex;
     public int EnemiesRemaining => enemiesRemaining;
 
@@ -85,6 +94,25 @@ public class WaveManager : MonoBehaviour
 
         WaveSO currentWave = waves[currentWaveIndex];
 
+        HashSet<EnemyType> typesInWave = new(); //counts each enemy type only once per wave.
+
+        foreach (WaveEnemy waveEnemy in currentWave.enemies)
+        {
+            EnemyHealthScript prefabHealth =
+                waveEnemy.enemyPrefab.GetComponent<EnemyHealthScript>();
+
+            if (prefabHealth != null)
+                typesInWave.Add(prefabHealth.Type);
+        }
+
+        foreach (EnemyType type in typesInWave)
+        {
+            if (!enemyWaveAppearances.ContainsKey(type))
+                enemyWaveAppearances[type] = 0;
+
+            enemyWaveAppearances[type]++;
+        }
+
         int spawnerIndex = 0;
 
         foreach (WaveEnemy enemy in currentWave.enemies)
@@ -104,6 +132,28 @@ public class WaveManager : MonoBehaviour
                 if (enemyHealth != null)
                 {
                     EnemyType type = enemyHealth.Type;
+
+                    int appearances = enemyWaveAppearances[type];
+                    int healthBonus = appearances * healthIncreasePerWave;
+
+                    enemyHealth.MaxHealth += healthBonus;
+
+                    if (appearances >= wavesPerExtraLayer)
+                    {
+                        EnemyHealthBarScript healthBar = spawnedEnemy.GetComponent<EnemyHealthBarScript>();
+
+                        if (healthBar != null)
+                            healthBar.ShowSecondSlider();
+                    }
+
+                    EnemyHealthLevels healthLevels = spawnedEnemy.GetComponent<EnemyHealthLevels>();
+
+                    if (healthLevels != null)
+                    {
+                        int additionalLayers = appearances / wavesPerExtraLayer;
+
+                        healthLevels.ConfigureHealthLayers(additionalLayers, healthPerExtraLayer);
+                    }
 
                     if (firstEncounters.Add(type)) //try to add the enemy to hashset. if it already exsits it will return false and skip the rest of the code within
                         //this block.

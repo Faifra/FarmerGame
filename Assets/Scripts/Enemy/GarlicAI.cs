@@ -39,6 +39,10 @@ public class GarlicAI : MonoBehaviour
             Explode();
             GameObject gas = Instantiate(gasCloud, transform.position, Quaternion.identity);
             gas.SetActive(true);
+            if (GetComponent<BossUIHelperScript>())
+            {
+                GetComponent<BossUIHelperScript>().RemoveHealthBar();
+            }
             Destroy(gameObject); //destroy garlic after explosion.
             //apply effect here perhaps
         }
