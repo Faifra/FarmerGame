@@ -93456,7 +93456,7 @@ MonoBehaviour:
   - itemName: Kanelbulle
     description: A classic cinnamon bun. Restores 20 health.
     icon: {fileID: 0}
-    cost: 5
+    cost: 15
     healing: 20
     effect: 0
     effectMultiplier: 1
@@ -93464,15 +93464,15 @@ MonoBehaviour:
   - itemName: Chokladboll
     description: A chocolate treat. Restores 35 health.
     icon: {fileID: 0}
-    cost: 8
+    cost: 27
     healing: 35
     effect: 0
     effectMultiplier: 1
     effectDuration: 20
-  - itemName: Semla
-    description: A generous cream-filled bun. Restores 60 health.
+  - itemName: Spettekaka
+    description: A local dessert. Restores 60 health.
     icon: {fileID: 0}
-    cost: 14
+    cost: 50
     healing: 60
     effect: 0
     effectMultiplier: 1
@@ -93480,34 +93480,34 @@ MonoBehaviour:
   - itemName: "Prinsesst\xE5rta"
     description: A slice of princess cake. Restores 100 health.
     icon: {fileID: 0}
-    cost: 22
+    cost: 95
     healing: 100
     effect: 0
     effectMultiplier: 1
     effectDuration: 20
   - itemName: Bryggkaffe
-    description: Reduces stamina depletion by 50% for 20 seconds.
+    description: Reduces stamina depletion by 50% for 30 seconds.
     icon: {fileID: 0}
-    cost: 12
+    cost: 15
     healing: 0
     effect: 1
     effectMultiplier: 0.5
-    effectDuration: 20
+    effectDuration: 30
   - itemName: Varm choklad
-    description: Doubles stamina recovery for 20 seconds.
+    description: Doubles stamina recovery for 30 seconds.
     icon: {fileID: 0}
     cost: 10
     healing: 0
     effect: 2
     effectMultiplier: 2
-    effectDuration: 20
-  - itemName: Kardemummabulle
-    description: Slowly restores 2 HP per second for 10 seconds.
+    effectDuration: 30
+  - itemName: Bulle Med Bulle
+    description: Slowly restores 5 HP per second for 10 seconds.
     icon: {fileID: 0}
-    cost: 15
+    cost: 20
     healing: 0
     effect: 3
-    effectMultiplier: 2
+    effectMultiplier: 5
     effectDuration: 10
   playerResources: {fileID: 1750207871}
   playerLook: {fileID: 1750207870}

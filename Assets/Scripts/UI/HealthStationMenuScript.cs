@@ -70,8 +70,8 @@ public class HealthStationMenuScript : MonoBehaviour
         new FikaItem 
         {
             itemName = "Bryggkaffe",
-            description = "Reduces stamina depletion by 50% for 20 seconds.",
-            cost = 12,
+            description = "Reduces stamina depletion by 50% for 30 seconds.",
+            cost = 15,
             effect = FikaEffect.StaminaDepletion,
             effectMultiplier = 0.5f,
             effectDuration = 20f
@@ -79,7 +79,7 @@ public class HealthStationMenuScript : MonoBehaviour
         new FikaItem 
         {
             itemName = "Varm choklad",
-            description = "Doubles stamina recovery for 20 seconds.",
+            description = "Doubles stamina recovery for 30 seconds.",
             cost = 10,
             effect = FikaEffect.StaminaRecovery,
             effectMultiplier = 2f,
@@ -88,8 +88,8 @@ public class HealthStationMenuScript : MonoBehaviour
         new FikaItem
         {
             itemName = "Bulle Med Bulle",
-            description = "Slowly restores 2 HP per second for 10 seconds.",
-            cost = 15,
+            description = "Slowly restores 5 HP per second for 10 seconds.",
+            cost = 20,
             effect = FikaEffect.HealthRegeneration,
             effectMultiplier = 2f,
             effectDuration = 10f
@@ -129,10 +129,8 @@ public class HealthStationMenuScript : MonoBehaviour
     private void BuildItemCards()
     {
         if (cardContainer == null || cardPrefab == null)
-        {
-            Debug.LogError("Health Station: Card Container or Card Prefab is missing.");
             return;
-        }
+       
 
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
