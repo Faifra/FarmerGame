@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,7 +17,21 @@ public class GameManagerScript : MonoBehaviour
     public static GameManagerScript instance { get; private set; }
 
     private UpgradeManagerScript upgradeManager;
+
+    private Coroutine healthRegenerationCoroutine;
     public static int MaxHP => maximumHP;
+
+    [Header("Stun Options")]
+    [SerializeField] private static bool isStunned = false;
+    [SerializeField] private static bool immuneToStun = false;
+    [SerializeField] private static float stunCooldownTimer;
+    [SerializeField] private static float stunCooldown;
+    [SerializeField] private static float stunTimer;
+    [SerializeField] private static float stunDuration;
+    private PlayerMovementScript playerMovementScript;
+    private float previousMoveForce;
+
+    public bool IsStunned => isStunned;
 
     private void Awake()
     {
@@ -32,6 +47,11 @@ public class GameManagerScript : MonoBehaviour
 
         maximumHP = Mathf.Max(1, maxHP);
         playerHP = Mathf.Clamp(startingHP, 0, maximumHP);
+
+        isStunned = false;
+        immuneToStun = false;
+
+        playerMovementScript = FindFirstObjectByType<PlayerMovementScript>();
     }
 
     public static void SetHP(int newhp)
@@ -69,6 +89,51 @@ public class GameManagerScript : MonoBehaviour
         return maxStamina;
     }
 
+    public void ApplyTemporaryHealthRegeneration(int healthPerSecond, float duration)
+    {
+        if (healthRegenerationCoroutine != null)
+            StopCoroutine(healthRegenerationCoroutine);
+
+        healthRegenerationCoroutine = StartCoroutine(HealthRegenerationRoutine(healthPerSecond, duration));
+    }
+
+    public void ApplyStun(float duration, float cooldown)
+    {
+        if (isStunned || immuneToStun)
+            return;
+
+        
+        isStunned = true;
+        immuneToStun = true;
+
+        stunDuration = duration;
+        stunCooldown = cooldown;
+
+        stunTimer = 0f;
+        stunCooldownTimer = 0f;
+
+        playerMovementScript.IsDashing = false;
+        playerMovementScript.ShouldJump = false;
+        previousMoveForce = playerMovementScript.MoveForce;
+        playerMovementScript.MoveForce = 0f;
+    }
+
+    private IEnumerator HealthRegenerationRoutine(int healthPerSecond, float duration)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            yield return new WaitForSeconds(1f);
+
+            elapsedTime += 1f;
+
+            RestoreHP(healthPerSecond);
+        }
+
+        healthRegenerationCoroutine = null;
+    }
+
     void Update()
     {
         if(playerHP <= 0) // Reload level when we die
@@ -77,6 +142,29 @@ public class GameManagerScript : MonoBehaviour
                 upgradeManager.ResetUpgrades();
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        if (isStunned)
+        {
+            stunTimer += Time.deltaTime;
+
+            if (stunTimer >= stunDuration)
+            {
+                playerMovementScript.MoveForce = previousMoveForce;
+                isStunned = false;
+                stunTimer = 0f;
+            }
+        }
+
+        if (immuneToStun)
+        {
+            stunCooldownTimer += Time.deltaTime;
+
+            if (stunCooldownTimer >= stunCooldown)
+            {
+                immuneToStun = false;
+                stunCooldownTimer = 0f;
+            }
         }
     }
 

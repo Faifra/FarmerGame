@@ -25,6 +25,10 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
     [SerializeField] private Collider bodyCollider;
     public Collider BodyCollider => bodyCollider;
+
+    protected float DamageMultiplier => temporaryDamageMultiplier;
+    protected MoveTo MoveToComponent => moveTo;
+
     [Header("Enemy Information")]
     [SerializeField] private EnemyType enemyType;
 
@@ -35,7 +39,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
         set => maxHealth = value;
     }
 
-    // Current health shared with derived enemy classes.
+    // Current health shared with derived enemy classes
     [SerializeField] protected int currentHealth;
 
     public bool IsDead => isDead;
@@ -44,7 +48,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     private EnemyDropsScript dropsScript;
     private int bonusDropsOnDeath;
     private WaveManager waveManager;
-    private MoveTo moveTo;
+    protected MoveTo moveTo;
 
     // Tracks death state and any active knockback coroutine.
     private bool isDead = false;
@@ -97,7 +101,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
         }
     }
 
-    public void TakeDamageFromSprinkler(int damage, GameObject wallPrefab, float wallHealthMultiplier = 1f)
+    public virtual void TakeDamageFromSprinkler(int damage, GameObject wallPrefab, float wallHealthMultiplier = 1f)
     {
         if (isDead)
             return;
@@ -117,7 +121,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     }
 
     // Spawns a damage number between the enemy and the player.
-    private void ShowDamageNumber(int damage)
+    protected void ShowDamageNumber(int damage)
     {
         if (damageNumberPrefab == null)
             return;
@@ -177,7 +181,7 @@ public abstract class EnemyHealthScript : MonoBehaviour
     }
 
     // Applies damage based on a percentage of maximum health.
-    public void TakePercentageDamage(float percentage)
+    public virtual void TakePercentageDamage(float percentage)
     {
         if (isDead)
             return;
@@ -205,6 +209,17 @@ public abstract class EnemyHealthScript : MonoBehaviour
 
         temporaryDamageMultiplier = 1f;
         damageMultiplierCoroutine = null;
+    }
+
+    protected void ApplyBaseHealthDamage(int finalDamage)
+    {
+        currentHealth -= finalDamage;
+
+        ShowDamageNumber(finalDamage);
+        Debug.Log($"current health: {currentHealth}");
+
+        if (currentHealth <= 0)
+            Die();
     }
 
     // Handles death, drops, and removal of the enemy.
@@ -248,4 +263,17 @@ public abstract class EnemyHealthScript : MonoBehaviour
         return currentHealth;
     }
 
+    protected void ApplySprinklerBaseDamage(int finalDamage, GameObject wallPrefab, float wallHealthMultiplier)
+    {
+        currentHealth -= finalDamage;
+
+        ShowDamageNumber(finalDamage);
+
+        if (currentHealth <= 0)
+        {
+            rootedWallPrefab = wallPrefab;
+            rootedWallHealthMultiplier = wallHealthMultiplier;
+            Die();
+        }
+    }
 }

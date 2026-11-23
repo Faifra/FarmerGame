@@ -4975,14 +4975,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7867204772041170787}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.533}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.227, y: -0.541, z: -0.002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 420070587315844957}
   m_Father: {fileID: 3415831688076264428}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!135 &7151631202740934451
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5035,6 +5035,8 @@ GameObject:
   - component: {fileID: 7496189725551747925}
   - component: {fileID: 1290560114266358280}
   - component: {fileID: -6300649277110659574}
+  - component: {fileID: 9035851929865255262}
+  - component: {fileID: -1606474169034934171}
   m_Layer: 6
   m_Name: SugarbeetEnemy
   m_TagString: BossBarCollection
@@ -5065,7 +5067,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8384746767767502866}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -2378885398013798754, guid: 855acfb9d288ca046b802b259678e508, type: 3}
 --- !u!23 &4669020605040790038
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5091,7 +5093,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 719517811429001261, guid: 855acfb9d288ca046b802b259678e508, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5135,7 +5137,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0.2, y: 0, z: 0}
 --- !u!114 &9123358559013487249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5150,11 +5152,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   targetAltitude: 10
   altitudeThreshold: 3
-  flyingSpeed: 4
+  flyingSpeed: 8
   attackRange: 15
-  chargeSpeed: 15
+  chargeSpeed: 20
   chargeCooldown: 3
   chargeDamage: 5
+  bobbingHeight: 0.7
+  bobbingSpeed: 2
+  zigzagDistance: 2
+  zigzagSpeed: 2
+  zigzagDirectionChangeSpeed: 1.5
+  turnSpeed: 180
+  windupSpinSpeed: 1000
   groundLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -5171,12 +5180,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
-  maxHealth: 45
+  maxHealth: 55
   damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
   damageNumberForwardOffset: 0.75
-  damageNumberHeight: 2
+  damageNumberHeight: 1
   damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
-  bodyCollider: {fileID: 0}
+  bodyCollider: {fileID: 8763984447735584}
   enemyType: 6
   currentHealth: 0
 --- !u!114 &7496189725551747925
@@ -5213,10 +5222,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &-6300649277110659574
 MonoBehaviour:
@@ -5231,7 +5240,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 7
   burstDistance: 1.5
-  burstHeight: 0.5
+  burstHeight: 1
+--- !u!114 &9035851929865255262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c269c24d29938e545bce49922c418970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMarkerSpawnerScript
+  markerPrefab: {fileID: 7493753560536211224, guid: d333690cd38a0a14ba47e1bc47eb8049, type: 3}
+  enemyIcon: {fileID: 1215296530120796333, guid: 0e9df4971272c624087a0cd922546c8f, type: 3}
+--- !u!114 &-1606474169034934171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aeb5597a90eab44aa1fb703df20414b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBarScript
+  healthBarPrefab: {fileID: 8261764444921352098, guid: b15eb04c9390faf4b91154e70bfde15e, type: 3}
+  heightOffset: 0.3
+  visibleDistance: 34
+  fadeEndDistance: 42

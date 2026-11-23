@@ -20,7 +20,7 @@ public class EnemyDropsScript : MonoBehaviour
     // Controls the distance and height of spawned drops.
     [Header("Drop Burst")]
     [SerializeField] private float burstDistance = 1.5f;
-    [SerializeField] private float burstHeight = 0.5f;
+    [SerializeField] private float burstHeight = 1f;
 
     // Spawns the configured quantity of each valid drop.
     public void Drop()
@@ -63,8 +63,7 @@ public class EnemyDropsScript : MonoBehaviour
 
         Vector3 spawnPosition = transform.position + direction * Random.Range(0.2f, burstDistance) + Vector3.up * burstHeight;
 
-        GameObject drop = Instantiate(prefab, spawnPosition, Quaternion.identity
-        );
+        GameObject drop = Instantiate(prefab, spawnPosition, Quaternion.identity);
 
         Rigidbody body = drop.GetComponent<Rigidbody>();
 

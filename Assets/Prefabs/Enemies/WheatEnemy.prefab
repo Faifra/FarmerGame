@@ -5033,6 +5033,13 @@ GameObject:
   - component: {fileID: -1260601196073960439}
   - component: {fileID: 8827327480464963579}
   - component: {fileID: 2430233110075703854}
+  - component: {fileID: 3230378375632017716}
+  - component: {fileID: 1351186636298356341}
+  - component: {fileID: 8243881121568147767}
+  - component: {fileID: 7704197567055368873}
+  - component: {fileID: -3414131078223760326}
+  - component: {fileID: 6077987360179233511}
+  - component: {fileID: 5235577149896662540}
   m_Layer: 6
   m_Name: WheatEnemy
   m_TagString: BossBarCollection
@@ -5159,7 +5166,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &8827327480464963579
 MonoBehaviour:
@@ -5174,10 +5181,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
-  - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 10
+  - prefab: {fileID: 4394939927166631210, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
+    amount: 5
   burstDistance: 1.5
-  burstHeight: 0.5
+  burstHeight: 1
 --- !u!195 &2430233110075703854
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5188,7 +5195,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.35
-  m_Speed: 3.5
+  m_Speed: 7.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5200,3 +5207,120 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3230378375632017716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193afc33d1bf3eb4daf0f6aa0a47f501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyHealth
+  maxHealth: 65
+  damageNumberPrefab: {fileID: 3267762388557263663, guid: 35e62c8dbd34cc148a103cc60dcce5a1, type: 3}
+  damageNumberForwardOffset: 0.75
+  damageNumberHeight: 1
+  damageNumberAdditionalOffset: {x: 0, y: 0, z: 0}
+  bodyCollider: {fileID: 8763984447735584}
+  enemyType: 0
+  currentHealth: 0
+--- !u!114 &1351186636298356341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6b19cf3cc53dfb3980ef8e78364f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleEnemyScript
+--- !u!114 &8243881121568147767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20592a8acb5609030a6f271fe7f76c4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoveTo
+  useErraticMovement: 1
+  movementRadius: 4
+  minDirectionChangeTime: 2
+  maxDirectionChangeTime: 4
+  destinationArrivalDistance: 1.5
+  navMeshSearchRadius: 5
+  directChaseDistance: 8
+  flankDistance: 8
+  flankAngleVariation: 20
+  flankDistanceVariation: 1.5
+  goal: {fileID: 0}
+  increaseSpeedRange: 50
+--- !u!114 &7704197567055368873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbefa65573828704396667e2dd3fc627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlantVineSpawnerScript
+  vinePrefab: {fileID: 8722497302726761309, guid: 5a46a3b55ee9c1e42b9b5a15884db253, type: 3}
+  detectionRange: 20
+  arrivalDistance: 1
+  plantingDuration: 2
+  checkInterval: 1.5
+  maximumVinesToGrow: 1
+--- !u!114 &-3414131078223760326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cf27caf5f8cc643a6da982f6ea6c98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VineClimbAgentScript
+  climbDuration: 2
+--- !u!114 &6077987360179233511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c269c24d29938e545bce49922c418970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMarkerSpawnerScript
+  markerPrefab: {fileID: 7493753560536211224, guid: d333690cd38a0a14ba47e1bc47eb8049, type: 3}
+  enemyIcon: {fileID: 1215296530120796333, guid: 0e9df4971272c624087a0cd922546c8f, type: 3}
+--- !u!114 &5235577149896662540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aeb5597a90eab44aa1fb703df20414b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBarScript
+  healthBarPrefab: {fileID: 8261764444921352098, guid: b15eb04c9390faf4b91154e70bfde15e, type: 3}
+  heightOffset: 0.3
+  visibleDistance: 34
+  fadeEndDistance: 42

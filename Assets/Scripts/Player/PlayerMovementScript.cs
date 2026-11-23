@@ -15,6 +15,12 @@ public class PlayerMovementScript : MonoBehaviour
     [Space, SerializeField]private float sprintMultiplier = 2f;
     [SerializeField] private float slideSpeedMultiplier = 1.2f;
 
+    public float MoveForce
+    {
+        get => moveForce;
+        set => moveForce = value;
+    }
+
     [Header("Stamina")]
     [SerializeField] private int maxStamina = 100;
     [SerializeField] private int staminaRemovalRate = 1;
@@ -68,16 +74,32 @@ public class PlayerMovementScript : MonoBehaviour
     private float dashCooldownTimer;
     private Vector3 dashDirection;
 
+    public bool IsDashing
+    {
+        get => isDashing;
+        set => isDashing = value;
+    }
+
+    public bool ShouldJump
+    {
+        get => shouldJump;
+        set => shouldJump = value;
+    }
+
     private bool keepMomentum;
     private float dashMomentumSpeed;
     private Coroutine dashMomentumRoutine;
 
     private bool grappleMovementActive;
 
-    private float fovTimer = 0;
-
     private float temporaryMovementSpeedMultiplier = 1f;
     private Coroutine movementSpeedBoostCoroutine;
+
+    private float temporaryStaminaDepletionMultiplier = 1f;
+    private float temporaryStaminaRecoveryMultiplier = 1f;
+
+    private Coroutine staminaDepletionBoostCoroutine;
+    private Coroutine staminaRecoveryBoostCoroutine;
 
     // ==========================================//
 
@@ -126,7 +148,7 @@ public class PlayerMovementScript : MonoBehaviour
             jumpsLeft = maxJumps;
         }
 
-        if (jumpAction.WasPressedThisFrame() && jumpsLeft > 0)
+        if (jumpAction.WasPressedThisFrame() && jumpsLeft > 0 && !GameManagerScript.instance.IsStunned)
         {
             shouldJump = true;
         }
@@ -146,7 +168,7 @@ public class PlayerMovementScript : MonoBehaviour
         }
 
         // Dash input
-        if (dashAction.WasPressedThisFrame() && dashCooldownTimer <= 0f && !isDashing)
+        if (dashAction.WasPressedThisFrame() && dashCooldownTimer <= 0f && !isDashing && !GameManagerScript.instance.IsStunned)
         {
             StartDash(moveValue);
         }
@@ -180,7 +202,7 @@ public class PlayerMovementScript : MonoBehaviour
         Vector3 targetVelocity = finalMoveVector.normalized * moveForce * temporaryMovementSpeedMultiplier;
 
         StaminaCalculation();
-        if(shouldSprint && shouldCrouch)shouldSlide = true;
+        if(shouldSprint && shouldCrouch && PlayerCollisionScript.isGrounded())shouldSlide = true;
         else shouldSlide = false;
 
         targetVelocity *= !shouldSprint ? 1 : sprintMultiplier;
@@ -338,30 +360,70 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void StaminaCalculation()
     {
-        // Stamina
         if (shouldSprint)
         {
             if (GameManagerScript.GetStamina() <= 0)
             {
                 shouldSprint = false;
+
                 CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
             else
             {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaRemovalRate - (shouldSlide ? slideRemovalRate : 0));
+                float staminaDepletion = (staminaRemovalRate + (shouldSlide ? slideRemovalRate : 0f)) * temporaryStaminaDepletionMultiplier;
+
+                GameManagerScript.SetStamina(GameManagerScript.GetStamina() - staminaDepletion);
+
                 CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV + playerRunFOV, playerRunTimerRate * Time.fixedDeltaTime));
             }
         }
-        else 
+        else
         {
-
-            if (GameManagerScript.GetStamina() < GameManagerScript.GetMaxStamina())
+            if (GameManagerScript.GetStamina() < maxStamina)
             {
-                GameManagerScript.SetStamina(GameManagerScript.GetStamina() + staminaRecoveryRate);
-            }
-            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
+                float staminaRecovery = staminaRecoveryRate * temporaryStaminaRecoveryMultiplier;
 
+                GameManagerScript.SetStamina(Mathf.Min(GameManagerScript.GetStamina() + staminaRecovery, maxStamina));
+            }
+
+            CameraScript.SetCameraFOV(Mathf.MoveTowards(CameraScript.GetCameraFov(), maxFOV, playerRunTimerRate * Time.fixedDeltaTime));
         }
+    }
+
+    public void ApplyTemporaryStaminaDepletionMultiplier(float multiplier, float duration)
+    {
+        if (staminaDepletionBoostCoroutine != null)
+            StopCoroutine(staminaDepletionBoostCoroutine);
+
+        temporaryStaminaDepletionMultiplier = Mathf.Max(0.1f, multiplier);
+
+        staminaDepletionBoostCoroutine = StartCoroutine(ResetStaminaDepletionMultiplier(duration));
+    }
+
+    private IEnumerator ResetStaminaDepletionMultiplier(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryStaminaDepletionMultiplier = 1f;
+        staminaDepletionBoostCoroutine = null;
+    }
+
+    public void ApplyTemporaryStaminaRecoveryMultiplier(float multiplier, float duration)
+    {
+        if (staminaRecoveryBoostCoroutine != null)
+            StopCoroutine(staminaRecoveryBoostCoroutine);
+
+        temporaryStaminaRecoveryMultiplier = Mathf.Max(0.1f, multiplier);
+
+        staminaRecoveryBoostCoroutine = StartCoroutine(ResetStaminaRecoveryMultiplier(duration));
+    }
+
+    private IEnumerator ResetStaminaRecoveryMultiplier(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        temporaryStaminaRecoveryMultiplier = 1f;
+        staminaRecoveryBoostCoroutine = null;
     }
 
     // ==========================================//

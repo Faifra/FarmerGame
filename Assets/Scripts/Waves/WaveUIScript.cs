@@ -5,6 +5,7 @@ public class WaveUIScript : MonoBehaviour
 {
     [SerializeField] private WaveManager waveManager; //ref to wave manager
     [SerializeField] private TextMeshProUGUI waveText; //current wave
+    [SerializeField] private TextMeshProUGUI phaseText; //current phase
 
     void Start()
     {
@@ -15,6 +16,15 @@ public class WaveUIScript : MonoBehaviour
     void Update()
     {
         waveText.text = "Wave: " + (waveManager.CurrentWave)
-            + "\nEnemies Remaining: " + waveManager.EnemiesRemaining;
+            + "\nTotal Enemies Remaining: " + waveManager.EnemiesRemaining;
+
+        if (waveManager.IsPrepPhase)
+        {
+            phaseText.text = "Current phase: Prep Phase";
+        }
+        else
+        {
+            phaseText.text = "Current phase: Wave Phase";
+        }
     }
 }

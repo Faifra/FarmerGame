@@ -5127,7 +5127,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5203,6 +5203,7 @@ MonoBehaviour:
   damageNumberHeight: 2
   damageNumberAdditionalOffset: {x: 1, y: -1.5, z: 0}
   bodyCollider: {fileID: 4140143815264739940}
+  enemyType: 0
 --- !u!54 &5821718157569806990
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5244,7 +5245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDropsScript
   drops:
   - prefab: {fileID: 7377052881330529721, guid: ee59dbcd7a0a6794fb85efd341327d6a, type: 3}
-    amount: 50
+    amount: 10
   burstDistance: 1.5
   burstHeight: 0.5
 --- !u!64 &4140143815264739940

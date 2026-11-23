@@ -12,6 +12,24 @@ public class SugarbeetAI : MonoBehaviour
     [SerializeField] private int chargeDamage = 5;
     private bool isCharging = false;
 
+    [Header("Flying Movement")]
+    [SerializeField] private float bobbingHeight = 0.5f;
+    [SerializeField] private float bobbingSpeed = 2f;
+    [SerializeField] private float zigzagDistance = 1.5f;
+    [SerializeField] private float zigzagSpeed = 2f;
+    [SerializeField] private float zigzagDirectionChangeSpeed = 1f;
+
+    private float flyingTime;
+    private float zigzagOffset;
+    private float zigzagDirection = 1f;
+
+    [Header("Charge Rotation")]
+    [SerializeField] private float turnSpeed = 180f;
+    [SerializeField] private float windupSpinSpeed = 1000f;
+
+    private Quaternion normalRotation;
+    private bool returningToNormalRotation = false;
+
     //CHARGE GREJER
     private float chargeTimer = 0f;
     private float windupTimer = 0f;
@@ -34,6 +52,7 @@ public class SugarbeetAI : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        normalRotation = transform.rotation;
     }
 
     // Update is called once per frame
@@ -78,23 +97,75 @@ public class SugarbeetAI : MonoBehaviour
 
     void Hover()
     {
+        flyingTime += Time.deltaTime;
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0f;
+        direction.Normalize();
+
+        zigzagOffset += zigzagDirection * zigzagSpeed * Time.deltaTime;
+
+        if (zigzagOffset >= zigzagDistance)
+        {
+            zigzagOffset = zigzagDistance;
+            zigzagDirection = -1f;
+        }
+        else if (zigzagOffset <= -zigzagDistance)
+        {
+            zigzagOffset = -zigzagDistance;
+            zigzagDirection = 1f;
+        }
+
+        if (Random.value < zigzagDirectionChangeSpeed * Time.deltaTime)
+        {
+            zigzagDirection *= -1f;
+        }
+
+        Vector3 sideways = Vector3.Cross(Vector3.up, direction).normalized;
+
+        Vector3 movement = Vector3.zero;
 
         if (distanceToPlayer > attackRange)
         {
-            Vector3 direction = player.position - transform.position;
-            direction.y = 0f;
-            direction.Normalize();
-
-            transform.position += direction * flyingSpeed * Time.deltaTime;
+            movement += direction * flyingSpeed;
         }
+
+        movement += sideways * zigzagOffset;
+
+        float bobbing = Mathf.Sin(flyingTime * bobbingSpeed) * bobbingHeight;
+
+        Vector3 targetPosition = transform.position + movement * Time.deltaTime;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 100f, groundLayer))
+        {
+            float desiredAltitude = hit.point.y + targetAltitude + bobbing;
+
+            targetPosition.y = Mathf.MoveTowards(transform.position.y, desiredAltitude, flyingSpeed * Time.deltaTime);
+        }
+
+        transform.position = targetPosition;
 
         if (distanceToPlayer <= attackRange) //if within range to start attack, switch to windup state. 
             //beet should ignore the attack range considering the windup, would be too easy for the player to reset the state by simply moving out of range.
             //which would make the beet useless. windup state doesnt check for a range requirement, so attack should happen regardless.
         {
             currentState = BehaviourState.Windup;
+            windupTimer = 0f;
         }
+    }
+
+    private Quaternion GetPlayerFacingRotation()
+    {
+        Vector3 directionToPlayer = player.position - transform.position;
+
+        if (directionToPlayer.sqrMagnitude < 0.001f)
+            return transform.rotation;
+
+        Vector3 currentBottomDirection = transform.rotation * Vector3.down;
+
+        return Quaternion.FromToRotation(currentBottomDirection, directionToPlayer.normalized) * transform.rotation;
     }
 
     private void Windup()
@@ -102,10 +173,20 @@ public class SugarbeetAI : MonoBehaviour
         Debug.Log("windup has started");
         windupTimer += Time.deltaTime;
 
+        Quaternion targetRotation = GetPlayerFacingRotation();
+
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+
+        transform.Rotate(Vector3.up, windupSpinSpeed * Time.deltaTime, Space.Self);
+
         if (windupTimer >= windupDuration)
         {
             Debug.Log("windup ended, charging now");
+
+            transform.rotation = GetPlayerFacingRotation();
+
             chargeTarget = player.position;
+
             currentState = BehaviourState.Charging;
             windupTimer = 0f;
             isCharging = true;
@@ -118,6 +199,8 @@ public class SugarbeetAI : MonoBehaviour
 
         if (Vector3.Distance(transform.position, chargeTarget) <= 0.1f)
         {
+            returningToNormalRotation = true;
+
             currentState = BehaviourState.Cooldown;
             chargeTimer = 0f;
             isCharging = false;
@@ -126,12 +209,26 @@ public class SugarbeetAI : MonoBehaviour
 
     private void ReCharge()
     {
+        if (returningToNormalRotation)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, normalRotation, turnSpeed * Time.deltaTime);
+
+            if (Quaternion.Angle(transform.rotation, normalRotation) <= 0.5f)
+            {
+                transform.rotation = normalRotation;
+                returningToNormalRotation = false;
+            }
+        }
+
         chargeTimer += Time.deltaTime;
 
         if (chargeTimer >= chargeCooldown)
         {
             chargeTimer = 0f;
             currentState = BehaviourState.Ascending;
+            flyingTime = 0f;
+            zigzagOffset = 0f;
+            zigzagDirection = 1f;
         }
     }
 
