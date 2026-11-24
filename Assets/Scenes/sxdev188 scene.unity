@@ -202,6 +202,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1932489702573247725, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2993907025760043191, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: upgradeMenu
       value: 
@@ -218,6 +222,18 @@ PrefabInstance:
       propertyPath: upgradeMenu
       value: 
       objectReference: {fileID: 1186155255}
+    - target: {fileID: 4364066686104707247, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364066686104707247, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364066686104707247, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4896764529807878904, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: totalText
       value: 
@@ -230,6 +246,10 @@ PrefabInstance:
       propertyPath: healthStationMenu
       value: 
       objectReference: {fileID: 1186155254}
+    - target: {fileID: 6815491151963499697, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7216160372256504650, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: pauseMenu
       value: 
@@ -237,7 +257,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8115273180834765804, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1857004276}
+    - targetCorrespondingSourceObject: {fileID: 8451507947718515252, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1004441488}
+    - targetCorrespondingSourceObject: {fileID: 8638125956671355883, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1276099966}
+    - targetCorrespondingSourceObject: {fileID: 3522268415571643054, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 794064668}
+    - targetCorrespondingSourceObject: {fileID: 8944854288210469100, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 967371451}
+    - targetCorrespondingSourceObject: {fileID: 7339536347315931639, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1653251734}
+    - targetCorrespondingSourceObject: {fileID: 5774159783449239950, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 868944508}
   m_SourcePrefab: {fileID: 100100000, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
 --- !u!1 &622212355
 GameObject:
@@ -281,6 +322,86 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &794064662 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3522268415571643054, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &794064668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794064662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
+--- !u!1 &868944502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5774159783449239950, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &868944508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868944502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
+--- !u!1 &967371445 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8944854288210469100, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &967371451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967371445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
+--- !u!1 &1004441480 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8451507947718515252, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1004441488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004441480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
 --- !u!1001 &1021588419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -462,6 +583,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4023225ca04fa3c43aad81cda9643015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeMenuScript
+--- !u!1 &1276099959 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8638125956671355883, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1276099966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1276099959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
 --- !u!114 &1487167920 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4738454590445619161, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
@@ -479,7 +620,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 383388056}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28bd77401f960874883bb6903fc35928, type: 3}
   m_Name: 
@@ -495,6 +636,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255d882816b55a3feb42e57321aad1da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagerScript
+--- !u!1 &1653251728 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7339536347315931639, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1653251734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653251728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
+--- !u!1 &1857004269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8115273180834765804, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+  m_PrefabInstance: {fileID: 383388056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1857004276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857004269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
+  rotationOffset: {x: 0, y: 0, z: 0}
+  smooth: 5
+  multiplier: 5
 --- !u!1 &1981739794 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8674885250339202490, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
