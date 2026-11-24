@@ -3375,9 +3375,24 @@ MonoBehaviour:
   upgradeWeaponsPanel: {fileID: 0}
   selectedTabColor: {r: 0.7176471, g: 0.4745098, b: 0.21176471, a: 1}
   normalTabColor: {r: 0.20392157, g: 0.27450982, b: 0.30980393, a: 1}
-  playerResources: {fileID: 1637679562}
+  basicSprayOutline: {fileID: 0}
+  shotgunSprayOutline: {fileID: 0}
+  pitchforkOutline: {fileID: 0}
+  scytheOutline: {fileID: 0}
+  grappleOutline: {fileID: 0}
+  sniperOutline: {fileID: 0}
+  waterBalloonOutline: {fileID: 0}
+  milkChurnOutline: {fileID: 0}
+  restorativeGasOutline: {fileID: 0}
+  launchTrapOutline: {fileID: 0}
+  pullTrapOutline: {fileID: 0}
+  beehiveTrapOutline: {fileID: 0}
+  sprinklerTrapOutline: {fileID: 0}
+  magnifyingGlassTrapOutline: {fileID: 0}
+  playerResources: {fileID: 0}
   playerLook: {fileID: 1637679561}
   playerWeapons: {fileID: 0}
+  upgradeManager: {fileID: 0}
   launchTrapCost: 10
   launchTrapButton: {fileID: 1897320783}
   launchTrapCostText: {fileID: 1419061784}
@@ -3393,6 +3408,188 @@ MonoBehaviour:
   sprinklerTrapCost: 10
   sprinklerTrapButton: {fileID: 0}
   sprinklerTrapCostText: {fileID: 0}
+  basicSprayUpgradePanel: {fileID: 0}
+  basicSprayNameText: {fileID: 0}
+  basicSprayDescriptionText: {fileID: 0}
+  shotgunSprayUpgradePanel: {fileID: 0}
+  shotgunSprayNameText: {fileID: 0}
+  shotgunSprayDescriptionText: {fileID: 0}
+  pitchforkUpgradePanel: {fileID: 0}
+  pitchforkNameText: {fileID: 0}
+  pitchforkDescriptionText: {fileID: 0}
+  scytheUpgradePanel: {fileID: 0}
+  scytheNameText: {fileID: 0}
+  scytheDescriptionText: {fileID: 0}
+  grappleUpgradePanel: {fileID: 0}
+  grappleNameText: {fileID: 0}
+  grappleDescriptionText: {fileID: 0}
+  sniperUpgradePanel: {fileID: 0}
+  sniperNameText: {fileID: 0}
+  sniperDescriptionText: {fileID: 0}
+  waterBalloonUpgradePanel: {fileID: 0}
+  waterBalloonNameText: {fileID: 0}
+  waterBalloonDescriptionText: {fileID: 0}
+  milkChurnUpgradePanel: {fileID: 0}
+  milkChurnNameText: {fileID: 0}
+  milkChurnDescriptionText: {fileID: 0}
+  restorativeGasUpgradePanel: {fileID: 0}
+  restorativeGasNameText: {fileID: 0}
+  restorativeGasDescriptionText: {fileID: 0}
+  improvedSprayCost: 10
+  improvedSprayButton: {fileID: 0}
+  improvedSprayCostText: {fileID: 0}
+  maximumHealthDamageCost: 15
+  maximumHealthDamageButton: {fileID: 0}
+  maximumHealthDamageCostText: {fileID: 0}
+  knockbackCost: 20
+  knockbackButton: {fileID: 0}
+  knockbackCostText: {fileID: 0}
+  doubleBurstCost: 15
+  doubleBurstButton: {fileID: 0}
+  doubleBurstCostText: {fileID: 0}
+  fasterReloadCost: 10
+  fasterReloadButton: {fileID: 0}
+  fasterReloadCostText: {fileID: 0}
+  closeRangeDamageCost: 15
+  closeRangeDamageButton: {fileID: 0}
+  closeRangeDamageCostText: {fileID: 0}
+  pitchforkBonusDamageCost: 15
+  pitchforkBonusDamageButton: {fileID: 0}
+  pitchforkBonusDamageCostText: {fileID: 0}
+  pitchforkEnemySlowdownCost: 10
+  pitchforkEnemySlowdownButton: {fileID: 0}
+  pitchforkEnemySlowdownCostText: {fileID: 0}
+  pitchforkBonusDropsCost: 15
+  pitchforkBonusDropsButton: {fileID: 0}
+  pitchforkBonusDropsCostText: {fileID: 0}
+  scytheRadiusCost: 10
+  scytheRadiusButton: {fileID: 0}
+  scytheRadiusCostText: {fileID: 0}
+  scytheAttackSpeedCost: 15
+  scytheAttackSpeedButton: {fileID: 0}
+  scytheAttackSpeedCostText: {fileID: 0}
+  scytheHealthOnKillCost: 20
+  scytheHealthOnKillButton: {fileID: 0}
+  scytheHealthOnKillCostText: {fileID: 0}
+  grappleSpeedCost: 10
+  grappleSpeedButton: {fileID: 0}
+  grappleSpeedCostText: {fileID: 0}
+  grappleEnemyVulnerabilityCost: 15
+  grappleEnemyVulnerabilityButton: {fileID: 0}
+  grappleEnemyVulnerabilityCostText: {fileID: 0}
+  grappleHealthAndSpeedOnKillCost: 20
+  grappleHealthAndSpeedOnKillButton: {fileID: 0}
+  grappleHealthAndSpeedOnKillCostText: {fileID: 0}
+  sniperFasterReloadCost: 10
+  sniperFasterReloadButton: {fileID: 0}
+  sniperFasterReloadCostText: {fileID: 0}
+  sniperExposeWeakpointsCost: 30
+  sniperExposeWeakpointsButton: {fileID: 0}
+  sniperExposeWeakpointsCostText: {fileID: 0}
+  sniperRicochetShotCost: 25
+  sniperRicochetShotButton: {fileID: 0}
+  sniperRicochetShotCostText: {fileID: 0}
+  balloonExpandedSplashCost: 15
+  balloonExpandedSplashButton: {fileID: 0}
+  balloonExpandedSplashCostText: {fileID: 0}
+  balloonRubberizedBalloonCost: 25
+  balloonRubberizedBalloonButton: {fileID: 0}
+  balloonRubberizedBalloonCostText: {fileID: 0}
+  balloonConcussiveAftershockCost: 25
+  balloonConcussiveAftershockButton: {fileID: 0}
+  balloonConcussiveAftershockCostText: {fileID: 0}
+  milkChurnFasterReloadCost: 10
+  milkChurnFasterReloadButton: {fileID: 0}
+  milkChurnFasterReloadCostText: {fileID: 0}
+  milkChurnLargerSplatterCost: 20
+  milkChurnLargerSplatterButton: {fileID: 0}
+  milkChurnLargerSplatterCostText: {fileID: 0}
+  milkChurnUnstableMixtureCost: 25
+  milkChurnUnstableMixtureButton: {fileID: 0}
+  milkChurnUnstableMixtureCostText: {fileID: 0}
+  restorativeGasExpandedCanisterCost: 25
+  restorativeGasExpandedCanisterButton: {fileID: 0}
+  restorativeGasExpandedCanisterCostText: {fileID: 0}
+  restorativeGasFasterReloadCost: 15
+  restorativeGasFasterReloadButton: {fileID: 0}
+  restorativeGasFasterReloadCostText: {fileID: 0}
+  restorativeGasLingeringTonicCost: 25
+  restorativeGasLingeringTonicButton: {fileID: 0}
+  restorativeGasLingeringTonicCostText: {fileID: 0}
+  launchTrapUpgradePanel: {fileID: 0}
+  launchTrapNameText: {fileID: 0}
+  launchTrapDescriptionText: {fileID: 0}
+  pullTrapUpgradePanel: {fileID: 0}
+  pullTrapNameText: {fileID: 0}
+  pullTrapDescriptionText: {fileID: 0}
+  beehiveTrapUpgradePanel: {fileID: 0}
+  beehiveTrapNameText: {fileID: 0}
+  beehiveTrapDescriptionText: {fileID: 0}
+  sprinklerTrapUpgradePanel: {fileID: 0}
+  sprinklerTrapNameText: {fileID: 0}
+  sprinklerTrapDescriptionText: {fileID: 0}
+  magnifyingGlassTrapUpgradePanel: {fileID: 0}
+  magnifyingGlassTrapNameText: {fileID: 0}
+  magnifyingGlassTrapDescriptionText: {fileID: 0}
+  launchTrapHighForceLaunchCost: 15
+  launchTrapHighForceLaunchButton: {fileID: 0}
+  launchTrapHighForceLaunchCostText: {fileID: 0}
+  launchTrapConcussiveExhaustCost: 20
+  launchTrapConcussiveExhaustButton: {fileID: 0}
+  launchTrapConcussiveExhaustCostText: {fileID: 0}
+  launchTrapDoubleTriggerCost: 30
+  launchTrapDoubleTriggerButton: {fileID: 0}
+  launchTrapDoubleTriggerCostText: {fileID: 0}
+  pullTrapExpandedVacuumCost: 30
+  pullTrapExpandedVacuumButton: {fileID: 0}
+  pullTrapExpandedVacuumCostText: {fileID: 0}
+  pullTrapExtendedReachCost: 15
+  pullTrapExtendedReachButton: {fileID: 0}
+  pullTrapExtendedReachCostText: {fileID: 0}
+  pullTrapForcefulLaunchCost: 25
+  pullTrapForcefulLaunchButton: {fileID: 0}
+  pullTrapForcefulLaunchCostText: {fileID: 0}
+  beehiveTrapExpandedColonyCost: 25
+  beehiveTrapExpandedColonyButton: {fileID: 0}
+  beehiveTrapExpandedColonyCostText: {fileID: 0}
+  beehiveTrapFrenziedSwarmCost: 15
+  beehiveTrapFrenziedSwarmButton: {fileID: 0}
+  beehiveTrapFrenziedSwarmCostText: {fileID: 0}
+  beehiveTrapSwarmReplicationCost: 25
+  beehiveTrapSwarmReplicationButton: {fileID: 0}
+  beehiveTrapSwarmReplicationCostText: {fileID: 0}
+  sprinklerTrapPressurizedSprayCost: 15
+  sprinklerTrapPressurizedSprayButton: {fileID: 0}
+  sprinklerTrapPressurizedSprayCostText: {fileID: 0}
+  sprinklerTrapRapidRotationCost: 20
+  sprinklerTrapRapidRotationButton: {fileID: 0}
+  sprinklerTrapRapidRotationCostText: {fileID: 0}
+  sprinklerTrapReinforcedBarriersCost: 20
+  sprinklerTrapReinforcedBarriersButton: {fileID: 0}
+  sprinklerTrapReinforcedBarriersCostText: {fileID: 0}
+  magnifyingGlassTrapFocusedSunlightCost: 25
+  magnifyingGlassTrapFocusedSunlightButton: {fileID: 0}
+  magnifyingGlassTrapFocusedSunlightCostText: {fileID: 0}
+  magnifyingGlassTrapIntensifiedHeatCost: 20
+  magnifyingGlassTrapIntensifiedHeatButton: {fileID: 0}
+  magnifyingGlassTrapIntensifiedHeatCostText: {fileID: 0}
+  magnifyingGlassTrapRefractedBeamCost: 25
+  magnifyingGlassTrapRefractedBeamButton: {fileID: 0}
+  magnifyingGlassTrapRefractedBeamCostText: {fileID: 0}
+  basicSprayUpgrade: {fileID: 0}
+  shotgunSprayUpgrade: {fileID: 0}
+  pitchforkUpgrade: {fileID: 0}
+  scytheUpgrade: {fileID: 0}
+  grappleUpgrade: {fileID: 0}
+  sniperUpgrade: {fileID: 0}
+  waterBalloonUpgrade: {fileID: 0}
+  restorativeGasUpgrade: {fileID: 0}
+  milkChurnUpgrade: {fileID: 0}
+  launchTrapUpgrade: {fileID: 0}
+  pullTrapUpgrade: {fileID: 0}
+  beehiveTrapUpgrade: {fileID: 0}
+  sprinklerUpgrade: {fileID: 0}
+  magnifyingGlassTrapUpgrade: {fileID: 0}
 --- !u!114 &1432227613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3836,17 +4033,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c897686f3f1a416b3cda1bd0d32210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLookScript
---- !u!114 &1637679562 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2290664602436423616, guid: 894cf2ff000b60a4bad979bec4cf7909, type: 3}
-  m_PrefabInstance: {fileID: 1637679558}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e3c30dedf55c244e866293688e805e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerResourceScript
 --- !u!114 &1653562983 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3655751871265422904, guid: 7dadf10cb3a12fb40af644d49df7b209, type: 3}
@@ -4549,7 +4735,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 3287220292019520204}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28bd77401f960874883bb6903fc35928, type: 3}
   m_Name: 
@@ -6157,6 +6343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveUIScript
   waveManager: {fileID: 1791542708}
   waveText: {fileID: 1057337433}
+  phaseText: {fileID: 0}
 --- !u!1001 &3287220292019520204
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6175,7 +6362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 412746287932549674, guid: 257c7a7d01df5da468921a7644fa0884, type: 3}
       propertyPath: bossBarUIOBject

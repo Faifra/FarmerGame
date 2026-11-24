@@ -88,13 +88,16 @@ public class PlayerCollisionScript : MonoBehaviour
             Vector3 normal = collision.GetContact(0).normal;
 
             if(Mathf.Abs(normal.y) > 0.9f)
+            {
+                targetDutch = 0;
                 return;
-
+            }
+            
+            
             playerWallRunning = true;
 
             if (!isGrounded())
             {
-
                 Vector3 cross = Vector3.Cross(normal, transform.rotation.eulerAngles);
 
                 if(cross.x > 0 && cross.z < 0 || collision.GetContact(0).normal == Vector3.left) // left: 1,0,-1
