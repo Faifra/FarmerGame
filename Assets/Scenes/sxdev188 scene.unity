@@ -162,6 +162,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 723648155325906507, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 723648155325906507, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 723648155325906507, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1500842150336309545, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -222,6 +234,10 @@ PrefabInstance:
       propertyPath: upgradeMenu
       value: 
       objectReference: {fileID: 1186155255}
+    - target: {fileID: 3522268415571643054, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4364066686104707247, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -339,7 +355,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1 &868944502 stripped
@@ -359,7 +374,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1 &967371445 stripped
@@ -379,7 +393,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1 &1004441480 stripped
@@ -399,7 +412,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1001 &1021588419
@@ -600,7 +612,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!114 &1487167920 stripped
@@ -653,7 +664,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1 &1857004269 stripped
@@ -673,7 +683,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715feca1364e2044a92fb6bec0a0d8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSwayBobScript
-  rotationOffset: {x: 0, y: 0, z: 0}
   smooth: 5
   multiplier: 5
 --- !u!1 &1981739794 stripped
