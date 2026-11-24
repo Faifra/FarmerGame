@@ -6658,7 +6658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementScript
   moveForce: 8
-  jumpForce: 4
+  jumpForce: 6
   useTogglableSprint: 0
   useTogglableCrouch: 1
   sprintMultiplier: 1.6
@@ -12234,10 +12234,10 @@ Transform:
   - {fileID: 8209798190121580767}
   - {fileID: 5149200258246731323}
   - {fileID: 2988719742776971904}
+  - {fileID: 2964988420563933629}
   - {fileID: 165738374094050420}
   - {fileID: 1546265305387603417}
   - {fileID: 2346334498395831712}
-  - {fileID: 2964988420563933629}
   - {fileID: 7866695428204850424}
   - {fileID: 8592185184161329008}
   - {fileID: 4845835793591286051}

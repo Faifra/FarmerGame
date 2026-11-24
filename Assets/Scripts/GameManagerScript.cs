@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
@@ -8,7 +7,20 @@ public class GameManagerScript : MonoBehaviour
     [Header("Player Health")]
     [SerializeField] private int maxHP = 100;
     [SerializeField] private int startingHP = 100;
-    
+
+    private static int playerHP;
+    private static int maximumHP;
+
+    private static float playerStamina;
+    private static float maxStamina;
+
+    public static GameManagerScript instance { get; private set; }
+
+    private UpgradeManagerScript upgradeManager;
+
+    private Coroutine healthRegenerationCoroutine;
+    public static int MaxHP => maximumHP;
+
     [Header("Stun Options")]
     [SerializeField] private static bool isStunned = false;
     [SerializeField] private static bool immuneToStun = false;
@@ -16,26 +28,10 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField] private static float stunCooldown;
     [SerializeField] private static float stunTimer;
     [SerializeField] private static float stunDuration;
-
-    [Header("PauseMenu")]
-    [SerializeField] private GameObject pauseMenu;
-
-    private static int playerHP;
-    private static int maximumHP;
-    private static float playerStamina;
-    private static float maxStamina;
-
-    private UpgradeManagerScript upgradeManager;
-    private Coroutine healthRegenerationCoroutine;
-
-    public static GameManagerScript instance { get; private set; }
-    public static int MaxHP => maximumHP;
-    public bool IsStunned => isStunned;
-    
     private PlayerMovementScript playerMovementScript;
     private float previousMoveForce;
 
-    private InputAction pauseAction;
+    public bool IsStunned => isStunned;
 
     private void Awake()
     {
@@ -57,54 +53,6 @@ public class GameManagerScript : MonoBehaviour
 
         playerMovementScript = FindFirstObjectByType<PlayerMovementScript>();
     }
-
-    void Start()
-    {
-        pauseAction = InputSystem.actions.FindAction("PauseGame");
-    }
-
-    void Update()
-    {
-
-
-        if(playerHP <= 0) // Reload level when we die
-        {
-            if (upgradeManager != null)
-                upgradeManager.ResetUpgrades();
-
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-
-        if (isStunned)
-        {
-            stunTimer += Time.deltaTime;
-
-            if (stunTimer >= stunDuration)
-            {
-                playerMovementScript.MoveForce = previousMoveForce;
-                isStunned = false;
-                stunTimer = 0f;
-            }
-        }
-
-        if (immuneToStun)
-        {
-            stunCooldownTimer += Time.deltaTime;
-
-            if (stunCooldownTimer >= stunCooldown)
-            {
-                immuneToStun = false;
-                stunCooldownTimer = 0f;
-            }
-        }
-
-        if (pauseAction.WasPressedThisFrame())
-        {
-            PauseGame();
-        }
-
-    }
-
 
     public static void SetHP(int newhp)
     {
@@ -186,6 +134,39 @@ public class GameManagerScript : MonoBehaviour
         healthRegenerationCoroutine = null;
     }
 
+    void Update()
+    {
+        if(playerHP <= 0) // Reload level when we die
+        {
+            if (upgradeManager != null)
+                upgradeManager.ResetUpgrades();
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        if (isStunned)
+        {
+            stunTimer += Time.deltaTime;
+
+            if (stunTimer >= stunDuration)
+            {
+                playerMovementScript.MoveForce = previousMoveForce;
+                isStunned = false;
+                stunTimer = 0f;
+            }
+        }
+
+        if (immuneToStun)
+        {
+            stunCooldownTimer += Time.deltaTime;
+
+            if (stunCooldownTimer >= stunCooldown)
+            {
+                immuneToStun = false;
+                stunCooldownTimer = 0f;
+            }
+        }
+    }
 
     // Helper methods
     public static void ExitGame()
@@ -204,33 +185,4 @@ public class GameManagerScript : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public void PauseGame()
-    {
-        if(pauseMenu == null)
-            return;
-
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-
-    public void ResumeGame()
-    {
-        if(pauseMenu == null)
-            return;
-
-        pauseMenu.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        Time.timeScale = 1;
-    }
-
-    public void MainMenuLOL()
-    {
-        pauseMenu.SetActive(false);
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        Time.timeScale = 1;
-    }
 }

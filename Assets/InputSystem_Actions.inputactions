@@ -285,16 +285,6 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
-                },
-                {
-                    "name": "PauseGame",
-                    "type": "Button",
-                    "id": "1309926f-d451-4975-a810-81d6adf78aab",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
                 }
             ],
             "bindings": [
@@ -889,17 +879,6 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Reload",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7be0a238-6d4f-424a-9e4f-3a436399be19",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "PauseGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

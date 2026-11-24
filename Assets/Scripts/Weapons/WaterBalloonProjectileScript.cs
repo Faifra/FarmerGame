@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 public class WaterBalloonProjectileScript : MonoBehaviour
 {
     [Header("Explosion")]
@@ -52,7 +53,10 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    public void Initialize(Vector3 initialVelocity, Transform firingOwner, WaterBalloonUpgradeScript upgrades = null)
+    public void Initialize(
+        Vector3 initialVelocity,
+        Transform firingOwner,
+        WaterBalloonUpgradeScript upgrades = null)
     {
         balloonUpgrades = upgrades;
         projectileBody.linearVelocity = initialVelocity;
@@ -60,13 +64,18 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         if (firingOwner == null)
             return;
 
-        Collider[] ownerColliders = firingOwner.GetComponentsInChildren<Collider>();
+        Collider[] ownerColliders =
+            firingOwner.GetComponentsInChildren<Collider>();
 
         foreach (Collider ownerCollider in ownerColliders)
         {
             if (ownerCollider != null)
             {
-                Physics.IgnoreCollision(projectileCollider, ownerCollider, true);
+                Physics.IgnoreCollision(
+                    projectileCollider,
+                    ownerCollider,
+                    true
+                );
             }
         }
     }
@@ -76,7 +85,10 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         if (hasExploded)
             return;
 
-        projectileBody.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
+        projectileBody.AddForce(
+            Physics.gravity * gravityMultiplier,
+            ForceMode.Acceleration
+        );
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -89,13 +101,18 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         if (hitCollider == null || collision.contactCount == 0)
             return;
 
-        if (balloonUpgrades != null && balloonUpgrades.RubberizedBalloon && !hasBounced)
+        // First collision: bounce once.
+        if (balloonUpgrades != null &&
+            balloonUpgrades.RubberizedBalloon &&
+            !hasBounced)
         {
             Bounce(collision);
             return;
         }
 
-        EnemyHealthScript enemy = hitCollider.GetComponentInParent<EnemyHealthScript>();
+        // Any collision after the first bounce causes an explosion.
+        EnemyHealthScript enemy =
+            hitCollider.GetComponentInParent<EnemyHealthScript>();
 
         if (enemy != null)
             IgnoreEnemyCollisions(enemy);
@@ -108,17 +125,20 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         hasBounced = true;
 
         ContactPoint contact = collision.GetContact(0);
-
         Vector3 normal = contact.normal;
 
         Vector3 incomingVelocity = projectileBody.linearVelocity;
 
+        // Reflect the incoming velocity away from the collision surface.
         Vector3 reflectedVelocity = Vector3.Reflect(incomingVelocity, normal);
 
+        // Increase the reflected speed to give the balloon more distance.
         reflectedVelocity *= bounceSpeedMultiplier;
 
+        // Add an upward boost so the balloon doesn't immediately fall back down.
         reflectedVelocity += Vector3.up * bounceUpwardBoost;
 
+        // Move the balloon slightly away from the collision surface.
         projectileBody.position += normal * 0.05f;
 
         projectileBody.linearVelocity = reflectedVelocity;
@@ -143,14 +163,20 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
     private void IgnoreEnemyCollisions(EnemyHealthScript enemy)
     {
-        Collider[] enemyColliders = enemy.GetComponentsInChildren<Collider>();
+        Collider[] enemyColliders =
+            enemy.GetComponentsInChildren<Collider>();
 
         foreach (Collider enemyCollider in enemyColliders)
         {
-            if (enemyCollider == null || ignoredEnemyColliders.Contains(enemyCollider))
+            if (enemyCollider == null ||
+                ignoredEnemyColliders.Contains(enemyCollider))
                 continue;
 
-            Physics.IgnoreCollision(projectileCollider, enemyCollider, true);
+            Physics.IgnoreCollision(
+                projectileCollider,
+                enemyCollider,
+                true
+            );
 
             ignoredEnemyColliders.Add(enemyCollider);
         }
@@ -163,6 +189,7 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
         hasExploded = true;
 
+        // Stop physics and hide the projectile immediately.
         projectileBody.linearVelocity = Vector3.zero;
         projectileBody.angularVelocity = Vector3.zero;
         projectileBody.isKinematic = true;
@@ -179,7 +206,8 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         SpawnExplosionEffect(position, 1f);
         DamageNearbyTargets(position);
 
-        if (balloonUpgrades != null && balloonUpgrades.ConcussiveAftershock)
+        if (balloonUpgrades != null &&
+            balloonUpgrades.ConcussiveAftershock)
         {
             StartCoroutine(SecondaryStunExplosion(position));
         }
@@ -191,14 +219,24 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
     private IEnumerator SecondaryStunExplosion(Vector3 position)
     {
-        yield return new WaitForSeconds(balloonUpgrades.SecondaryExplosionDelay);
+        yield return new WaitForSeconds(
+            balloonUpgrades.SecondaryExplosionDelay
+        );
 
         if (this == null)
             yield break;
 
-        float secondaryRadius = explosionRadius * (balloonUpgrades != null ? balloonUpgrades.ExplosionRadiusMultiplier : 1f) * balloonUpgrades.SecondaryRadiusMultiplier;
+        float secondaryRadius =
+            explosionRadius *
+            (balloonUpgrades != null
+                ? balloonUpgrades.ExplosionRadiusMultiplier
+                : 1f) *
+            balloonUpgrades.SecondaryRadiusMultiplier;
 
-        SpawnExplosionEffect(position, balloonUpgrades.SecondaryEffectScale);
+        SpawnExplosionEffect(
+            position,
+            balloonUpgrades.SecondaryEffectScale
+        );
 
         StunNearbyEnemies(position, secondaryRadius);
 
@@ -210,11 +248,16 @@ public class WaterBalloonProjectileScript : MonoBehaviour
         if (explosionEffectPrefab == null)
             return;
 
-        GameObject effect = Instantiate(explosionEffectPrefab, position, Quaternion.identity);
+        GameObject effect = Instantiate(
+            explosionEffectPrefab,
+            position,
+            Quaternion.identity
+        );
 
         effect.transform.localScale *= scale;
 
-        ParticleSystem[] particleSystems = effect.GetComponentsInChildren<ParticleSystem>(true);
+        ParticleSystem[] particleSystems =
+            effect.GetComponentsInChildren<ParticleSystem>(true);
 
         float effectLifetime = 0f;
 
@@ -225,7 +268,10 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
             ParticleSystem.MainModule main = particles.main;
 
-            float duration = main.duration + main.startDelay.constantMax + main.startLifetime.constantMax;
+            float duration =
+                main.duration +
+                main.startDelay.constantMax +
+                main.startLifetime.constantMax;
 
             effectLifetime = Mathf.Max(effectLifetime, duration);
         }
@@ -238,7 +284,9 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
     private float GetExplosionRadius()
     {
-        float multiplier = balloonUpgrades != null ? balloonUpgrades.ExplosionRadiusMultiplier : 1f;
+        float multiplier = balloonUpgrades != null
+            ? balloonUpgrades.ExplosionRadiusMultiplier
+            : 1f;
 
         return explosionRadius * multiplier;
     }
@@ -247,11 +295,18 @@ public class WaterBalloonProjectileScript : MonoBehaviour
     {
         int detectionLayers = enemyLayers.value | wallLayers.value;
 
-        Collider[] hits = Physics.OverlapSphere(position, GetExplosionRadius(), detectionLayers, QueryTriggerInteraction.Collide);
+        Collider[] hits = Physics.OverlapSphere(
+            position,
+            GetExplosionRadius(),
+            detectionLayers,
+            QueryTriggerInteraction.Collide
+        );
 
-        HashSet<EnemyHealthScript> damagedEnemies = new HashSet<EnemyHealthScript>();
+        HashSet<EnemyHealthScript> damagedEnemies =
+            new HashSet<EnemyHealthScript>();
 
-        HashSet<EnemyWallScript> damagedWalls = new HashSet<EnemyWallScript>();
+        HashSet<EnemyWallScript> damagedWalls =
+            new HashSet<EnemyWallScript>();
 
         foreach (Collider hit in hits)
         {
@@ -260,9 +315,12 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
             if ((enemyLayers.value & (1 << hit.gameObject.layer)) != 0)
             {
-                EnemyHealthScript enemy = hit.GetComponentInParent<EnemyHealthScript>();
+                EnemyHealthScript enemy =
+                    hit.GetComponentInParent<EnemyHealthScript>();
 
-                if (enemy != null && !enemy.IsDead && damagedEnemies.Add(enemy))
+                if (enemy != null &&
+                    !enemy.IsDead &&
+                    damagedEnemies.Add(enemy))
                 {
                     enemy.TakeDamage(explosionDamage);
                 }
@@ -270,7 +328,8 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
             if ((wallLayers.value & (1 << hit.gameObject.layer)) != 0)
             {
-                EnemyWallScript wall = hit.GetComponentInParent<EnemyWallScript>();
+                EnemyWallScript wall =
+                    hit.GetComponentInParent<EnemyWallScript>();
 
                 if (wall != null && damagedWalls.Add(wall))
                     wall.TakeDamage(explosionDamage);
@@ -280,18 +339,27 @@ public class WaterBalloonProjectileScript : MonoBehaviour
 
     private void StunNearbyEnemies(Vector3 position, float radius)
     {
-        Collider[] hits = Physics.OverlapSphere(position, radius, enemyLayers, QueryTriggerInteraction.Collide);
+        Collider[] hits = Physics.OverlapSphere(
+            position,
+            radius,
+            enemyLayers,
+            QueryTriggerInteraction.Collide
+        );
 
-        HashSet<EnemyHealthScript> stunnedEnemies = new HashSet<EnemyHealthScript>();
+        HashSet<EnemyHealthScript> stunnedEnemies =
+            new HashSet<EnemyHealthScript>();
 
         foreach (Collider hit in hits)
         {
             if (hit == null)
                 continue;
 
-            EnemyHealthScript enemy = hit.GetComponentInParent<EnemyHealthScript>();
+            EnemyHealthScript enemy =
+                hit.GetComponentInParent<EnemyHealthScript>();
 
-            if (enemy == null || enemy.IsDead || !stunnedEnemies.Add(enemy))
+            if (enemy == null ||
+                enemy.IsDead ||
+                !stunnedEnemies.Add(enemy))
                 continue;
 
             MoveTo enemyMovement = enemy.GetComponent<MoveTo>();
@@ -315,7 +383,10 @@ public class WaterBalloonProjectileScript : MonoBehaviour
             balloonUpgrades.ConcussiveAftershock)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, radius * balloonUpgrades.SecondaryRadiusMultiplier);
+            Gizmos.DrawWireSphere(
+                transform.position,
+                radius * balloonUpgrades.SecondaryRadiusMultiplier
+            );
         }
     }
 }

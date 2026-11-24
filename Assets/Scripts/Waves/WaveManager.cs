@@ -203,9 +203,4 @@ public class WaveManager : MonoBehaviour
 
     }
 
-    public bool TenSecondsLeft()
-    {
-        return prepTimer + 10 > prepPhaseTime;
-    }
-
 }
