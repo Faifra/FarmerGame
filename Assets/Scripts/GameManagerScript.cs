@@ -214,6 +214,9 @@ public class GameManagerScript : MonoBehaviour
 
     public void PauseGame()
     {
+        if(pauseMenu == null)
+            return;
+
         pauseMenu.SetActive(true);
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
@@ -222,6 +225,9 @@ public class GameManagerScript : MonoBehaviour
 
     public void ResumeGame()
     {
+        if(pauseMenu == null)
+            return;
+
         pauseMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
