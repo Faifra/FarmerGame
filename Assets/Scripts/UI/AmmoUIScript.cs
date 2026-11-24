@@ -26,6 +26,6 @@ public class AmmoUIScript : MonoBehaviour
             return;
         }
 
-        ammoText.text = $"{weapon.CurrentAmmo} / O-O";
+        ammoText.text = $"{weapon.CurrentAmmo} / ∞";
     }
 }

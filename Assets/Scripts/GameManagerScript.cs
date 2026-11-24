@@ -36,7 +36,6 @@ public class GameManagerScript : MonoBehaviour
     private float previousMoveForce;
 
     private InputAction pauseAction;
-    private bool togglePauseMenu;
 
     private void Awake()
     {
@@ -66,10 +65,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
-        if (pauseAction.WasPressedThisFrame())
-        {
-            togglePauseMenu = !togglePauseMenu;
-        }
+
 
         if(playerHP <= 0) // Reload level when we die
         {
@@ -102,13 +98,9 @@ public class GameManagerScript : MonoBehaviour
             }
         }
 
-        if (togglePauseMenu)
+        if (pauseAction.WasPressedThisFrame())
         {
             PauseGame();
-        }
-        else
-        {
-            ResumeGame();
         }
 
     }
@@ -233,10 +225,4 @@ public class GameManagerScript : MonoBehaviour
         Cursor.visible = false;
         Time.timeScale = 1;
     }
-
-    public void TogglePauseMenu(bool b)
-    {
-        togglePauseMenu = b;
-    }
-
 }
