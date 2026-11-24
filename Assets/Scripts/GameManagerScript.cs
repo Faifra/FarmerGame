@@ -225,4 +225,12 @@ public class GameManagerScript : MonoBehaviour
         Cursor.visible = false;
         Time.timeScale = 1;
     }
+
+    public void MainMenuLOL()
+    {
+        pauseMenu.SetActive(false);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 1;
+    }
 }

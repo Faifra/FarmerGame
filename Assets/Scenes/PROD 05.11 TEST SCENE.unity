@@ -548,7 +548,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3669090770759694024, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ResumeGame
+      value: MainMenuLOL
       objectReference: {fileID: 0}
     - target: {fileID: 3669090770759694024, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -565,6 +565,10 @@ PrefabInstance:
     - target: {fileID: 3669090770759694024, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
       value: Main
+      objectReference: {fileID: 0}
+    - target: {fileID: 3669090770759694024, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3669090770759694024, guid: 0de9e50bd5c675243a308ab87956332e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -707,6 +711,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 1075202692267260608, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: aimCamera
+      value: 
+      objectReference: {fileID: 527957371}
     - target: {fileID: 1500842150336309545, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -746,6 +754,10 @@ PrefabInstance:
     - target: {fileID: 1500842150336309545, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2798709167778209688, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2967636426838708790, guid: cc666d09dc39bf842bd553c2d647fa05, type: 3}
       propertyPath: powerup_pickup.m_PersistentCalls.m_Calls.Array.data[0].m_Target
