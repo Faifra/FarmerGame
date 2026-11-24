@@ -57,6 +57,7 @@ public class RangedWeaponScript : WeaponScript
     [Header("Sniper Upgrades")]
     [SerializeField] private bool sniperWeapon;
     [SerializeField] private SniperUpgradeScript sniperUpgrades;
+    [SerializeField] private SniperScopeScript sniperScope;
 
     [Header("Liquid Stream")]
     [SerializeField] private LiquidStreamScript liquidStream;
@@ -76,7 +77,7 @@ public class RangedWeaponScript : WeaponScript
     private bool isReloading;
     private bool shotgunBurstInProgress;
 
-    private Coroutine reloadCoroutine;
+    private PlayerWeaponsScript reloadManager;
     private Coroutine shotgunBurstCoroutine;
 
     public int CurrentAmmo => currentAmmo;
@@ -127,6 +128,11 @@ public class RangedWeaponScript : WeaponScript
         }
     }
 
+    public void SetReloadManager(PlayerWeaponsScript manager)
+    {
+        reloadManager = manager;
+    }
+
     private bool HasValidProjectilePrefab()
     {
         if (waterBalloonLauncher)
@@ -159,10 +165,15 @@ public class RangedWeaponScript : WeaponScript
         return (aimPoint - muzzle.position).normalized;
     }
 
+    private bool CanFire()
+    {
+        return !sniperWeapon || (sniperScope != null && sniperScope.IsAiming);
+    }
+
     // Fires repeatedly while automatic fire input is held.
     public void HoldAttack()
     {
-        if (isReloading)
+        if (isReloading || !CanFire())
             return;
 
         if (fireMode == FireMode.RestorativeGas)
@@ -235,7 +246,7 @@ public class RangedWeaponScript : WeaponScript
     // Handles a single attack.
     public override void Attack()
     {
-        if (isReloading || shotgunBurstInProgress)
+        if (isReloading || shotgunBurstInProgress || !CanFire())
             return;
 
         if (fireMode == FireMode.RestorativeGas)
@@ -363,53 +374,48 @@ public class RangedWeaponScript : WeaponScript
     // Reloads the weapon using available reserve ammunition.
     public void Reload()
     {
-        if (isReloading || shotgunBurstInProgress || currentAmmo >= magazineSize || reserveAmmo <= 0)
+        if (isReloading || shotgunBurstInProgress ||
+            currentAmmo >= magazineSize || reserveAmmo <= 0)
+            return;
+
+        if (reloadManager == null)
             return;
 
         StopAttack();
-        reloadCoroutine = StartCoroutine(ReloadRoutine());
+        isReloading = true;
+
+        float finalReloadDuration = reloadDuration;
+
+        if (shotgunUpgrades != null)
+            finalReloadDuration *= shotgunUpgrades.ReloadDurationMultiplier;
+
+        if (sniperWeapon && sniperUpgrades != null)
+            finalReloadDuration *= sniperUpgrades.ReloadDurationMultiplier;
+
+        if (milkChurn && milkChurnUpgrades != null)
+            finalReloadDuration *= milkChurnUpgrades.ReloadDurationMultiplier;
+
+        if (fireMode == FireMode.RestorativeGas && restorativeGasUpgrades != null)
+            finalReloadDuration *= restorativeGasUpgrades.ReloadDurationMultiplier;
+
+        reloadManager.StartWeaponReload(this, finalReloadDuration);
+    }
+
+    public void CompleteReload()
+    {
+        if (!isReloading)
+            return;
+
+        int ammoNeeded = magazineSize - currentAmmo;
+        currentAmmo += ammoNeeded;
+
+        isReloading = false;
     }
 
     private void TryAutoReload()
     {
         if (currentAmmo <= 0 && reserveAmmo > 0)
             Reload();
-    }
-
-    private IEnumerator ReloadRoutine()
-    {
-        isReloading = true;
-        StopAttack();
-
-        float finalReloadDuration = reloadDuration;
-
-        if (shotgunUpgrades != null)
-        {
-            finalReloadDuration *= shotgunUpgrades.ReloadDurationMultiplier;
-        }
-
-        if (sniperWeapon && sniperUpgrades != null)
-        {
-            finalReloadDuration *= sniperUpgrades.ReloadDurationMultiplier;
-        }
-
-        if (milkChurn && milkChurnUpgrades != null)
-        {
-            finalReloadDuration *= milkChurnUpgrades.ReloadDurationMultiplier;
-        }
-
-        if (fireMode == FireMode.RestorativeGas && restorativeGasUpgrades != null)
-        {
-            finalReloadDuration *= restorativeGasUpgrades.ReloadDurationMultiplier;
-        }
-
-        yield return new WaitForSeconds(finalReloadDuration);
-
-        int ammoNeeded = magazineSize - currentAmmo;
-        currentAmmo += ammoNeeded;
-
-        isReloading = false;
-        reloadCoroutine = null;
     }
 
     // Stops sustained firing when the attack button is released.
@@ -573,16 +579,10 @@ public class RangedWeaponScript : WeaponScript
     {
         StopAttack();
 
-        if (reloadCoroutine != null)
-            StopCoroutine(reloadCoroutine);
-
         if (shotgunBurstCoroutine != null)
-            StopCoroutine (shotgunBurstCoroutine);
+            StopCoroutine(shotgunBurstCoroutine);
 
-        reloadCoroutine = null;
         shotgunBurstCoroutine = null;
-
-        isReloading = false;
         shotgunBurstInProgress = false;
     }
 }

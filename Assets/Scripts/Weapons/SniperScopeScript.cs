@@ -15,6 +15,8 @@ public class SniperScopeScript : MonoBehaviour
     private InputAction aimAction;
     private float normalFieldOfView;
 
+    public bool IsAiming { get; private set; }
+
     private void Awake()
     {
         aimAction = InputSystem.actions.FindAction("Aim");
@@ -29,16 +31,20 @@ public class SniperScopeScript : MonoBehaviour
     private void Update()
     {
         if (aimAction == null)
+        {
+            IsAiming = false;
+            WeakPointScript.SetScoped(false);
             return;
+        }
 
-        bool isAiming = aimAction.IsPressed();
+        IsAiming = aimAction.IsPressed();
 
-        WeakPointScript.SetScoped(isAiming);
+        WeakPointScript.SetScoped(IsAiming);
 
         if (cinemachineCamera == null)
             return;
 
-        float targetFieldOfView = aimAction.IsPressed() ? zoomFieldOfView : normalFieldOfView;
+        float targetFieldOfView = IsAiming ? zoomFieldOfView : normalFieldOfView;
 
         var lens = cinemachineCamera.Lens;
         lens.FieldOfView = Mathf.Lerp(lens.FieldOfView, targetFieldOfView, zoomSpeed * Time.deltaTime);
@@ -48,6 +54,7 @@ public class SniperScopeScript : MonoBehaviour
 
     private void OnDisable()
     {
+        IsAiming = false;
         WeakPointScript.SetScoped(false);
 
         if (cinemachineCamera == null)

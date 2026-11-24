@@ -1,121 +1,95 @@
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Tracks upgrades purchased by the player during the game.
+/// Tracks upgrades purchased during the current game and resets upgrade effects.
 /// </summary>
 public class UpgradeManagerScript : MonoBehaviour
 {
+    [Serializable]
+    private class WeaponUpgrades
+    {
+        public BasicSprayUpgradeScript basicSpray;
+        public ShotgunSprayUpgradeScript shotgunSpray;
+        public PitchforkUpgradeScript pitchfork;
+        public ScytheUpgradeScript scythe;
+        public GrappleUpgradeScript grapple;
+        public SniperUpgradeScript sniper;
+        public WaterBalloonUpgradeScript waterBalloon;
+        public MilkChurnUpgradeScript milkChurn;
+        public RestorativeGasUpgradeScript restorativeGas;
+    }
+
+    [Serializable]
+    private class TrapUpgrades
+    {
+        public LaunchTrapUpgradeScript launchTrap;
+        public PullTrapUpgradeScript pullTrap;
+        public BeehiveTrapUpgradeScript beehive;
+        public SprinklerTrapUpgradeScript sprinkler;
+        public MagnifyingGlassTrapUpgradeScript magnifyingGlass;
+    }
+
     [Header("Weapon Upgrades")]
-    [SerializeField] private BasicSprayUpgradeScript basicSprayUpgrade;
-    [SerializeField] private ShotgunSprayUpgradeScript shotgunSprayUpgrade;
-    [SerializeField] private PitchforkUpgradeScript pitchforkUpgrade;
-    [SerializeField] private ScytheUpgradeScript scytheUpgrade;
-    [SerializeField] private GrappleUpgradeScript grappleUpgrade;
-    [SerializeField] private SniperUpgradeScript sniperUpgrade;
-    [SerializeField] private WaterBalloonUpgradeScript waterBalloonUpgrade;
-    [SerializeField] private MilkChurnUpgradeScript milkChurnUpgrade;
-    [SerializeField] private RestorativeGasUpgradeScript restorativeGasUpgrade;
+    [SerializeField] private WeaponUpgrades weapons = new WeaponUpgrades();
 
     [Header("Trap Upgrades")]
-    [SerializeField] private LaunchTrapUpgradeScript launchTrapUpgrade;
-    [SerializeField] private PullTrapUpgradeScript pullTrapUpgrade;
-    [SerializeField] private BeehiveTrapUpgradeScript beehiveUpgrade;
-    [SerializeField] private SprinklerTrapUpgradeScript sprinklerUpgrade;
-    [SerializeField] private MagnifyingGlassTrapUpgradeScript magnifyingGlassTrapUpgrade;
+    [SerializeField] private TrapUpgrades traps = new TrapUpgrades();
 
+    private readonly HashSet<string> purchasedUpgrades = new HashSet<string>();
 
-    // Stores the IDs of upgrades purchased.
-    private HashSet<string> purchasedUpgrades = new HashSet<string>();
+    // Weapon upgrade accessors.
+    public BasicSprayUpgradeScript BasicSpray => weapons.basicSpray;
+    public ShotgunSprayUpgradeScript ShotgunSpray => weapons.shotgunSpray;
+    public PitchforkUpgradeScript Pitchfork => weapons.pitchfork;
+    public ScytheUpgradeScript Scythe => weapons.scythe;
+    public GrappleUpgradeScript Grapple => weapons.grapple;
+    public SniperUpgradeScript Sniper => weapons.sniper;
+    public WaterBalloonUpgradeScript WaterBalloon => weapons.waterBalloon;
+    public MilkChurnUpgradeScript MilkChurn => weapons.milkChurn;
+    public RestorativeGasUpgradeScript RestorativeGas => weapons.restorativeGas;
 
-    // Checks whether an upgrade has already been purchased.
+    // Trap upgrade accessors.
+    public LaunchTrapUpgradeScript LaunchTrap => traps.launchTrap;
+    public PullTrapUpgradeScript PullTrap => traps.pullTrap;
+    public BeehiveTrapUpgradeScript Beehive => traps.beehive;
+    public SprinklerTrapUpgradeScript Sprinkler => traps.sprinkler;
+    public MagnifyingGlassTrapUpgradeScript MagnifyingGlass => traps.magnifyingGlass;
+
     public bool HasUpgrade(string upgradeID)
     {
         return purchasedUpgrades.Contains(upgradeID);
     }
 
-    // Registers an upgrade as purchased.
     public void RegisterUpgrade(string upgradeID)
     {
-        if (string.IsNullOrEmpty(upgradeID))
-            return;
-
-        purchasedUpgrades.Add(upgradeID);
+        if (!string.IsNullOrEmpty(upgradeID))
+            purchasedUpgrades.Add(upgradeID);
     }
 
-    // Removes all purchased upgrades when the player dies.
+    /// <summary>
+    /// Clears purchased upgrades and resets all assigned upgrade components.
+    /// </summary>
     public void ResetUpgrades()
     {
         purchasedUpgrades.Clear();
 
-        if (basicSprayUpgrade != null)
-        {
-            basicSprayUpgrade.ResetUpgrades();
-        }
+        weapons.basicSpray?.ResetUpgrades();
+        weapons.shotgunSpray?.ResetUpgrades();
+        weapons.pitchfork?.ResetUpgrades();
+        weapons.scythe?.ResetUpgrades();
+        weapons.grapple?.ResetUpgrades();
+        weapons.sniper?.ResetUpgrades();
+        weapons.waterBalloon?.ResetUpgrades();
+        weapons.milkChurn?.ResetUpgrades();
+        weapons.restorativeGas?.ResetUpgrades();
 
-        if (shotgunSprayUpgrade != null)
-        {
-            shotgunSprayUpgrade.ResetUpgrades();
-        }
-
-        if (scytheUpgrade != null)
-        {
-            scytheUpgrade.ResetUpgrades();
-        }
-
-        if (pitchforkUpgrade != null)
-        {
-            pitchforkUpgrade.ResetUpgrades();
-        }
-
-        if (grappleUpgrade != null)
-        {
-            grappleUpgrade.ResetUpgrades();
-        }
-
-        if (sniperUpgrade != null)
-        {
-            sniperUpgrade.ResetUpgrades();
-        }
-
-        if (waterBalloonUpgrade != null)
-        {
-            waterBalloonUpgrade.ResetUpgrades();
-        }
-
-        if (milkChurnUpgrade != null)
-        {
-            milkChurnUpgrade.ResetUpgrades();
-        }
-
-        if (restorativeGasUpgrade != null)
-        {
-            restorativeGasUpgrade.ResetUpgrades();
-        }
-
-        if (launchTrapUpgrade != null)
-        {
-            launchTrapUpgrade.ResetUpgrades();
-        }
-
-        if (pullTrapUpgrade != null)
-        {
-            pullTrapUpgrade.ResetUpgrades();
-        }
-
-        if (beehiveUpgrade != null)
-        {
-            beehiveUpgrade.ResetUpgrades();
-        }
-
-        if (sprinklerUpgrade != null)
-        {
-            sprinklerUpgrade.ResetUpgrades();
-        }
-
-        if (magnifyingGlassTrapUpgrade != null)
-        {
-            magnifyingGlassTrapUpgrade.ResetUpgrades();
-        }
+        traps.launchTrap?.ResetUpgrades();
+        traps.pullTrap?.ResetUpgrades();
+        traps.beehive?.ResetUpgrades();
+        traps.sprinkler?.ResetUpgrades();
+        traps.magnifyingGlass?.ResetUpgrades();
     }
 }

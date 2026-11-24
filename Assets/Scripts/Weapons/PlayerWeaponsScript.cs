@@ -1,11 +1,21 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 /// <summary>
 /// Manages weapon selection, hotbars, attacks, and trap placement.
 /// </summary>
 public class PlayerWeaponsScript : MonoBehaviour
 {
+    public enum WeaponOwnership
+    {
+        Owned,
+        NotOwned
+    }
+
+    [Header("Starting Weapon Ownership")]
+    [SerializeField] private WeaponOwnership[] weaponOwnership;
+
     // Weapons available to the player at startup.
     [Header("Weapons")]
     [SerializeField] private GameObject[] weapons;
@@ -82,9 +92,23 @@ public class PlayerWeaponsScript : MonoBehaviour
 
         if (weapons != null)
         {
-            foreach (GameObject weapon in weapons)
+            for (int i = 0; i < weapons.Length; i++)
             {
+                GameObject weapon = weapons[i];
+
                 if (weapon == null)
+                    continue;
+
+                RangedWeaponScript rangedWeapon = weapon.GetComponent<RangedWeaponScript>();
+
+                if (rangedWeapon != null)
+                    rangedWeapon.SetReloadManager(this);
+
+                bool isOwned = weaponOwnership != null && i < weaponOwnership.Length && weaponOwnership[i] == WeaponOwnership.Owned;
+
+                weapon.SetActive(false);
+
+                if (!isOwned)
                     continue;
 
                 TrapBaseScript trap = weapon.GetComponent<TrapBaseScript>();
@@ -114,8 +138,6 @@ public class PlayerWeaponsScript : MonoBehaviour
                     primaryHotbar[nextSlot] = weapon;
                     nextSlot++;
                 }
-
-                weapon.SetActive(false);
             }
         }
 
@@ -602,5 +624,62 @@ public class PlayerWeaponsScript : MonoBehaviour
         }
 
         SelectFirstAvailableSlot();
+    }
+
+    public bool CanPurchaseWeapon(int weaponIndex)
+    {
+        if (weapons == null || weaponOwnership == null || weaponIndex < 0 || weaponIndex >= weapons.Length || weaponIndex >= weaponOwnership.Length)
+            return false;
+
+        if (weapons[weaponIndex] == null)
+            return false;
+
+        if (weaponOwnership[weaponIndex] == WeaponOwnership.Owned)
+            return false;
+
+        return FindFirstEmptySlot(primaryHotbar) != -1;
+    }
+
+    public bool PurchaseWeapon(int weaponIndex)
+    {
+        if (!CanPurchaseWeapon(weaponIndex))
+            return false;
+
+        int slot = FindFirstEmptySlot(primaryHotbar);
+
+        weaponOwnership[weaponIndex] = WeaponOwnership.Owned;
+        primaryHotbar[slot] = weapons[weaponIndex];
+
+        if (activeHotbar == 0 && currentSlot == -1)
+            SelectSlot(slot);
+
+        return true;
+    }
+
+    private int FindFirstEmptySlot(GameObject[] hotbar)
+    {
+        for (int i = 0; i < hotbar.Length; i++)
+        {
+            if (hotbar[i] == null)
+                return i;
+        }
+
+        return -1;
+    }
+
+    public void StartWeaponReload(RangedWeaponScript weapon, float duration)
+    {
+        if (weapon == null)
+            return;
+
+        StartCoroutine(WeaponReloadRoutine(weapon, duration));
+    }
+
+    private IEnumerator WeaponReloadRoutine(RangedWeaponScript weapon, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        if (weapon != null)
+            weapon.CompleteReload();
     }
 }

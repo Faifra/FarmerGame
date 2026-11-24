@@ -1,383 +1,230 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System;
-using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
-/// Manages the upgrade menu and purchases traps using player resources.
+/// Handles the upgrade menu, item selection, and purchases.
+/// Upgrade component references are managed by UpgradeManagerScript.
 /// </summary>
 public class UpgradeMenuScript : MonoBehaviour
 {
-    [Header("HUD Elements")]
+    // --------------------------------------------------
+    // INSPECTOR DATA CLASSES
+    // --------------------------------------------------
+
+    [Serializable]
+    private class TabUI
+    {
+        public Button purchaseWeaponsButton;
+        public Button purchaseTrapsButton;
+        public Button upgradeTrapsButton;
+        public Button upgradeWeaponsButton;
+
+        public GameObject purchaseWeaponsPanel;
+        public GameObject purchaseTrapsPanel;
+        public GameObject upgradeTrapsPanel;
+        public GameObject upgradeWeaponsPanel;
+
+        public Color selectedColor = new Color(183f / 255f, 121f / 255f, 54f / 255f);
+
+        public Color normalColor = new Color(52f / 255f, 70f / 255f, 79f / 255f);
+    }
+
+    [Serializable]
+    private class ItemUI
+    {
+        public Outline outline;
+        public GameObject upgradePanel;
+        public TextMeshProUGUI nameText;
+        public TextMeshProUGUI descriptionText;
+    }
+
+    [Serializable]
+    private class PurchaseUI
+    {
+        public int cost;
+        public Button button;
+        public TextMeshProUGUI costText;
+    }
+
+    [Serializable]
+    private class UpgradeGroupUI
+    {
+        public PurchaseUI first = new PurchaseUI();
+        public PurchaseUI second = new PurchaseUI();
+        public PurchaseUI third = new PurchaseUI();
+    }
+
+    [Serializable]
+    private class WeaponPurchaseUI
+    {
+        public PurchaseUI basicSpray = new PurchaseUI();
+        public PurchaseUI shotgunSpray = new PurchaseUI();
+        public PurchaseUI pitchfork = new PurchaseUI();
+        public PurchaseUI scythe = new PurchaseUI();
+        public PurchaseUI grapple = new PurchaseUI();
+        public PurchaseUI sniper = new PurchaseUI();
+        public PurchaseUI waterBalloon = new PurchaseUI();
+        public PurchaseUI milkChurn = new PurchaseUI();
+        public PurchaseUI restorativeGas = new PurchaseUI();
+    }
+
+    [Serializable]
+    private class TrapPurchaseUI
+    {
+        public PurchaseUI launch = new PurchaseUI();
+        public PurchaseUI pull = new PurchaseUI();
+        public PurchaseUI beehive = new PurchaseUI();
+        public PurchaseUI magnifyingGlass = new PurchaseUI();
+        public PurchaseUI sprinkler = new PurchaseUI();
+    }
+
+    private class UpgradeDefinition
+    {
+        public string ID;
+        public int Cost;
+        public Button Button;
+        public Action Activate;
+
+        public UpgradeDefinition(string id, PurchaseUI ui, Action activate)
+        {
+            ID = id;
+            Cost = ui.cost;
+            Button = ui.button;
+            Activate = activate;
+        }
+    }
+
+    private class ItemSelection
+    {
+        public Outline Outline;
+        public GameObject Panel;
+        public TextMeshProUGUI NameText;
+        public TextMeshProUGUI DescriptionText;
+        public string Name;
+        public string Description;
+
+        public ItemSelection(ItemUI ui, string name, string description)
+        {
+            Outline = ui.outline;
+            Panel = ui.upgradePanel;
+            NameText = ui.nameText;
+            DescriptionText = ui.descriptionText;
+            Name = name;
+            Description = description;
+        }
+    }
+
+    // --------------------------------------------------
+    // HUD AND MENU
+    // --------------------------------------------------
+
+    [Header("HUD")]
     [SerializeField] private GameObject hotbarUI;
     [SerializeField] private GameObject ammoTextUI;
 
-    // Reference to the upgrade menu UI.
     [Header("Menu")]
     [SerializeField] private GameObject upgradeMenu;
 
     [Header("Tabs")]
-    [SerializeField] private Button purchaseTrapsTabButton;
-    [SerializeField] private Button upgradeTrapsTabButton;
-    [SerializeField] private Button upgradeWeaponsTabButton;
+    [SerializeField] private TabUI tabs = new TabUI();
 
-    [SerializeField] private GameObject purchaseTrapsPanel;
-    [SerializeField] private GameObject upgradeTrapsPanel;
-    [SerializeField] private GameObject upgradeWeaponsPanel;
+    // --------------------------------------------------
+    // PLAYER REFERENCES
+    // --------------------------------------------------
 
-    [Header("Tab Colors")]
-    [SerializeField] private Color selectedTabColor = new Color(183f / 255f, 121f / 255f, 54f / 255f);
-    [SerializeField] private Color normalTabColor = new Color(52f / 255f, 70f / 255f, 79f / 255f);
-
-    [Header("Item Button Outlines")]
-    [SerializeField] private Outline basicSprayOutline;
-    [SerializeField] private Outline shotgunSprayOutline;
-    [SerializeField] private Outline pitchforkOutline;
-    [SerializeField] private Outline scytheOutline;
-    [SerializeField] private Outline grappleOutline;
-    [SerializeField] private Outline sniperOutline;
-    [SerializeField] private Outline waterBalloonOutline;
-    [SerializeField] private Outline milkChurnOutline;
-    [SerializeField] private Outline restorativeGasOutline;
-    [SerializeField] private Outline launchTrapOutline;
-    [SerializeField] private Outline pullTrapOutline;
-    [SerializeField] private Outline beehiveTrapOutline;
-    [SerializeField] private Outline sprinklerTrapOutline;
-    [SerializeField] private Outline magnifyingGlassTrapOutline;
-
-    // Player components affected by opening and using the menu.
     [Header("Player")]
     [SerializeField] private PlayerResourceScript playerResources;
     [SerializeField] private PlayerLookScript playerLook;
     [SerializeField] private PlayerWeaponsScript playerWeapons;
     [SerializeField] private UpgradeManagerScript upgradeManager;
 
-    // Launch trap purchase settings and UI references.
-    [Header("Launch Trap Purchase")]
-    [SerializeField] private int launchTrapCost = 10;
-    [SerializeField] private Button launchTrapButton;
-    [SerializeField] private TextMeshProUGUI launchTrapCostText;
+    // --------------------------------------------------
+    // PURCHASES
+    // --------------------------------------------------
 
-    // Pull trap purchase settings and UI references.
-    [Header("Pull Trap Purchase")]
-    [SerializeField] private int pullTrapCost = 15;
-    [SerializeField] private Button pullTrapButton;
-    [SerializeField] private TextMeshProUGUI pullTrapCostText;
+    [Header("Trap Purchases")]
+    [SerializeField] private TrapPurchaseUI trapPurchases = new TrapPurchaseUI();
 
-    // Beehive trap purchase settings and UI references.
-    [Header("Beehive Trap Purchase")]
-    [SerializeField] private int beehiveTrapCost = 10;
-    [SerializeField] private Button beehiveTrapButton;
-    [SerializeField] private TextMeshProUGUI beehiveTrapCostText;
+    [Header("Weapon Purchases")]
+    [SerializeField] private WeaponPurchaseUI weaponPurchases = new WeaponPurchaseUI();
 
-    // Magnifying glass trap purchase settings and UI references.
-    [Header("Magnifying Glass Trap Purchase")]
-    [SerializeField] private int magnifyingGlassTrapCost = 10;
-    [SerializeField] private Button magnifyingGlassTrapButton;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapCostText;
+    // --------------------------------------------------
+    // ITEM SELECTION UI
+    // --------------------------------------------------
 
-    // Magnifying glass trap purchase settings and UI references.
-    [Header("Sprinkler Trap Purchase")]
-    [SerializeField] private int sprinklerTrapCost = 10;
-    [SerializeField] private Button sprinklerTrapButton;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapCostText;
+    [Header("Weapon Selection UI")]
+    [SerializeField] private ItemUI basicSpray = new ItemUI();
+    [SerializeField] private ItemUI shotgunSpray = new ItemUI();
+    [SerializeField] private ItemUI pitchfork = new ItemUI();
+    [SerializeField] private ItemUI scythe = new ItemUI();
+    [SerializeField] private ItemUI grapple = new ItemUI();
+    [SerializeField] private ItemUI sniper = new ItemUI();
+    [SerializeField] private ItemUI waterBalloon = new ItemUI();
+    [SerializeField] private ItemUI milkChurn = new ItemUI();
+    [SerializeField] private ItemUI restorativeGas = new ItemUI();
 
-    [Header("Basic Spray Selection")]
-    [SerializeField] private GameObject basicSprayUpgradePanel;
-    [SerializeField] private TextMeshProUGUI basicSprayNameText;
-    [SerializeField] private TextMeshProUGUI basicSprayDescriptionText;
+    [Header("Trap Selection UI")]
+    [SerializeField] private ItemUI launchTrap = new ItemUI();
+    [SerializeField] private ItemUI pullTrap = new ItemUI();
+    [SerializeField] private ItemUI beehiveTrap = new ItemUI();
+    [SerializeField] private ItemUI sprinklerTrap = new ItemUI();
+    [SerializeField] private ItemUI magnifyingGlassTrap = new ItemUI();
 
-    [Header("Shotgun Spray Selection")]
-    [SerializeField] private GameObject shotgunSprayUpgradePanel;
-    [SerializeField] private TextMeshProUGUI shotgunSprayNameText;
-    [SerializeField] private TextMeshProUGUI shotgunSprayDescriptionText;
+    // --------------------------------------------------
+    // WEAPON UPGRADE PURCHASE UI
+    // --------------------------------------------------
 
-    [Header("Pitchfork Selection")]
-    [SerializeField] private GameObject pitchforkUpgradePanel;
-    [SerializeField] private TextMeshProUGUI pitchforkNameText;
-    [SerializeField] private TextMeshProUGUI pitchforkDescriptionText;
+    [Header("Basic Spray Upgrades")]
+    [SerializeField] private UpgradeGroupUI basicSprayUpgrades = new UpgradeGroupUI();
 
-    [Header("Scythe Selection")]
-    [SerializeField] private GameObject scytheUpgradePanel;
-    [SerializeField] private TextMeshProUGUI scytheNameText;
-    [SerializeField] private TextMeshProUGUI scytheDescriptionText;
+    [Header("Shotgun Spray Upgrades")]
+    [SerializeField] private UpgradeGroupUI shotgunSprayUpgrades = new UpgradeGroupUI();
 
-    [Header("Grapple Selection")]
-    [SerializeField] private GameObject grappleUpgradePanel;
-    [SerializeField] private TextMeshProUGUI grappleNameText;
-    [SerializeField] private TextMeshProUGUI grappleDescriptionText;
+    [Header("Pitchfork Upgrades")]
+    [SerializeField] private UpgradeGroupUI pitchforkUpgrades = new UpgradeGroupUI();
 
-    [Header("Sniper Selection")]
-    [SerializeField] private GameObject sniperUpgradePanel;
-    [SerializeField] private TextMeshProUGUI sniperNameText;
-    [SerializeField] private TextMeshProUGUI sniperDescriptionText;
+    [Header("Scythe Upgrades")]
+    [SerializeField] private UpgradeGroupUI scytheUpgrades = new UpgradeGroupUI();
 
-    [Header("Water Balloon Launcher Selection")]
-    [SerializeField] private GameObject waterBalloonUpgradePanel;
-    [SerializeField] private TextMeshProUGUI waterBalloonNameText;
-    [SerializeField] private TextMeshProUGUI waterBalloonDescriptionText;
+    [Header("Grapple Upgrades")]
+    [SerializeField] private UpgradeGroupUI grappleUpgrades = new UpgradeGroupUI();
 
-    [Header("Milk Churn Launcher Selection")]
-    [SerializeField] private GameObject milkChurnUpgradePanel;
-    [SerializeField] private TextMeshProUGUI milkChurnNameText;
-    [SerializeField] private TextMeshProUGUI milkChurnDescriptionText;
+    [Header("Sniper Upgrades")]
+    [SerializeField] private UpgradeGroupUI sniperUpgrades = new UpgradeGroupUI();
 
-    [Header("Restorative Gas Thrower Selection")]
-    [SerializeField] private GameObject restorativeGasUpgradePanel;
-    [SerializeField] private TextMeshProUGUI restorativeGasNameText;
-    [SerializeField] private TextMeshProUGUI restorativeGasDescriptionText;
+    [Header("Water Balloon Upgrades")]
+    [SerializeField] private UpgradeGroupUI waterBalloonUpgrades = new UpgradeGroupUI();
 
-    [Header("Basic Spray - Improved Spray")]
-    [SerializeField] private int improvedSprayCost = 10;
-    [SerializeField] private Button improvedSprayButton;
-    [SerializeField] private TextMeshProUGUI improvedSprayCostText;
+    [Header("Milk Churn Upgrades")]
+    [SerializeField] private UpgradeGroupUI milkChurnUpgrades = new UpgradeGroupUI();
 
-    [Header("Basic Spray - Maximum Health Damage")]
-    [SerializeField] private int maximumHealthDamageCost = 15;
-    [SerializeField] private Button maximumHealthDamageButton;
-    [SerializeField] private TextMeshProUGUI maximumHealthDamageCostText;
+    [Header("Restorative Gas Upgrades")]
+    [SerializeField] private UpgradeGroupUI restorativeGasUpgrades = new UpgradeGroupUI();
 
-    [Header("Basic Spray - Knockback")]
-    [SerializeField] private int knockbackCost = 20;
-    [SerializeField] private Button knockbackButton;
-    [SerializeField] private TextMeshProUGUI knockbackCostText;
+    // --------------------------------------------------
+    // TRAP UPGRADE PURCHASE UI
+    // --------------------------------------------------
 
-    [Header("Shotgun Spray - Double Burst")]
-    [SerializeField] private int doubleBurstCost = 15;
-    [SerializeField] private Button doubleBurstButton;
-    [SerializeField] private TextMeshProUGUI doubleBurstCostText;
+    [Header("Launch Trap Upgrades")]
+    [SerializeField] private UpgradeGroupUI launchTrapUpgrades = new UpgradeGroupUI();
 
-    [Header("Shotgun Spray - Faster Reload")]
-    [SerializeField] private int fasterReloadCost = 10;
-    [SerializeField] private Button fasterReloadButton;
-    [SerializeField] private TextMeshProUGUI fasterReloadCostText;
+    [Header("Pull Trap Upgrades")]
+    [SerializeField] private UpgradeGroupUI pullTrapUpgrades = new UpgradeGroupUI();
 
-    [Header("Shotgun Spray - Close Range Damage")]
-    [SerializeField] private int closeRangeDamageCost = 15;
-    [SerializeField] private Button closeRangeDamageButton;
-    [SerializeField] private TextMeshProUGUI closeRangeDamageCostText;
+    [Header("Beehive Trap Upgrades")]
+    [SerializeField] private UpgradeGroupUI beehiveTrapUpgrades = new UpgradeGroupUI();
 
-    [Header("Pitchfork - Bonus Damage")]
-    [SerializeField] private int pitchforkBonusDamageCost = 15;
-    [SerializeField] private Button pitchforkBonusDamageButton;
-    [SerializeField] private TextMeshProUGUI pitchforkBonusDamageCostText;
+    [Header("Sprinkler Trap Upgrades")]
+    [SerializeField] private UpgradeGroupUI sprinklerTrapUpgrades = new UpgradeGroupUI();
 
-    [Header("Pitchfork - Enemy Slowdown")]
-    [SerializeField] private int pitchforkEnemySlowdownCost = 10;
-    [SerializeField] private Button pitchforkEnemySlowdownButton;
-    [SerializeField] private TextMeshProUGUI pitchforkEnemySlowdownCostText;
+    [Header("Magnifying Glass Trap Upgrades")]
+    [SerializeField] private UpgradeGroupUI magnifyingGlassTrapUpgrades = new UpgradeGroupUI();
 
-    [Header("Pitchfork - Bonus Drops")]
-    [SerializeField] private int pitchforkBonusDropsCost = 15;
-    [SerializeField] private Button pitchforkBonusDropsButton;
-    [SerializeField] private TextMeshProUGUI pitchforkBonusDropsCostText;
-
-    [Header("Scythe - Increased Attack Radius")]
-    [SerializeField] private int scytheRadiusCost = 10;
-    [SerializeField] private Button scytheRadiusButton;
-    [SerializeField] private TextMeshProUGUI scytheRadiusCostText;
-
-    [Header("Scythe - Increasing Attack Speed")]
-    [SerializeField] private int scytheAttackSpeedCost = 15;
-    [SerializeField] private Button scytheAttackSpeedButton;
-    [SerializeField] private TextMeshProUGUI scytheAttackSpeedCostText;
-
-    [Header("Scythe - Health on Kill")]
-    [SerializeField] private int scytheHealthOnKillCost = 20;
-    [SerializeField] private Button scytheHealthOnKillButton;
-    [SerializeField] private TextMeshProUGUI scytheHealthOnKillCostText;
-
-    [Header("Grapple - Grapple speed and cooldown")]
-    [SerializeField] private int grappleSpeedCost = 10;
-    [SerializeField] private Button grappleSpeedButton;
-    [SerializeField] private TextMeshProUGUI grappleSpeedCostText;
-
-    [Header("Grapple - Increased enemy vulnerablility")]
-    [SerializeField] private int grappleEnemyVulnerabilityCost = 15;
-    [SerializeField] private Button grappleEnemyVulnerabilityButton;
-    [SerializeField] private TextMeshProUGUI grappleEnemyVulnerabilityCostText;
-
-    [Header("Grapple - Health & Speed on Kill")]
-    [SerializeField] private int grappleHealthAndSpeedOnKillCost = 20;
-    [SerializeField] private Button grappleHealthAndSpeedOnKillButton;
-    [SerializeField] private TextMeshProUGUI grappleHealthAndSpeedOnKillCostText;
-
-    [Header("Sniper - Faster Reload")]
-    [SerializeField] private int sniperFasterReloadCost = 10;
-    [SerializeField] private Button sniperFasterReloadButton;
-    [SerializeField] private TextMeshProUGUI sniperFasterReloadCostText;
-
-    [Header("Sniper - Expose Weakpoints")]
-    [SerializeField] private int sniperExposeWeakpointsCost = 30;
-    [SerializeField] private Button sniperExposeWeakpointsButton;
-    [SerializeField] private TextMeshProUGUI sniperExposeWeakpointsCostText;
-
-    [Header("Sniper - Ricochet Shot")]
-    [SerializeField] private int sniperRicochetShotCost = 25;
-    [SerializeField] private Button sniperRicochetShotButton;
-    [SerializeField] private TextMeshProUGUI sniperRicochetShotCostText;
-
-    [Header("Water Balloon Launcher - Expanded Splash")]
-    [SerializeField] private int balloonExpandedSplashCost = 15;
-    [SerializeField] private Button balloonExpandedSplashButton;
-    [SerializeField] private TextMeshProUGUI balloonExpandedSplashCostText;
-
-    [Header("Water Balloon Launcher - Rubberized Balloon")]
-    [SerializeField] private int balloonRubberizedBalloonCost = 25;
-    [SerializeField] private Button balloonRubberizedBalloonButton;
-    [SerializeField] private TextMeshProUGUI balloonRubberizedBalloonCostText;
-
-    [Header("Water Balloon Launcher - Concussive Aftershock")]
-    [SerializeField] private int balloonConcussiveAftershockCost = 25;
-    [SerializeField] private Button balloonConcussiveAftershockButton;
-    [SerializeField] private TextMeshProUGUI balloonConcussiveAftershockCostText;
-
-    [Header("Milk Churn Launcher - Faster Reload")]
-    [SerializeField] private int milkChurnFasterReloadCost = 10;
-    [SerializeField] private Button milkChurnFasterReloadButton;
-    [SerializeField] private TextMeshProUGUI milkChurnFasterReloadCostText;
-
-    [Header("Milk Churn Launcher - Larger Splatter")]
-    [SerializeField] private int milkChurnLargerSplatterCost = 20;
-    [SerializeField] private Button milkChurnLargerSplatterButton;
-    [SerializeField] private TextMeshProUGUI milkChurnLargerSplatterCostText;
-
-    [Header("Milk Churn Launcher - Unstable Mixture")]
-    [SerializeField] private int milkChurnUnstableMixtureCost = 25;
-    [SerializeField] private Button milkChurnUnstableMixtureButton;
-    [SerializeField] private TextMeshProUGUI milkChurnUnstableMixtureCostText;
-
-    [Header("Restorative Gas Thrower - Expanded Canister")]
-    [SerializeField] private int restorativeGasExpandedCanisterCost = 25;
-    [SerializeField] private Button restorativeGasExpandedCanisterButton;
-    [SerializeField] private TextMeshProUGUI restorativeGasExpandedCanisterCostText;
-
-    [Header("Restorative Gas Thrower - Faster Reload")]
-    [SerializeField] private int restorativeGasFasterReloadCost = 15;
-    [SerializeField] private Button restorativeGasFasterReloadButton;
-    [SerializeField] private TextMeshProUGUI restorativeGasFasterReloadCostText;
-
-    [Header("Restorative Gas Thrower - Lingering Tonic")]
-    [SerializeField] private int restorativeGasLingeringTonicCost = 25;
-    [SerializeField] private Button restorativeGasLingeringTonicButton;
-    [SerializeField] private TextMeshProUGUI restorativeGasLingeringTonicCostText;
-
-    [Header("Launch Trap Selection")]
-    [SerializeField] private GameObject launchTrapUpgradePanel;
-    [SerializeField] private TextMeshProUGUI launchTrapNameText;
-    [SerializeField] private TextMeshProUGUI launchTrapDescriptionText;
-
-    [Header("Pull Trap Selection")]
-    [SerializeField] private GameObject pullTrapUpgradePanel;
-    [SerializeField] private TextMeshProUGUI pullTrapNameText;
-    [SerializeField] private TextMeshProUGUI pullTrapDescriptionText;
-
-    [Header("Beehive Trap Selection")]
-    [SerializeField] private GameObject beehiveTrapUpgradePanel;
-    [SerializeField] private TextMeshProUGUI beehiveTrapNameText;
-    [SerializeField] private TextMeshProUGUI beehiveTrapDescriptionText;
-
-    [Header("Sprinkler Trap Selection")]
-    [SerializeField] private GameObject sprinklerTrapUpgradePanel;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapNameText;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapDescriptionText;
-
-    [Header("Magnifying Glass Trap Selection")]
-    [SerializeField] private GameObject magnifyingGlassTrapUpgradePanel;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapNameText;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapDescriptionText;
-
-    [Header("Launch Trap - High Force Launch")]
-    [SerializeField] private int launchTrapHighForceLaunchCost = 15;
-    [SerializeField] private Button launchTrapHighForceLaunchButton;
-    [SerializeField] private TextMeshProUGUI launchTrapHighForceLaunchCostText;
-
-    [Header("Launch Trap - Concussive Exhaust")]
-    [SerializeField] private int launchTrapConcussiveExhaustCost = 20;
-    [SerializeField] private Button launchTrapConcussiveExhaustButton;
-    [SerializeField] private TextMeshProUGUI launchTrapConcussiveExhaustCostText;
-
-    [Header("Launch Trap - Double Trigger")]
-    [SerializeField] private int launchTrapDoubleTriggerCost = 30;
-    [SerializeField] private Button launchTrapDoubleTriggerButton;
-    [SerializeField] private TextMeshProUGUI launchTrapDoubleTriggerCostText;
-
-    [Header("Pull Trap - Expanded Vacuum")]
-    [SerializeField] private int pullTrapExpandedVacuumCost = 30;
-    [SerializeField] private Button pullTrapExpandedVacuumButton;
-    [SerializeField] private TextMeshProUGUI pullTrapExpandedVacuumCostText;
-
-    [Header("Pull Trap - Extended Reach")]
-    [SerializeField] private int pullTrapExtendedReachCost = 15;
-    [SerializeField] private Button pullTrapExtendedReachButton;
-    [SerializeField] private TextMeshProUGUI pullTrapExtendedReachCostText;
-
-    [Header("Pull Trap - Forceful Launch")]
-    [SerializeField] private int pullTrapForcefulLaunchCost = 25;
-    [SerializeField] private Button pullTrapForcefulLaunchButton;
-    [SerializeField] private TextMeshProUGUI pullTrapForcefulLaunchCostText;
-
-    [Header("Beehive Trap - Expanded Colony")]
-    [SerializeField] private int beehiveTrapExpandedColonyCost = 25;
-    [SerializeField] private Button beehiveTrapExpandedColonyButton;
-    [SerializeField] private TextMeshProUGUI beehiveTrapExpandedColonyCostText;
-
-    [Header("Beehive Trap - Frenzied Swarm")]
-    [SerializeField] private int beehiveTrapFrenziedSwarmCost = 15;
-    [SerializeField] private Button beehiveTrapFrenziedSwarmButton;
-    [SerializeField] private TextMeshProUGUI beehiveTrapFrenziedSwarmCostText;
-
-    [Header("Beehive Trap - Swarm Replication")]
-    [SerializeField] private int beehiveTrapSwarmReplicationCost = 25;
-    [SerializeField] private Button beehiveTrapSwarmReplicationButton;
-    [SerializeField] private TextMeshProUGUI beehiveTrapSwarmReplicationCostText;
-
-    [Header("Sprinkler Trap - Pressurized Spray")]
-    [SerializeField] private int sprinklerTrapPressurizedSprayCost = 15;
-    [SerializeField] private Button sprinklerTrapPressurizedSprayButton;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapPressurizedSprayCostText;
-
-    [Header("Sprinkler Trap - Rapid Rotation")]
-    [SerializeField] private int sprinklerTrapRapidRotationCost = 20;
-    [SerializeField] private Button sprinklerTrapRapidRotationButton;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapRapidRotationCostText;
-
-    [Header("Sprinkler Trap - Reinforced Barriers")]
-    [SerializeField] private int sprinklerTrapReinforcedBarriersCost = 20;
-    [SerializeField] private Button sprinklerTrapReinforcedBarriersButton;
-    [SerializeField] private TextMeshProUGUI sprinklerTrapReinforcedBarriersCostText;
-
-    [Header("Magnifying Glass Trap - Focused Sunlight")]
-    [SerializeField] private int magnifyingGlassTrapFocusedSunlightCost = 25;
-    [SerializeField] private Button magnifyingGlassTrapFocusedSunlightButton;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapFocusedSunlightCostText;
-
-    [Header("Magnifying Glass Trap - Intensified Heat")]
-    [SerializeField] private int magnifyingGlassTrapIntensifiedHeatCost = 20;
-    [SerializeField] private Button magnifyingGlassTrapIntensifiedHeatButton;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapIntensifiedHeatCostText;
-
-    [Header("Magnifying Glass Trap - Refracted Beam")]
-    [SerializeField] private int magnifyingGlassTrapRefractedBeamCost = 25;
-    [SerializeField] private Button magnifyingGlassTrapRefractedBeamButton;
-    [SerializeField] private TextMeshProUGUI magnifyingGlassTrapRefractedBeamCostText;
-
-    [Header("Upgrade Scripts")]
-    [SerializeField] private BasicSprayUpgradeScript basicSprayUpgrade;
-    [SerializeField] private ShotgunSprayUpgradeScript shotgunSprayUpgrade;
-    [SerializeField] private PitchforkUpgradeScript pitchforkUpgrade;
-    [SerializeField] private ScytheUpgradeScript scytheUpgrade;
-    [SerializeField] private GrappleUpgradeScript grappleUpgrade;
-    [SerializeField] private SniperUpgradeScript sniperUpgrade;
-    [SerializeField] private WaterBalloonUpgradeScript waterBalloonUpgrade;
-    [SerializeField] private RestorativeGasUpgradeScript restorativeGasUpgrade;
-    [SerializeField] private MilkChurnUpgradeScript milkChurnUpgrade;
-    [SerializeField] private LaunchTrapUpgradeScript launchTrapUpgrade;
-    [SerializeField] private PullTrapUpgradeScript pullTrapUpgrade;
-    [SerializeField] private BeehiveTrapUpgradeScript beehiveTrapUpgrade;
-    [SerializeField] private SprinklerTrapUpgradeScript sprinklerUpgrade;
-    [SerializeField] private MagnifyingGlassTrapUpgradeScript magnifyingGlassTrapUpgrade;
+    // --------------------------------------------------
+    // UPGRADE IDS
+    // --------------------------------------------------
 
     private const string ImprovedSprayID = "basic_spray_improved";
     private const string MaximumHealthDamageID = "basic_spray_bonus_damage";
@@ -395,7 +242,7 @@ public class UpgradeMenuScript : MonoBehaviour
     private const string ScytheAttackSpeedID = "scythe_increasing_attack_speed";
     private const string ScytheHealthOnKillID = "scythe_health_on_kill";
 
-    private const string GrappleSpeedID = "gapple_speed";
+    private const string GrappleSpeedID = "grapple_speed";
     private const string GrappleEnemyVulnerabilityID = "grapple_enemy_vulnerability";
     private const string GrappleHealthAndSpeedOnKillID = "grapple_health_and_speed_on_kill";
 
@@ -405,7 +252,7 @@ public class UpgradeMenuScript : MonoBehaviour
 
     private const string BalloonExpandedSplashID = "balloon_expanded_splash";
     private const string BalloonRubberizedBalloonID = "balloon_rubberized_balloon";
-    private const string BallonCuncussiveAfterShockID = "ballon_concussive_aftershock";
+    private const string BallonCuncussiveAfterShockID = "balloon_concussive_aftershock";
 
     private const string MilkChurnFasterReloadID = "milk_churn_faster_reload";
     private const string MilkChurnLargerSplatterID = "milk_churn_larger_splatter";
@@ -435,939 +282,520 @@ public class UpgradeMenuScript : MonoBehaviour
     private const string MagnifyingGlassTrapIntensifiedHeatID = "magnifying_glass_trap_intensified_heat";
     private const string MagnifyingGlassTrapRefractedBeamID = "magnifying_glass_trap_refracted_beam";
 
-    // Tracks whether the upgrade menu is currently open.
-    private bool menuOpen = false;
+    // --------------------------------------------------
+    // RUNTIME DATA
+    // --------------------------------------------------
 
-    // Allows other scripts to check the menu state.
+    private bool menuOpen;
+
     public bool IsMenuOpen => menuOpen;
 
-    // Initializes the menu and displays trap prices.
+    private UpgradeDefinition[] upgrades;
+    private ItemSelection[] itemSelections;
+
+    // --------------------------------------------------
+    // INITIALIZATION
+    // --------------------------------------------------
+
     private void Start()
     {
-        upgradeMenu.SetActive(false);
-
-        if (launchTrapCostText != null)
-        {
-            launchTrapCostText.text = launchTrapCost.ToString();
-        }
-
-        if (pullTrapCostText != null)
-        {
-            pullTrapCostText.text = pullTrapCost.ToString();
-        }
-
-        if (beehiveTrapCostText != null)
-        {
-            beehiveTrapCostText.text = beehiveTrapCost.ToString();
-        }
-
-        if (magnifyingGlassTrapCostText != null)
-        {
-            magnifyingGlassTrapCostText.text = magnifyingGlassTrapCost.ToString();
-        }
-
-        if (sprinklerTrapCostText != null)
-        {
-            sprinklerTrapCostText.text = sprinklerTrapCost.ToString();
-        }
-
-        if (improvedSprayCostText != null)
-            improvedSprayCostText.text = improvedSprayCost.ToString();
-
-        if (maximumHealthDamageCostText != null)
-            maximumHealthDamageCostText.text = maximumHealthDamageCost.ToString();
-
-        if (knockbackCostText != null)
-            knockbackCostText.text = knockbackCost.ToString();
-
-        if (doubleBurstCostText != null)
-            doubleBurstCostText.text = doubleBurstCost.ToString();
-
-        if (fasterReloadCostText != null)
-            fasterReloadCostText.text = fasterReloadCost.ToString();
-
-        if (closeRangeDamageCostText != null)
-            closeRangeDamageCostText.text = closeRangeDamageCost.ToString();
-
-        if (pitchforkBonusDamageCostText != null)
-            pitchforkBonusDamageCostText.text = pitchforkBonusDamageCost.ToString();
-
-        if (pitchforkEnemySlowdownCostText != null)
-            pitchforkEnemySlowdownCostText.text = pitchforkEnemySlowdownCost.ToString();
-
-        if (pitchforkBonusDropsCostText != null)
-            pitchforkBonusDropsCostText.text = pitchforkBonusDropsCost.ToString();
-
-        if (scytheRadiusCostText != null)
-            scytheRadiusCostText.text = scytheRadiusCost.ToString();
-
-        if (scytheAttackSpeedCostText != null)
-            scytheAttackSpeedCostText.text = scytheAttackSpeedCost.ToString();
-
-        if (scytheHealthOnKillCostText != null)
-            scytheHealthOnKillCostText.text = scytheHealthOnKillCost.ToString();
-
-        if (grappleSpeedCostText != null)
-            grappleSpeedCostText.text = grappleSpeedCost.ToString();
-
-        if (grappleEnemyVulnerabilityCostText != null)
-            grappleEnemyVulnerabilityCostText.text = grappleEnemyVulnerabilityCost.ToString();
-
-        if (grappleHealthAndSpeedOnKillCostText != null)
-            grappleHealthAndSpeedOnKillCostText.text = grappleHealthAndSpeedOnKillCost.ToString();
-
-        if (sniperFasterReloadCostText != null)
-            sniperFasterReloadCostText.text = sniperFasterReloadCost.ToString();
-
-        if (sniperExposeWeakpointsCostText != null)
-            sniperExposeWeakpointsCostText.text = sniperExposeWeakpointsCost.ToString();
-
-        if (sniperRicochetShotCostText != null)
-            sniperRicochetShotCostText.text = sniperRicochetShotCost.ToString();
-
-        if (balloonExpandedSplashCostText != null)
-            balloonExpandedSplashCostText.text = balloonExpandedSplashCost.ToString();
-
-        if (balloonRubberizedBalloonCostText != null)
-            balloonRubberizedBalloonCostText.text = balloonRubberizedBalloonCost.ToString();
-
-        if (balloonConcussiveAftershockCostText != null)
-            balloonConcussiveAftershockCostText.text = balloonConcussiveAftershockCost.ToString();
-
-        if (milkChurnFasterReloadCostText != null)
-            milkChurnFasterReloadCostText.text = milkChurnFasterReloadCost.ToString();
-
-        if (milkChurnLargerSplatterCostText != null)
-            milkChurnLargerSplatterCostText.text = milkChurnLargerSplatterCost.ToString();
-
-        if (milkChurnUnstableMixtureCostText != null)
-            milkChurnUnstableMixtureCostText.text = milkChurnUnstableMixtureCost.ToString();
-
-        if (restorativeGasExpandedCanisterCostText != null)
-            restorativeGasExpandedCanisterCostText.text = restorativeGasExpandedCanisterCost.ToString();
-
-        if (restorativeGasFasterReloadCostText != null)
-            restorativeGasFasterReloadCostText.text = restorativeGasFasterReloadCost.ToString();
-
-        if (restorativeGasLingeringTonicCostText != null)
-            restorativeGasLingeringTonicCostText.text = restorativeGasLingeringTonicCost.ToString();
-
-        if (launchTrapHighForceLaunchCostText != null)
-            launchTrapHighForceLaunchCostText.text = launchTrapHighForceLaunchCost.ToString();
-
-        if (launchTrapConcussiveExhaustCostText != null)
-            launchTrapConcussiveExhaustCostText.text = launchTrapConcussiveExhaustCost.ToString();
-
-        if (launchTrapDoubleTriggerCostText != null)
-            launchTrapDoubleTriggerCostText.text = launchTrapDoubleTriggerCost.ToString();
-
-        if (pullTrapExpandedVacuumCostText != null)
-            pullTrapExpandedVacuumCostText.text = pullTrapExpandedVacuumCost.ToString();
-
-        if (pullTrapExtendedReachCostText != null)
-            pullTrapExtendedReachCostText.text = pullTrapExtendedReachCost.ToString();
-
-        if (pullTrapForcefulLaunchCostText != null)
-            pullTrapForcefulLaunchCostText.text = pullTrapForcefulLaunchCost.ToString();
-
-        if (beehiveTrapExpandedColonyCostText != null)
-            beehiveTrapExpandedColonyCostText.text = beehiveTrapExpandedColonyCost.ToString();
-
-        if (beehiveTrapFrenziedSwarmCostText != null)
-            beehiveTrapFrenziedSwarmCostText.text = beehiveTrapFrenziedSwarmCost.ToString();
-
-        if (beehiveTrapSwarmReplicationCostText != null)
-            beehiveTrapSwarmReplicationCostText.text = beehiveTrapSwarmReplicationCost.ToString();
-
-        if (sprinklerTrapPressurizedSprayCostText != null)
-            sprinklerTrapPressurizedSprayCostText.text = sprinklerTrapPressurizedSprayCost.ToString();
-
-        if (sprinklerTrapRapidRotationCostText != null)
-            sprinklerTrapRapidRotationCostText.text = sprinklerTrapRapidRotationCost.ToString();
-
-        if (sprinklerTrapReinforcedBarriersCostText != null)
-            sprinklerTrapReinforcedBarriersCostText.text = sprinklerTrapReinforcedBarriersCost.ToString();
-
-        if (magnifyingGlassTrapFocusedSunlightCostText != null)
-            magnifyingGlassTrapFocusedSunlightCostText.text = magnifyingGlassTrapFocusedSunlightCost.ToString();
-
-        if (magnifyingGlassTrapIntensifiedHeatCostText != null)
-            magnifyingGlassTrapIntensifiedHeatCostText.text = magnifyingGlassTrapIntensifiedHeatCost.ToString();
-
-        if (magnifyingGlassTrapRefractedBeamCostText != null)
-            magnifyingGlassTrapRefractedBeamCostText.text = magnifyingGlassTrapRefractedBeamCost.ToString();
-
-        if (basicSprayUpgradePanel != null)
-            basicSprayUpgradePanel.SetActive(false);
-
-        if (shotgunSprayUpgradePanel != null)
-            shotgunSprayUpgradePanel.SetActive(false);
-
-        if (pitchforkUpgradePanel != null)
-            pitchforkUpgradePanel.SetActive(false);
-
-        if (scytheUpgradePanel != null)
-            scytheUpgradePanel.SetActive(false);
-
-        if (grappleUpgradePanel != null)
-            grappleUpgradePanel.SetActive(false);
-
-        if (sniperUpgradePanel != null)
-            sniperUpgradePanel.SetActive(false);
-
-        if (waterBalloonUpgradePanel != null)
-            waterBalloonUpgradePanel.SetActive(false);
-
-        if (milkChurnUpgradePanel != null)
-            milkChurnUpgradePanel.SetActive(false);
-
-        if (restorativeGasUpgradePanel != null)
-            restorativeGasUpgradePanel.SetActive(false);
-
-        if (launchTrapUpgradePanel != null)
-            launchTrapUpgradePanel.SetActive(false);
-
-        if (pullTrapUpgradePanel != null)
-            pullTrapUpgradePanel.SetActive(false);
-
-        if (beehiveTrapUpgradePanel != null)
-            beehiveTrapUpgradePanel.SetActive(false);
-
-        if (sprinklerTrapUpgradePanel != null)
-            sprinklerTrapUpgradePanel.SetActive(false);
-
-        if (magnifyingGlassTrapUpgradePanel != null)
-            magnifyingGlassTrapUpgradePanel.SetActive(false);
-
-        UpdateButton();
-
+        InitializeUpgradeDefinitions();
+        InitializeItemSelections();
+        UpdateCostLabels();
         ShowPurchaseTrapsTab();
+        UpdateButton();
     }
 
-    // Keeps purchase button availability in sync with player resources.
-    private void Update()
+    private void InitializeUpgradeDefinitions()
     {
-        if (menuOpen)
+        if (upgradeManager == null)
         {
-            UpdateButton();
+            upgrades = Array.Empty<UpgradeDefinition>();
+            return;
         }
+
+        upgrades = new UpgradeDefinition[]
+        {
+            // Basic Spray
+            new UpgradeDefinition(ImprovedSprayID, basicSprayUpgrades.first, upgradeManager.BasicSpray != null ? upgradeManager.BasicSpray.ActivateImprovedSpray : null),
+
+            new UpgradeDefinition(MaximumHealthDamageID, basicSprayUpgrades.second, upgradeManager.BasicSpray != null ? upgradeManager.BasicSpray.ActivateMaximumHealthDamage : null),
+
+            new UpgradeDefinition(KnockbackID, basicSprayUpgrades.third, upgradeManager.BasicSpray != null ? upgradeManager.BasicSpray.ActivateKnockback : null),
+
+            // Shotgun Spray
+            new UpgradeDefinition(DoubleBurstID, shotgunSprayUpgrades.first, upgradeManager.ShotgunSpray != null ? upgradeManager.ShotgunSpray.ActivateDoubleBurst : null),
+
+            new UpgradeDefinition(FasterReloadID, shotgunSprayUpgrades.second, upgradeManager.ShotgunSpray != null ? upgradeManager.ShotgunSpray.ActivateFasterReload : null),
+
+            new UpgradeDefinition(CloseRangeDamageID, shotgunSprayUpgrades.third, upgradeManager.ShotgunSpray != null ? upgradeManager.ShotgunSpray.ActivateCloseRangeDamage : null),
+
+            // Pitchfork
+            new UpgradeDefinition(PitchforkDamageID, pitchforkUpgrades.first, upgradeManager.Pitchfork != null ? upgradeManager.Pitchfork.ActivateBonusDamage : null),
+
+            new UpgradeDefinition(PitchforkSlowdownID, pitchforkUpgrades.second, upgradeManager.Pitchfork != null ? upgradeManager.Pitchfork.ActivateEnemySlowdown : null),
+
+            new UpgradeDefinition(PitchforkDropsID, pitchforkUpgrades.third, upgradeManager.Pitchfork != null ? upgradeManager.Pitchfork.ActivateBonusResources : null),
+
+            // Scythe
+            new UpgradeDefinition(ScytheRadiusID, scytheUpgrades.first, upgradeManager.Scythe != null ? upgradeManager.Scythe.ActivateIncreasedAttackRadius : null),
+
+            new UpgradeDefinition(ScytheAttackSpeedID, scytheUpgrades.second, upgradeManager.Scythe != null ? upgradeManager.Scythe.ActivateIncreasingAttackSpeed : null),
+
+            new UpgradeDefinition(ScytheHealthOnKillID, scytheUpgrades.third, upgradeManager.Scythe != null ? upgradeManager.Scythe.ActivateHealthOnKill : null),
+
+            // Grapple
+            new UpgradeDefinition(GrappleSpeedID, grappleUpgrades.first, upgradeManager.Grapple != null ? upgradeManager.Grapple.ActivateReinforcedGraft : null),
+
+            new UpgradeDefinition(GrappleEnemyVulnerabilityID, grappleUpgrades.second, upgradeManager.Grapple != null ? upgradeManager.Grapple.ActivateCorrosiveGraft : null),
+
+            new UpgradeDefinition(GrappleHealthAndSpeedOnKillID, grappleUpgrades.third, upgradeManager.Grapple != null ? upgradeManager.Grapple.ActivateGrapplerMomentum : null),
+
+            // Sniper
+            new UpgradeDefinition(SniperFasterReloadID, sniperUpgrades.first, upgradeManager.Sniper != null ? upgradeManager.Sniper.ActivateFasterReload : null),
+
+            new UpgradeDefinition(SniperExposeWeakpointsID, sniperUpgrades.second, upgradeManager.Sniper != null ? upgradeManager.Sniper.ActivateExposedWeakPoints : null),
+
+            new UpgradeDefinition(SniperRicochetShotID, sniperUpgrades.third, upgradeManager.Sniper != null ? upgradeManager.Sniper.ActivateRicochetShot : null),
+
+            // Water Balloon
+            new UpgradeDefinition(BalloonExpandedSplashID, waterBalloonUpgrades.first, upgradeManager.WaterBalloon != null ? upgradeManager.WaterBalloon.ActivateExpandedSplash : null),
+
+            new UpgradeDefinition(BalloonRubberizedBalloonID, waterBalloonUpgrades.second, upgradeManager.WaterBalloon != null ? upgradeManager.WaterBalloon.ActivateRubberizedBalloon : null),
+
+            new UpgradeDefinition(BallonCuncussiveAfterShockID, waterBalloonUpgrades.third, upgradeManager.WaterBalloon != null ? upgradeManager.WaterBalloon.ActivateConcussiveAftershock : null),
+
+            // Milk Churn
+            new UpgradeDefinition(MilkChurnFasterReloadID, milkChurnUpgrades.first, upgradeManager.MilkChurn != null ? upgradeManager.MilkChurn.ActivateRapidChurning : null),
+
+            new UpgradeDefinition(MilkChurnLargerSplatterID, milkChurnUpgrades.second, upgradeManager.MilkChurn != null ? upgradeManager.MilkChurn.ActivateLargerSplatter : null),
+
+            new UpgradeDefinition(MilkChurnUnstableMixtureID, milkChurnUpgrades.third, upgradeManager.MilkChurn != null ? upgradeManager.MilkChurn.ActivateUnstableMixture : null),
+
+            // Restorative Gas
+            new UpgradeDefinition(RestorativeGasExpandedCanisterID, restorativeGasUpgrades.first, upgradeManager.RestorativeGas != null ? upgradeManager.RestorativeGas.ActivateExtendedCanister : null),
+
+            new UpgradeDefinition(RestorativeGasFasterReloadID, restorativeGasUpgrades.second, upgradeManager.RestorativeGas != null ? upgradeManager.RestorativeGas.ActivateRapidRefill : null),
+
+            new UpgradeDefinition(RestorativeGasLingeringTonicID, restorativeGasUpgrades.third, upgradeManager.RestorativeGas != null ? upgradeManager.RestorativeGas.ActivateLingeringTonic : null),
+
+            // Launch Trap
+            new UpgradeDefinition(LaunchTrapHighForceLaunchID, launchTrapUpgrades.first, upgradeManager.LaunchTrap != null ? upgradeManager.LaunchTrap.ActivateHighForceLaunch : null),
+
+            new UpgradeDefinition(LaunchTrapConcussiveExhaustID, launchTrapUpgrades.second, upgradeManager.LaunchTrap != null ? upgradeManager.LaunchTrap.ActivateConcussiveBlast : null),
+
+            new UpgradeDefinition(LaunchTrapDoubleTriggerID, launchTrapUpgrades.third, upgradeManager.LaunchTrap != null ? upgradeManager.LaunchTrap.ActivateDoubleTrigger : null),
+
+            // Pull Trap
+            new UpgradeDefinition(PullTrapExpandedVacuumID, pullTrapUpgrades.first, upgradeManager.PullTrap != null ? upgradeManager.PullTrap.ActivateExpandedVacuum : null),
+
+            new UpgradeDefinition(PullTrapExtendedReachID, pullTrapUpgrades.second, upgradeManager.PullTrap != null ? upgradeManager.PullTrap.ActivateExtendedReach : null),
+
+            new UpgradeDefinition(PullTrapForcefulLaunchID, pullTrapUpgrades.third, upgradeManager.PullTrap != null ? upgradeManager.PullTrap.ActivateForcefulLaunch : null),
+
+            // Beehive Trap
+            new UpgradeDefinition(BeehiveTrapExpandedColonyID, beehiveTrapUpgrades.first, upgradeManager.Beehive != null ? upgradeManager.Beehive.ActivateExpandedColony : null),
+
+            new UpgradeDefinition(BeehiveTrapFrenziedSwarmID, beehiveTrapUpgrades.second, upgradeManager.Beehive != null ? upgradeManager.Beehive.ActivateFrenziedSwarm : null),
+
+            new UpgradeDefinition(BeehiveTrapSwarmReplicationID, beehiveTrapUpgrades.third, upgradeManager.Beehive != null ? upgradeManager.Beehive.ActivateSwarmReplication : null),
+
+            // Sprinkler Trap
+            new UpgradeDefinition(SprinklerTrapPressurizedSprayID, sprinklerTrapUpgrades.first, upgradeManager.Sprinkler != null ? upgradeManager.Sprinkler.ActivatePressurizedSpray : null),
+
+            new UpgradeDefinition(SprinklerTrapRapidRotationID, sprinklerTrapUpgrades.second, upgradeManager.Sprinkler != null ? upgradeManager.Sprinkler.ActivateRapidRotation : null),
+
+            new UpgradeDefinition(SprinklerTrapReinforcedBarriersID, sprinklerTrapUpgrades.third, upgradeManager.Sprinkler != null ? upgradeManager.Sprinkler.ActivateReinforcedBarriers : null),
+
+            // Magnifying Glass Trap
+            new UpgradeDefinition(MagnifyingGlassTrapFocusedSunlightID, magnifyingGlassTrapUpgrades.first, upgradeManager.MagnifyingGlass != null ? upgradeManager.MagnifyingGlass.ActivateFocusedSunlight : null),
+
+            new UpgradeDefinition(MagnifyingGlassTrapIntensifiedHeatID, magnifyingGlassTrapUpgrades.second, upgradeManager.MagnifyingGlass != null ? upgradeManager.MagnifyingGlass.ActivateIntensifiedHeat : null),
+
+            new UpgradeDefinition(MagnifyingGlassTrapRefractedBeamID, magnifyingGlassTrapUpgrades.third, upgradeManager.MagnifyingGlass != null ? upgradeManager.MagnifyingGlass.ActivateRefractedBeam : null)
+        };
     }
 
-    //------------------------------------------------------------------------
-    // MENU OPEN / CLOSE
-    // -----------------------------------------------------------------------
+    private void InitializeItemSelections()
+    {
+        itemSelections = new ItemSelection[]
+        {
+            new ItemSelection(basicSpray, "Basic Spray", "A basic spray weapon that fires a continuous stream of liquid."),
 
-    // Opens the menu and notifies player controls.
+            new ItemSelection(shotgunSpray, "Shotgun Spray", "A spray weapon that fires a burst of liquid."),
+
+            new ItemSelection(pitchfork, "Pitchfork", "A sturdy pitchfork allowing for powerful thrusting attacks."),
+
+            new ItemSelection(scythe, "Scythe", "A scythe allowing for wide sweeping swings."),
+
+            new ItemSelection(grapple, "Grapple", "A grapple gun providing increased mobility and positioning."),
+
+            new ItemSelection(sniper, "Sniper", "A precision weapon designed for long-range attacks."),
+
+            new ItemSelection(waterBalloon, "Water Balloon Launcher", "A powerful weapon launching water balloon explosives."),
+
+            new ItemSelection(milkChurn, "Milk Churn Launcher", "A launcher that fires damaging milk-based projectiles."),
+
+            new ItemSelection(restorativeGas, "Restorative Gas Thrower", "A weapon that releases restorative gas."),
+
+            new ItemSelection(launchTrap, "Launch Trap", "A trap that launches enemies away."),
+
+            new ItemSelection(pullTrap, "Pull Trap", "A trap that pulls enemies toward it."),
+
+            new ItemSelection(beehiveTrap, "Beehive Trap", "A trap that releases a swarm of bees."),
+
+            new ItemSelection(sprinklerTrap, "Sprinkler Trap", "A trap that sprays enemies with pressurized liquid."),
+
+            new ItemSelection(magnifyingGlassTrap, "Magnifying Glass Trap", "A trap that focuses sunlight to damage enemies.")
+        };
+    }
+
+    // --------------------------------------------------
+    // COST LABELS
+    // --------------------------------------------------
+
+    private void UpdateCostLabels()
+    {
+        SetCostText(weaponPurchases.basicSpray);
+        SetCostText(weaponPurchases.shotgunSpray);
+        SetCostText(weaponPurchases.pitchfork);
+        SetCostText(weaponPurchases.scythe);
+        SetCostText(weaponPurchases.grapple);
+        SetCostText(weaponPurchases.sniper);
+        SetCostText(weaponPurchases.waterBalloon);
+        SetCostText(weaponPurchases.milkChurn);
+        SetCostText(weaponPurchases.restorativeGas);
+
+        SetCostText(trapPurchases.launch);
+        SetCostText(trapPurchases.pull);
+        SetCostText(trapPurchases.beehive);
+        SetCostText(trapPurchases.magnifyingGlass);
+        SetCostText(trapPurchases.sprinkler);
+
+        SetCostText(basicSprayUpgrades);
+        SetCostText(shotgunSprayUpgrades);
+        SetCostText(pitchforkUpgrades);
+        SetCostText(scytheUpgrades);
+        SetCostText(grappleUpgrades);
+        SetCostText(sniperUpgrades);
+        SetCostText(waterBalloonUpgrades);
+        SetCostText(milkChurnUpgrades);
+        SetCostText(restorativeGasUpgrades);
+
+        SetCostText(launchTrapUpgrades);
+        SetCostText(pullTrapUpgrades);
+        SetCostText(beehiveTrapUpgrades);
+        SetCostText(sprinklerTrapUpgrades);
+        SetCostText(magnifyingGlassTrapUpgrades);
+    }
+
+    private void SetCostText(PurchaseUI purchase)
+    {
+        if (purchase != null && purchase.costText != null)
+            purchase.costText.text = purchase.cost.ToString();
+    }
+
+    private void SetCostText(UpgradeGroupUI group)
+    {
+        SetCostText(group.first);
+        SetCostText(group.second);
+        SetCostText(group.third);
+    }
+
+    // --------------------------------------------------
+    // MENU OPEN / CLOSE
+    // --------------------------------------------------
+
     public void OpenMenu()
     {
         if (menuOpen)
             return;
 
         menuOpen = true;
-        upgradeMenu.SetActive(true);
-
-        if (hotbarUI != null)
-            hotbarUI.SetActive(false);
-
-        if (ammoTextUI != null)
-            ammoTextUI.SetActive(false);
-
-        if (playerLook != null)
-            playerLook.SetMenuOpen(true);
-
-        if (playerWeapons != null)
-            playerWeapons.SetMenuOpen(true);
-
+        SetMenuState(true);
+        UpdateButton();
     }
 
-    // Closes the menu and restores player controls.
     public void CloseMenu()
     {
         if (!menuOpen)
             return;
 
         menuOpen = false;
-        upgradeMenu.SetActive(false);
-
-        if (hotbarUI != null)
-            hotbarUI.SetActive(true);
-
-        if (ammoTextUI != null)
-            ammoTextUI.SetActive(true);
-
-        if (playerLook != null)
-            playerLook.SetMenuOpen(false);
-
-        if (playerWeapons != null)
-            playerWeapons.SetMenuOpen(false);
-
+        SetMenuState(false);
     }
 
-    //------------------------------------------------------------------------
+    private void SetMenuState(bool isOpen)
+    {
+        if (upgradeMenu != null)
+            upgradeMenu.SetActive(isOpen);
+
+        if (hotbarUI != null)
+            hotbarUI.SetActive(!isOpen);
+
+        if (ammoTextUI != null)
+            ammoTextUI.SetActive(!isOpen);
+
+        if (playerLook != null)
+            playerLook.SetMenuOpen(isOpen);
+
+        if (playerWeapons != null)
+            playerWeapons.SetMenuOpen(isOpen);
+    }
+
+    // --------------------------------------------------
     // TABS
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------
+
+    public void ShowPurchaseWeaponsTab()
+    {
+        SetActiveTab(tabs.purchaseWeaponsPanel, tabs.purchaseWeaponsButton);
+    }
 
     public void ShowPurchaseTrapsTab()
     {
-        SetActiveTab(purchaseTrapsPanel, purchaseTrapsTabButton);
+        SetActiveTab(tabs.purchaseTrapsPanel, tabs.purchaseTrapsButton);
     }
 
     public void ShowUpgradeTrapsTab()
     {
-        SetActiveTab(upgradeTrapsPanel, upgradeTrapsTabButton);
+        SetActiveTab(tabs.upgradeTrapsPanel, tabs.upgradeTrapsButton);
     }
 
     public void ShowUpgradeWeaponsTab()
     {
-        SetActiveTab(upgradeWeaponsPanel, upgradeWeaponsTabButton);
+        SetActiveTab(tabs.upgradeWeaponsPanel, tabs.upgradeWeaponsButton);
     }
 
     private void SetActiveTab(GameObject selectedPanel, Button selectedButton)
     {
-        purchaseTrapsPanel.SetActive(false);
-        upgradeTrapsPanel.SetActive(false);
-        upgradeWeaponsPanel.SetActive(false);
+        SetPanelActive(tabs.purchaseWeaponsPanel, false);
+        SetPanelActive(tabs.purchaseTrapsPanel, false);
+        SetPanelActive(tabs.upgradeTrapsPanel, false);
+        SetPanelActive(tabs.upgradeWeaponsPanel, false);
 
-        selectedPanel.SetActive(true);
+        SetPanelActive(selectedPanel, true);
 
-        purchaseTrapsTabButton.image.color = normalTabColor;
-        upgradeTrapsTabButton.image.color = normalTabColor;
-        upgradeWeaponsTabButton.image.color = normalTabColor;
+        SetTabColor(tabs.purchaseWeaponsButton, tabs.normalColor);
+        SetTabColor(tabs.purchaseTrapsButton, tabs.normalColor);
+        SetTabColor(tabs.upgradeTrapsButton, tabs.normalColor);
+        SetTabColor(tabs.upgradeWeaponsButton, tabs.normalColor);
 
-        selectedButton.image.color = selectedTabColor;
+        SetTabColor(selectedButton, tabs.selectedColor);
     }
 
-    //------------------------------------------------------------------------
-    // TRAP PURCHASING
-    // -----------------------------------------------------------------------
-
-    // Purchases a launch trap if the player can afford it.
-    public void BuyLaunchTrap()
+    private void SetPanelActive(GameObject panel, bool isActive)
     {
-        if (playerResources == null)
+        if (panel != null)
+            panel.SetActive(isActive);
+    }
+
+    private void SetTabColor(Button button, Color color)
+    {
+        if (button != null && button.image != null)
+            button.image.color = color;
+    }
+
+    // --------------------------------------------------
+    // WEAPON PURCHASES
+    // --------------------------------------------------
+
+    public void BuyBasicSpray() => TryPurchaseWeapon(weaponPurchases.basicSpray, 0);
+    public void BuyShotgunSpray() => TryPurchaseWeapon(weaponPurchases.shotgunSpray, 1);
+    public void BuyPitchfork() => TryPurchaseWeapon(weaponPurchases.pitchfork, 2);
+    public void BuyScythe() => TryPurchaseWeapon(weaponPurchases.scythe, 3);
+    public void BuyGrapple() => TryPurchaseWeapon(weaponPurchases.grapple, 4);
+    public void BuySniper() => TryPurchaseWeapon(weaponPurchases.sniper, 5);
+    public void BuyWaterBalloon() => TryPurchaseWeapon(weaponPurchases.waterBalloon, 6);
+    public void BuyMilkChurn() => TryPurchaseWeapon(weaponPurchases.milkChurn, 7);
+    public void BuyRestorativeGas() => TryPurchaseWeapon(weaponPurchases.restorativeGas, 8);
+
+    private void TryPurchaseWeapon(PurchaseUI purchase, int weaponIndex)
+    {
+        if (purchase == null ||
+            playerResources == null ||
+            playerWeapons == null)
             return;
 
-        if (playerWeapons == null)
+        if (!playerWeapons.CanPurchaseWeapon(weaponIndex))
             return;
 
-        bool purchased = playerResources.SpendDrops(launchTrapCost);
-
-        if (!purchased)
-        {
+        if (!playerResources.SpendDrops(purchase.cost))
             return;
-        }
 
-        playerWeapons.AddLaunchTrap();
+        if (!playerWeapons.PurchaseWeapon(weaponIndex))
+            return;
 
         UpdateButton();
     }
 
-    // Purchases a pull trap if the player can afford it.
-    public void BuyPullTrap()
+    // --------------------------------------------------
+    // TRAP PURCHASES
+    // --------------------------------------------------
+
+    public void BuyLaunchTrap() => TryPurchaseTrap(trapPurchases.launch, playerWeapons != null ? (Action)playerWeapons.AddLaunchTrap : null);
+
+    public void BuyPullTrap() => TryPurchaseTrap(trapPurchases.pull, playerWeapons != null ? (Action)playerWeapons.AddPullTrap : null);
+
+    public void BuyBeehiveTrap() => TryPurchaseTrap(trapPurchases.beehive, playerWeapons != null ? (Action)playerWeapons.AddBeehiveTrap : null);
+
+    public void BuyMagnifyingGlassTrap() => TryPurchaseTrap(trapPurchases.magnifyingGlass, playerWeapons != null ? (Action)playerWeapons.AddMagnifyingGlassTrap : null);
+
+    public void BuySprinklerTrap() => TryPurchaseTrap(trapPurchases.sprinkler, playerWeapons != null ? (Action)playerWeapons.AddSprinklerTrap : null);
+
+    private void TryPurchaseTrap(PurchaseUI purchase, Action addTrap)
     {
-        if (playerResources == null)
+        if (purchase == null || playerResources == null || addTrap == null)
             return;
 
-        if (playerWeapons == null)
+        if (!playerResources.SpendDrops(purchase.cost))
             return;
 
-        bool purchased = playerResources.SpendDrops(pullTrapCost);
-
-        if (!purchased)
-        {
-            return;
-        }
-
-        playerWeapons.AddPullTrap();
-
+        addTrap.Invoke();
         UpdateButton();
     }
 
-    // Purchases a beehive trap if the player can afford it.
-    public void BuyBeehiveTrap()
-    {
-        if (playerResources == null)
-            return;
-
-        if (playerWeapons == null)
-            return;
-
-        bool purchased = playerResources.SpendDrops(beehiveTrapCost);
-
-        if (!purchased)
-        {
-            return;
-        }
-
-        playerWeapons.AddBeehiveTrap();
-
-        UpdateButton();
-    }
-
-    // Purchases a magnifying glass trap if the player can afford it.
-    public void BuyMagnifyingGlassTrap()
-    {
-        if (playerResources == null)
-            return;
-
-        if (playerWeapons == null)
-            return;
-
-        bool purchase = playerResources.SpendDrops(magnifyingGlassTrapCost);
-
-        if (!purchase)
-        {
-            return;
-        }
-
-        playerWeapons.AddMagnifyingGlassTrap();
-
-        UpdateButton();
-    }
-
-    // Purchases a magnifying glass trap if the player can afford it.
-    public void BuySprinklerTrap()
-    {
-        if (playerResources == null)
-            return;
-
-        if (playerWeapons == null)
-            return;
-
-        bool purchase = playerResources.SpendDrops(sprinklerTrapCost);
-
-        if (!purchase)
-        {
-            return;
-        }
-
-        playerWeapons.AddSprinklerTrap();
-
-        UpdateButton();
-    }
-
-    //------------------------------------------------------------------------
+    // --------------------------------------------------
     // ITEM SELECTION
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------
 
-    private void UpdateItemButtonOutlines(Outline selectedOutline)
+    private void SelectItem(int index)
     {
-        Outline[] outlines = {basicSprayOutline, shotgunSprayOutline, pitchforkOutline, scytheOutline, grappleOutline, sniperOutline, waterBalloonOutline, milkChurnOutline,
-            restorativeGasOutline, launchTrapOutline, pullTrapOutline, beehiveTrapOutline, sprinklerTrapOutline, magnifyingGlassTrapOutline};
+        if (itemSelections == null || index < 0 || index >= itemSelections.Length)
+            return;
 
-        foreach (Outline outline in outlines)
+        CloseAllUpgradePanels();
+
+        for (int i = 0; i < itemSelections.Length; i++)
         {
-            if (outline != null)
-                outline.enabled = (outline == selectedOutline);
+            if (itemSelections[i].Outline != null)
+                itemSelections[i].Outline.enabled = i == index;
         }
+
+        ItemSelection selected = itemSelections[index];
+
+        SetPanelActive(selected.Panel, true);
+
+        if (selected.NameText != null)
+            selected.NameText.text = selected.Name;
+
+        if (selected.DescriptionText != null)
+            selected.DescriptionText.text = selected.Description;
+
+        UpdateButton();
     }
 
     private void CloseAllUpgradePanels()
     {
-        if (basicSprayUpgradePanel != null)
-            basicSprayUpgradePanel.SetActive(false);
+        if (itemSelections == null)
+            return;
 
-        if (shotgunSprayUpgradePanel != null)
-            shotgunSprayUpgradePanel.SetActive(false);
-
-        if (pitchforkUpgradePanel != null)
-            pitchforkUpgradePanel.SetActive(false);
-
-        if (scytheUpgradePanel != null)
-            scytheUpgradePanel.SetActive(false);
-
-        if (grappleUpgradePanel != null)
-            grappleUpgradePanel.SetActive(false);
-
-        if (sniperUpgradePanel != null)
-            sniperUpgradePanel.SetActive(false);
-
-        if (waterBalloonUpgradePanel != null)
-            waterBalloonUpgradePanel.SetActive(false);
-
-        if (milkChurnUpgradePanel != null)
-            milkChurnUpgradePanel.SetActive(false);
-
-        if (restorativeGasUpgradePanel != null)
-            restorativeGasUpgradePanel.SetActive(false);
-
-        if (launchTrapUpgradePanel != null)
-            launchTrapUpgradePanel.SetActive(false);
-
-        if (pullTrapUpgradePanel != null)
-            pullTrapUpgradePanel.SetActive(false);
-
-        if (beehiveTrapUpgradePanel != null)
-            beehiveTrapUpgradePanel.SetActive(false);
-
-        if (sprinklerTrapUpgradePanel != null)
-            sprinklerTrapUpgradePanel.SetActive(false);
-
-        if (magnifyingGlassTrapUpgradePanel != null)
-            magnifyingGlassTrapUpgradePanel.SetActive(false);
+        foreach (ItemSelection item in itemSelections)
+        {
+            if (item.Panel != null)
+                item.Panel.SetActive(false);
+        }
     }
 
-    public void ShowBasicSprayUpgrades()
+    public void ShowBasicSprayUpgrades() => SelectItem(0);
+    public void ShowShotgunSprayUpgrades() => SelectItem(1);
+    public void ShowPitchforkUpgrades() => SelectItem(2);
+    public void ShowScytheUpgrades() => SelectItem(3);
+    public void ShowGrappleUpgrades() => SelectItem(4);
+    public void ShowSniperUpgrades() => SelectItem(5);
+    public void ShowWaterBallonLauncherUpgrades() => SelectItem(6);
+    public void ShowMilkChurnLauncherUpgrades() => SelectItem(7);
+    public void ShowRestorativeGasThrowerUpgrades() => SelectItem(8);
+    public void ShowLaunchTrapUpgrades() => SelectItem(9);
+    public void ShowPullTrapUpgrades() => SelectItem(10);
+    public void ShowBeehiveTrapUpgrades() => SelectItem(11);
+    public void ShowSprinklerTrapUpgrades() => SelectItem(12);
+    public void ShowMagnifyingGlassTrapUpgrades() => SelectItem(13);
+
+    // --------------------------------------------------
+    // UPGRADE PURCHASE CALLBACKS
+    // --------------------------------------------------
+
+    private void PurchaseUpgrade(string upgradeID)
     {
-        UpdateItemButtonOutlines(basicSprayOutline);
-        CloseAllUpgradePanels();
+        if (upgrades == null)
+            return;
 
-        if (basicSprayUpgradePanel != null)
-            basicSprayUpgradePanel.SetActive(true);
+        foreach (UpgradeDefinition upgrade in upgrades)
+        {
+            if (upgrade.ID != upgradeID)
+                continue;
 
-        if (basicSprayNameText != null)
-            basicSprayNameText.text = "Basic Spray";
+            TryPurchaseUpgrade(upgrade.ID, upgrade.Cost, upgrade.Activate);
 
-        if (basicSprayDescriptionText != null)
-            basicSprayDescriptionText.text = "A basic spray weapon that fires a continuous stream of liquid.";
-
-        UpdateButton();
+            return;
+        }
     }
 
-    public void ShowShotgunSprayUpgrades()
-    {
-        UpdateItemButtonOutlines(shotgunSprayOutline);
-        CloseAllUpgradePanels();
+    public void BuyImprovedSpray() => PurchaseUpgrade(ImprovedSprayID);
+    public void BuyMaximumHealthDamage() => PurchaseUpgrade(MaximumHealthDamageID);
+    public void BuyKnockback() => PurchaseUpgrade(KnockbackID);
 
-        if (shotgunSprayUpgradePanel != null)
-            shotgunSprayUpgradePanel.SetActive(true);
+    public void BuyDoubleBurst() => PurchaseUpgrade(DoubleBurstID);
+    public void BuyFasterReload() => PurchaseUpgrade(FasterReloadID);
+    public void BuyCloseRangeDamage() => PurchaseUpgrade(CloseRangeDamageID);
 
-        if (shotgunSprayNameText != null)
-            shotgunSprayNameText.text = "Shotgun Spray";
+    public void BuyPitchforkBonusDamage() => PurchaseUpgrade(PitchforkDamageID);
+    public void BuyPitchforkEnemySlowdown() => PurchaseUpgrade(PitchforkSlowdownID);
+    public void BuyPitchforkBonusDrops() => PurchaseUpgrade(PitchforkDropsID);
 
-        if (shotgunSprayDescriptionText != null)
-            shotgunSprayDescriptionText.text = "A  spray weapon that fires a burst of liquid.";
+    public void BuyScytheRadius() => PurchaseUpgrade(ScytheRadiusID);
+    public void BuyScytheAttackSpeed() => PurchaseUpgrade(ScytheAttackSpeedID);
+    public void BuyScytheHealthOnKill() => PurchaseUpgrade(ScytheHealthOnKillID);
 
-        UpdateButton();
-    }
+    public void BuyReinforcedGraft() => PurchaseUpgrade(GrappleSpeedID);
+    public void BuyCorrosiveGraft() => PurchaseUpgrade(GrappleEnemyVulnerabilityID);
+    public void BuyGrapplerMomentum() => PurchaseUpgrade(GrappleHealthAndSpeedOnKillID);
 
-    public void ShowPitchforkUpgrades()
-    {
-        UpdateItemButtonOutlines(pitchforkOutline);
-        CloseAllUpgradePanels();
+    public void BuySniperFasterReload() => PurchaseUpgrade(SniperFasterReloadID);
+    public void BuySniperExposedWeakPoints() => PurchaseUpgrade(SniperExposeWeakpointsID);
+    public void BuySniperRicochetShot() => PurchaseUpgrade(SniperRicochetShotID);
 
-        if (pitchforkUpgradePanel != null)
-            pitchforkUpgradePanel.SetActive(true);
+    public void BuyWaterBalloonExpandedSplash() => PurchaseUpgrade(BalloonExpandedSplashID);
+    public void BuyWaterBalloonRubberizedBalloon() => PurchaseUpgrade(BalloonRubberizedBalloonID);
+    public void BuyWaterBalloonConcussiveAftershock() => PurchaseUpgrade(BallonCuncussiveAfterShockID);
 
-        if (pitchforkNameText != null)
-            pitchforkNameText.text = "Pitchfork";
+    public void BuyMilkChurnRapidChurnin() => PurchaseUpgrade(MilkChurnFasterReloadID);
+    public void BuyMilkChurnLargerSplatter() => PurchaseUpgrade(MilkChurnLargerSplatterID);
+    public void BuyMilkChurnUnstableMixture() => PurchaseUpgrade(MilkChurnUnstableMixtureID);
 
-        if (pitchforkDescriptionText != null)
-            pitchforkDescriptionText.text = "A sturdy pitchfork allowing for powerful thrusting attacks.";
+    public void BuyRestorativeGasExtendedCanister() => PurchaseUpgrade(RestorativeGasExpandedCanisterID);
+    public void BuyRestorativeGasRapidRefill() => PurchaseUpgrade(RestorativeGasFasterReloadID);
+    public void BuyRestorativeGasLingeringTonic() => PurchaseUpgrade(RestorativeGasLingeringTonicID);
 
-        UpdateButton();
-    }
+    public void BuyLaunchTrapHighForceLaunch() => PurchaseUpgrade(LaunchTrapHighForceLaunchID);
+    public void BuyLaunchTrapConcussiveBlast() => PurchaseUpgrade(LaunchTrapConcussiveExhaustID);
+    public void BuyLaunchTrapDoubleTrigger() => PurchaseUpgrade(LaunchTrapDoubleTriggerID);
 
-    public void ShowScytheUpgrades()
-    {
-        UpdateItemButtonOutlines(scytheOutline);
-        CloseAllUpgradePanels();
+    public void BuyPullTrapExpandedVacuum() => PurchaseUpgrade(PullTrapExpandedVacuumID);
+    public void BuyPullTrapExtendedReach() => PurchaseUpgrade(PullTrapExtendedReachID);
+    public void BuyPullTrapForcefulLaunch() => PurchaseUpgrade(PullTrapForcefulLaunchID);
 
-        if (scytheUpgradePanel != null)
-            scytheUpgradePanel.SetActive(true);
+    public void BuyBeehiveTrapExpandedColony() => PurchaseUpgrade(BeehiveTrapExpandedColonyID);
+    public void BuyBeehiveTrapFrenziedSwarm() => PurchaseUpgrade(BeehiveTrapFrenziedSwarmID);
+    public void BuyBeehiveTrapSwarmReplication() => PurchaseUpgrade(BeehiveTrapSwarmReplicationID);
 
-        if (scytheNameText != null)
-            scytheNameText.text = "Scythe";
+    public void BuySprinklerTrapPressurizedSpray() => PurchaseUpgrade(SprinklerTrapPressurizedSprayID);
+    public void BuySprinklerTrapRapidRotation() => PurchaseUpgrade(SprinklerTrapRapidRotationID);
+    public void BuySprinklerTrapReinforcedBarriers() => PurchaseUpgrade(SprinklerTrapReinforcedBarriersID);
 
-        if (scytheDescriptionText != null)
-            scytheDescriptionText.text = "A scythe allowing for wide sweeping swings.";
+    public void BuyMagnifyingGlassTrapFocusedSunlight() => PurchaseUpgrade(MagnifyingGlassTrapFocusedSunlightID);
+    public void BuyMagnifyingGlassTrapIntensifiedHeat() => PurchaseUpgrade(MagnifyingGlassTrapIntensifiedHeatID);
+    public void BuyMagnifyingGlassTrapRefractedBeam() => PurchaseUpgrade(MagnifyingGlassTrapRefractedBeamID);
 
-        UpdateButton();
-    }
+    // --------------------------------------------------
+    // SHARED PURCHASE LOGIC
+    // --------------------------------------------------
 
-    public void ShowGrappleUpgrades()
-    {
-        UpdateItemButtonOutlines(grappleOutline);
-        CloseAllUpgradePanels();
-
-        if (grappleUpgradePanel != null)
-            grappleUpgradePanel.SetActive(true);
-
-        if (grappleNameText != null)
-            grappleNameText.text = "Grapple";
-
-        if (grappleDescriptionText != null)
-            grappleDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowSniperUpgrades()
-    {
-        UpdateItemButtonOutlines(sniperOutline);
-        CloseAllUpgradePanels();
-
-        if (sniperUpgradePanel != null)
-            sniperUpgradePanel.SetActive(true);
-
-        if (sniperNameText != null)
-            sniperNameText.text = "Sniper";
-
-        if (sniperDescriptionText != null)
-            sniperDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowWaterBallonLauncherUpgrades()
-    {
-        UpdateItemButtonOutlines(waterBalloonOutline);
-        CloseAllUpgradePanels();
-
-        if (waterBalloonUpgradePanel != null)
-            waterBalloonUpgradePanel.SetActive(true);
-
-        if (waterBalloonNameText != null)
-            waterBalloonNameText.text = "Water Ballon Launcher";
-
-        if (waterBalloonDescriptionText != null)
-            waterBalloonDescriptionText.text = "A powerful weapon launching water balloon explosives.";
-
-        UpdateButton();
-    }
-
-    public void ShowMilkChurnLauncherUpgrades()
-    {
-        UpdateItemButtonOutlines(milkChurnOutline);
-        CloseAllUpgradePanels();
-
-        if (milkChurnUpgradePanel != null)
-            milkChurnUpgradePanel.SetActive(true);
-
-        if (milkChurnNameText != null)
-            milkChurnNameText.text = "Milk Churn Launcher";
-
-        if (milkChurnDescriptionText != null)
-            milkChurnDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowRestorativeGasThrowerUpgrades()
-    {
-        UpdateItemButtonOutlines(restorativeGasOutline);
-        CloseAllUpgradePanels();
-
-        if (restorativeGasUpgradePanel != null)
-            restorativeGasUpgradePanel.SetActive(true);
-
-        if (restorativeGasNameText != null)
-            restorativeGasNameText.text = "Restorative Gas Thrower";
-
-        if (restorativeGasDescriptionText != null)
-            restorativeGasDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowLaunchTrapUpgrades()
-    {
-        UpdateItemButtonOutlines(launchTrapOutline);
-        CloseAllUpgradePanels();
-
-        if (launchTrapUpgradePanel != null)
-            launchTrapUpgradePanel.SetActive(true);
-
-        if (launchTrapNameText != null)
-            launchTrapNameText.text = "Launch Trap";
-
-        if (launchTrapDescriptionText != null)
-            launchTrapDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowPullTrapUpgrades()
-    {
-        UpdateItemButtonOutlines(pullTrapOutline);
-        CloseAllUpgradePanels();
-
-        if (pullTrapUpgradePanel != null)
-            pullTrapUpgradePanel.SetActive(true);
-
-        if (pullTrapNameText != null)
-            pullTrapNameText.text = "Pull Trap";
-
-        if (pullTrapDescriptionText != null)
-            pullTrapDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowBeehiveTrapUpgrades()
-    {
-        UpdateItemButtonOutlines(beehiveTrapOutline);
-        CloseAllUpgradePanels();
-
-        if (beehiveTrapUpgradePanel != null)
-            beehiveTrapUpgradePanel.SetActive(true);
-
-        if (beehiveTrapNameText != null)
-            beehiveTrapNameText.text = "Beehive Trap";
-
-        if (beehiveTrapDescriptionText != null)
-            beehiveTrapDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowSprinklerTrapUpgrades()
-    {
-        UpdateItemButtonOutlines(sprinklerTrapOutline);
-        CloseAllUpgradePanels();
-
-        if (sprinklerTrapUpgradePanel != null)
-            sprinklerTrapUpgradePanel.SetActive(true);
-
-        if (sprinklerTrapNameText != null)
-            sprinklerTrapNameText.text = "Sprinkler Trap";
-
-        if (sprinklerTrapDescriptionText != null)
-            sprinklerTrapDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    public void ShowMagnifyingGlassTrapUpgrades()
-    {
-        UpdateItemButtonOutlines(magnifyingGlassTrapOutline);
-        CloseAllUpgradePanels();
-
-        if (magnifyingGlassTrapUpgradePanel != null)
-            magnifyingGlassTrapUpgradePanel.SetActive(true);
-
-        if (magnifyingGlassTrapNameText != null)
-            magnifyingGlassTrapNameText.text = "Magnifying Glass Trap";
-
-        if (magnifyingGlassTrapDescriptionText != null)
-            magnifyingGlassTrapDescriptionText.text = "A grapple gun providing for increased mobility, positioning, and damage amplification.";
-
-        UpdateButton();
-    }
-
-    //------------------------------------------------------------------------
-    // WEAPON UPGRADE PURCHASES
-    // -----------------------------------------------------------------------
-
-    public void BuyImprovedSpray()
-    {
-        TryPurchaseUpgrade(ImprovedSprayID, improvedSprayCost, basicSprayUpgrade != null ? basicSprayUpgrade.ActivateImprovedSpray : null);
-    }
-
-    public void BuyMaximumHealthDamage()
-    {
-        TryPurchaseUpgrade(MaximumHealthDamageID, maximumHealthDamageCost, basicSprayUpgrade != null ? basicSprayUpgrade.ActivateMaximumHealthDamage : null);
-    }
-
-    public void BuyKnockback()
-    {
-        TryPurchaseUpgrade(KnockbackID, knockbackCost, basicSprayUpgrade != null ? basicSprayUpgrade.ActivateKnockback : null);
-    }
-
-    public void BuyDoubleBurst()
-    {
-
-        TryPurchaseUpgrade(DoubleBurstID, doubleBurstCost, shotgunSprayUpgrade != null ? shotgunSprayUpgrade.ActivateDoubleBurst : null);
-    }
-
-    public void BuyFasterReload()
-    {
-
-        TryPurchaseUpgrade(FasterReloadID, fasterReloadCost, shotgunSprayUpgrade != null ? shotgunSprayUpgrade.ActivateFasterReload : null);
-    }
-
-    public void BuyCloseRangeDamage()
-    {
-        TryPurchaseUpgrade(CloseRangeDamageID, closeRangeDamageCost, shotgunSprayUpgrade != null ? shotgunSprayUpgrade.ActivateCloseRangeDamage : null);
-    }
-
-    public void BuyPitchforkBonusDamage()
-    {
-        TryPurchaseUpgrade(PitchforkDamageID, pitchforkBonusDamageCost, pitchforkUpgrade != null ? pitchforkUpgrade.ActivateBonusDamage : null);
-    }
-
-    public void BuyPitchforkEnemySlowdown()
-    {
-        TryPurchaseUpgrade(PitchforkSlowdownID, pitchforkEnemySlowdownCost, pitchforkUpgrade != null ? pitchforkUpgrade.ActivateEnemySlowdown : null);
-    }
-
-    public void BuyPitchforkBonusDrops()
-    {
-        TryPurchaseUpgrade(PitchforkDropsID, pitchforkBonusDropsCost, pitchforkUpgrade != null ? pitchforkUpgrade.ActivateBonusResources : null);
-    }
-
-    public void BuyScytheRadius()
-    {
-        TryPurchaseUpgrade(ScytheRadiusID, scytheRadiusCost, scytheUpgrade != null ? scytheUpgrade.ActivateIncreasedAttackRadius: null);
-    }
-
-    public void BuyScytheAttackSpeed()
-    {
-        TryPurchaseUpgrade(ScytheAttackSpeedID, scytheAttackSpeedCost, scytheUpgrade != null ? scytheUpgrade.ActivateIncreasingAttackSpeed : null);
-    }
-
-    public void BuyScytheHealthOnKill()
-    {
-        TryPurchaseUpgrade(ScytheHealthOnKillID, scytheHealthOnKillCost, scytheUpgrade != null ? scytheUpgrade.ActivateHealthOnKill : null);
-    }
-
-    public void BuyReinforcedGraft()
-    {
-        TryPurchaseUpgrade(GrappleSpeedID, grappleSpeedCost, grappleUpgrade != null ? grappleUpgrade.ActivateReinforcedGraft : null);
-    }
-
-    public void BuyCorrosiveGraft()
-    {
-        TryPurchaseUpgrade(GrappleEnemyVulnerabilityID, grappleEnemyVulnerabilityCost, grappleUpgrade != null ? grappleUpgrade.ActivateCorrosiveGraft : null);
-    }
-
-    public void BuyGrapplerMomentum()
-    {
-        TryPurchaseUpgrade(GrappleHealthAndSpeedOnKillID, grappleHealthAndSpeedOnKillCost, grappleUpgrade != null ? grappleUpgrade.ActivateGrapplerMomentum : null);
-    }
-
-    public void BuySniperFasterReload()
-    {
-        TryPurchaseUpgrade(SniperFasterReloadID, sniperFasterReloadCost, sniperUpgrade != null ? sniperUpgrade.ActivateFasterReload : null);
-    }
-
-    public void BuySniperExposedWeakPoints()
-    {
-        TryPurchaseUpgrade(SniperExposeWeakpointsID, sniperExposeWeakpointsCost, sniperUpgrade != null ? sniperUpgrade.ActivateExposedWeakPoints : null);
-    }
-
-    public void BuySniperRicochetShot()
-    {
-        TryPurchaseUpgrade(SniperRicochetShotID, sniperRicochetShotCost, sniperUpgrade != null ? sniperUpgrade.ActivateRicochetShot : null);
-    }
-
-    public void BuyWaterBalloonExpandedSplash()
-    {
-        TryPurchaseUpgrade(BalloonExpandedSplashID, balloonExpandedSplashCost, waterBalloonUpgrade != null ? waterBalloonUpgrade.ActivateExpandedSplash : null);
-    }
-
-    public void BuyWaterBalloonRubberizedBalloon()
-    {
-        TryPurchaseUpgrade(BalloonRubberizedBalloonID, balloonRubberizedBalloonCost, waterBalloonUpgrade != null ? waterBalloonUpgrade.ActivateRubberizedBalloon : null);
-    }
-
-    public void BuyWaterBalloonConcussiveAftershock()
-    {
-        TryPurchaseUpgrade(BallonCuncussiveAfterShockID, balloonConcussiveAftershockCost, waterBalloonUpgrade != null ? waterBalloonUpgrade.ActivateConcussiveAftershock : null);
-    }
-
-    public void BuyMilkChurnRapidChurnin()
-    {
-        TryPurchaseUpgrade(MilkChurnFasterReloadID, milkChurnFasterReloadCost, milkChurnUpgrade != null ? milkChurnUpgrade.ActivateRapidChurning : null);
-    }
-
-    public void BuyMilkChurnLargerSplatter()
-    {
-        TryPurchaseUpgrade(MilkChurnLargerSplatterID, milkChurnLargerSplatterCost, milkChurnUpgrade != null ? milkChurnUpgrade.ActivateLargerSplatter : null);
-    }
-
-    public void BuyMilkChurnUnstableMixture()
-    {
-        TryPurchaseUpgrade(MilkChurnUnstableMixtureID, milkChurnUnstableMixtureCost, milkChurnUpgrade != null ? milkChurnUpgrade.ActivateUnstableMixture : null);
-    }
-
-    public void BuyRestorativeGasExtendedCanister()
-    {
-        TryPurchaseUpgrade(RestorativeGasExpandedCanisterID, restorativeGasExpandedCanisterCost, restorativeGasUpgrade != null ? restorativeGasUpgrade.ActivateExtendedCanister : null);
-    }
-
-    public void BuyRestorativeGasRapidRefill()
-    {
-        TryPurchaseUpgrade(RestorativeGasFasterReloadID, restorativeGasFasterReloadCost, restorativeGasUpgrade != null ? restorativeGasUpgrade.ActivateRapidRefill : null);
-    }
-
-    public void BuyRestorativeGasLingeringTonic()
-    {
-        TryPurchaseUpgrade(RestorativeGasLingeringTonicID, restorativeGasLingeringTonicCost, restorativeGasUpgrade != null ? restorativeGasUpgrade.ActivateLingeringTonic : null);
-    }
-
-    public void BuyLaunchTrapHighForceLaunch()
-    {
-        TryPurchaseUpgrade(LaunchTrapHighForceLaunchID, launchTrapHighForceLaunchCost, launchTrapUpgrade != null ? launchTrapUpgrade.ActivateHighForceLaunch : null);
-    }
-
-    public void BuyLaunchTrapConcussiveBlast()
-    {
-        TryPurchaseUpgrade(LaunchTrapConcussiveExhaustID, launchTrapConcussiveExhaustCost, launchTrapUpgrade != null ? launchTrapUpgrade.ActivateConcussiveBlast : null);
-    }
-
-    public void BuyLaunchTrapDoubleTrigger()
-    {
-        TryPurchaseUpgrade(LaunchTrapDoubleTriggerID, launchTrapDoubleTriggerCost, launchTrapUpgrade != null ? launchTrapUpgrade.ActivateDoubleTrigger : null);
-    }
-
-    public void BuyPullTrapExpandedVacuum()
-    {
-        TryPurchaseUpgrade(PullTrapExpandedVacuumID, pullTrapExpandedVacuumCost, pullTrapUpgrade != null ? pullTrapUpgrade.ActivateExpandedVacuum : null);
-    }
-
-    public void BuyPullTrapExtendedReach()
-    {
-        TryPurchaseUpgrade(PullTrapExtendedReachID, pullTrapExtendedReachCost, pullTrapUpgrade != null ? pullTrapUpgrade.ActivateExtendedReach : null);
-    }
-
-    public void BuyPullTrapForcefulLaunch()
-    {
-        TryPurchaseUpgrade(PullTrapForcefulLaunchID, pullTrapForcefulLaunchCost, pullTrapUpgrade != null ? pullTrapUpgrade.ActivateForcefulLaunch : null);
-    }
-
-    public void BuyBeehiveTrapExpandedColony()
-    {
-        TryPurchaseUpgrade(BeehiveTrapExpandedColonyID, beehiveTrapExpandedColonyCost, beehiveTrapUpgrade != null ? beehiveTrapUpgrade.ActivateExpandedColony : null);
-    }
-
-    public void BuyBeehiveTrapFrenziedSwarm()
-    {
-        TryPurchaseUpgrade(BeehiveTrapFrenziedSwarmID, beehiveTrapFrenziedSwarmCost, beehiveTrapUpgrade != null ? beehiveTrapUpgrade.ActivateFrenziedSwarm : null);
-    }
-
-    public void BuyBeehiveTrapSwarmReplication()
-    {
-        TryPurchaseUpgrade(BeehiveTrapSwarmReplicationID, beehiveTrapSwarmReplicationCost, beehiveTrapUpgrade != null ? beehiveTrapUpgrade.ActivateSwarmReplication : null);
-    }
-
-    public void BuySprinklerTrapPressurizedSpray()
-    {
-        TryPurchaseUpgrade(SprinklerTrapPressurizedSprayID, sprinklerTrapPressurizedSprayCost, sprinklerUpgrade != null ? sprinklerUpgrade.ActivatePressurizedSpray : null);
-    }
-
-    public void BuySprinklerTrapRapidRotation()
-    {
-        TryPurchaseUpgrade(SprinklerTrapRapidRotationID, sprinklerTrapRapidRotationCost, sprinklerUpgrade != null ? sprinklerUpgrade.ActivateRapidRotation : null);
-    }
-
-    public void BuySprinklerTrapReinforcedBarriers()
-    {
-        TryPurchaseUpgrade(SprinklerTrapReinforcedBarriersID, sprinklerTrapReinforcedBarriersCost, sprinklerUpgrade != null ? sprinklerUpgrade.ActivateReinforcedBarriers : null);
-    }
-
-    public void BuyMagnifyingGlassTrapFocusedSunlight()
-    {
-        TryPurchaseUpgrade(MagnifyingGlassTrapFocusedSunlightID, magnifyingGlassTrapFocusedSunlightCost, magnifyingGlassTrapUpgrade != null ? magnifyingGlassTrapUpgrade.ActivateFocusedSunlight : null);
-    }
-
-    public void BuyMagnifyingGlassTrapIntensifiedHeat()
-    {
-        TryPurchaseUpgrade(MagnifyingGlassTrapIntensifiedHeatID, magnifyingGlassTrapIntensifiedHeatCost, magnifyingGlassTrapUpgrade != null ? magnifyingGlassTrapUpgrade.ActivateIntensifiedHeat : null);
-    }
-
-    public void BuyMagnifyingGlassTrapRefractedBeam()
-    {
-        TryPurchaseUpgrade(MagnifyingGlassTrapRefractedBeamID, magnifyingGlassTrapRefractedBeamCost, magnifyingGlassTrapUpgrade != null ? magnifyingGlassTrapUpgrade.ActivateRefractedBeam : null);
-    }
-
-    // Checks affordability, prevents duplicate purchases, deducts drops and activates the purchased upgrade.
     private void TryPurchaseUpgrade(string upgradeID, int cost, Action activateUpgrade)
     {
         if (playerResources == null || upgradeManager == null || activateUpgrade == null)
-        {
             return;
-        }
 
         if (upgradeManager.HasUpgrade(upgradeID))
             return;
@@ -1376,13 +804,15 @@ public class UpgradeMenuScript : MonoBehaviour
             return;
 
         activateUpgrade.Invoke();
-
         upgradeManager.RegisterUpgrade(upgradeID);
 
         UpdateButton();
     }
 
-    // Updates purchase button availability based on current resources.
+    // --------------------------------------------------
+    // BUTTON AVAILABILITY
+    // --------------------------------------------------
+
     private void UpdateButton()
     {
         if (playerResources == null)
@@ -1390,229 +820,57 @@ public class UpgradeMenuScript : MonoBehaviour
 
         int drops = playerResources.TotalDrops;
 
-        if (launchTrapButton != null)
-            launchTrapButton.interactable = playerResources.TotalDrops >= launchTrapCost;
+        UpdateWeaponButton(weaponPurchases.basicSpray, 0, drops);
+        UpdateWeaponButton(weaponPurchases.shotgunSpray, 1, drops);
+        UpdateWeaponButton(weaponPurchases.pitchfork, 2, drops);
+        UpdateWeaponButton(weaponPurchases.scythe, 3, drops);
+        UpdateWeaponButton(weaponPurchases.grapple, 4, drops);
+        UpdateWeaponButton(weaponPurchases.sniper, 5, drops);
+        UpdateWeaponButton(weaponPurchases.waterBalloon, 6, drops);
+        UpdateWeaponButton(weaponPurchases.milkChurn, 7, drops);
+        UpdateWeaponButton(weaponPurchases.restorativeGas, 8, drops);
 
-        if (pullTrapButton != null)
-            pullTrapButton.interactable = playerResources.TotalDrops >= pullTrapCost;
+        UpdateTrapButton(trapPurchases.launch, drops);
+        UpdateTrapButton(trapPurchases.pull, drops);
+        UpdateTrapButton(trapPurchases.beehive, drops);
+        UpdateTrapButton(trapPurchases.magnifyingGlass, drops);
+        UpdateTrapButton(trapPurchases.sprinkler, drops);
 
-        if (beehiveTrapButton != null)
-            beehiveTrapButton.interactable = playerResources.TotalDrops >= beehiveTrapCost;
+        if (upgrades == null)
+            return;
 
-        if (magnifyingGlassTrapButton != null)
-            magnifyingGlassTrapButton.interactable = playerResources.TotalDrops >= magnifyingGlassTrapCost;
-
-        if (sprinklerTrapButton != null)
-            sprinklerTrapButton.interactable = playerResources.TotalDrops >= sprinklerTrapCost;
-
-        if (improvedSprayButton != null)
+        foreach (UpgradeDefinition upgrade in upgrades)
         {
-            improvedSprayButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(ImprovedSprayID) && drops >= improvedSprayCost;
-        }
+            if (upgrade.Button == null)
+                continue;
 
-        if (maximumHealthDamageButton != null)
-        {
-            maximumHealthDamageButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MaximumHealthDamageID) && drops >= maximumHealthDamageCost;
+            upgrade.Button.interactable = upgradeManager != null && upgrade.Activate != null && !upgradeManager.HasUpgrade(upgrade.ID) && drops >= upgrade.Cost;
         }
+    }
 
-        if (knockbackButton != null)
-        {
-            knockbackButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(KnockbackID) && drops >= knockbackCost;
-        }
+    private void UpdateWeaponButton(PurchaseUI purchase, int weaponIndex, int drops)
+    {
+        if (purchase == null || purchase.button == null)
+            return;
 
-        if (doubleBurstButton != null)
-        {
-            doubleBurstButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(DoubleBurstID) && drops >= doubleBurstCost;
-        }
+        purchase.button.interactable = playerWeapons != null && playerWeapons.CanPurchaseWeapon(weaponIndex) && drops >= purchase.cost;
+    }
 
-        if (fasterReloadButton != null)
-        {
-            fasterReloadButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(FasterReloadID) && drops >= fasterReloadCost;
-        }
+    private void UpdateTrapButton(PurchaseUI purchase, int drops)
+    {
+        if (purchase != null && purchase.button != null)
+            purchase.button.interactable = drops >= purchase.cost;
+    }
 
-        if (closeRangeDamageButton != null)
-        {
-            closeRangeDamageButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(CloseRangeDamageID) && drops >= closeRangeDamageCost;
-        }
+    private void OnDestroy()
+    {
+        if (tabs.purchaseTrapsButton != null)
+            tabs.purchaseTrapsButton.onClick.RemoveListener(ShowPurchaseTrapsTab);
 
-        if (pitchforkBonusDamageButton != null)
-        {
-            pitchforkBonusDamageButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PitchforkDamageID) && drops >= pitchforkBonusDamageCost;
-        }
+        if (tabs.upgradeTrapsButton != null)
+            tabs.upgradeTrapsButton.onClick.RemoveListener(ShowUpgradeTrapsTab);
 
-        if (pitchforkEnemySlowdownButton != null)
-        {
-            pitchforkEnemySlowdownButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PitchforkSlowdownID) && drops >= pitchforkEnemySlowdownCost;
-        }
-
-        if (pitchforkBonusDropsButton != null)
-        {
-            pitchforkBonusDropsButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PitchforkDropsID) && drops >= pitchforkBonusDropsCost;
-        }
-
-        if (scytheRadiusButton != null)
-        {
-            scytheRadiusButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(ScytheRadiusID) && drops >= scytheRadiusCost;
-        }
-
-        if (scytheAttackSpeedButton != null)
-        {
-            scytheAttackSpeedButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(ScytheAttackSpeedID) && drops >= scytheAttackSpeedCost;
-        }
-
-        if (scytheHealthOnKillButton != null)
-        {
-            scytheHealthOnKillButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(ScytheHealthOnKillID) && drops >= scytheHealthOnKillCost;
-        }
-
-        if (grappleSpeedButton != null)
-        {
-            grappleSpeedButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(GrappleSpeedID) && drops >= grappleSpeedCost;
-        }
-
-        if (grappleEnemyVulnerabilityButton != null)
-        {
-            grappleEnemyVulnerabilityButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(GrappleEnemyVulnerabilityID) && drops >= grappleEnemyVulnerabilityCost;
-        }
-
-        if (grappleHealthAndSpeedOnKillButton != null)
-        {
-            grappleHealthAndSpeedOnKillButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(GrappleHealthAndSpeedOnKillID) && drops >= grappleHealthAndSpeedOnKillCost;
-        }
-
-        if (sniperFasterReloadButton != null)
-        {
-            sniperFasterReloadButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SniperFasterReloadID) && drops >= sniperFasterReloadCost;
-        }
-
-        if (sniperExposeWeakpointsButton != null)
-        {
-            sniperExposeWeakpointsButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SniperExposeWeakpointsID) && drops >= sniperExposeWeakpointsCost;
-        }
-
-        if (sniperRicochetShotButton != null)
-        {
-            sniperRicochetShotButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SniperRicochetShotID) && drops >= sniperRicochetShotCost;
-        }
-
-        if (balloonExpandedSplashButton != null)
-        {
-            balloonExpandedSplashButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BalloonExpandedSplashID) && drops >= balloonExpandedSplashCost;
-        }
-
-        if (balloonRubberizedBalloonButton != null)
-        {
-            balloonRubberizedBalloonButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BalloonRubberizedBalloonID) && drops >= balloonRubberizedBalloonCost;
-        }
-
-        if (balloonConcussiveAftershockButton != null)
-        {
-            balloonConcussiveAftershockButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BallonCuncussiveAfterShockID) && drops >= balloonConcussiveAftershockCost;
-        }
-
-        if (milkChurnFasterReloadButton != null)
-        {
-            milkChurnFasterReloadButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MilkChurnFasterReloadID) && drops >= milkChurnFasterReloadCost;
-        }
-
-        if (milkChurnLargerSplatterButton != null)
-        {
-            milkChurnLargerSplatterButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MilkChurnLargerSplatterID) && drops >= milkChurnLargerSplatterCost;
-        }
-
-        if (milkChurnUnstableMixtureButton != null)
-        {
-            milkChurnUnstableMixtureButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MilkChurnUnstableMixtureID) && drops >= milkChurnUnstableMixtureCost;
-        }
-
-        if (restorativeGasExpandedCanisterButton != null)
-        {
-            restorativeGasExpandedCanisterButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(RestorativeGasExpandedCanisterID) && drops >= restorativeGasExpandedCanisterCost;
-        }
-
-        if (restorativeGasFasterReloadButton != null)
-        {
-            restorativeGasFasterReloadButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(RestorativeGasFasterReloadID) && drops >= restorativeGasFasterReloadCost;
-        }
-
-        if (restorativeGasLingeringTonicButton != null)
-        {
-            restorativeGasLingeringTonicButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(RestorativeGasLingeringTonicID) && drops >= restorativeGasLingeringTonicCost;
-        }
-
-        if (launchTrapHighForceLaunchButton != null)
-        {
-            launchTrapHighForceLaunchButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(LaunchTrapHighForceLaunchID) && drops >= launchTrapHighForceLaunchCost;
-        }
-
-        if (launchTrapConcussiveExhaustButton != null)
-        {
-            launchTrapConcussiveExhaustButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(LaunchTrapConcussiveExhaustID) && drops >= launchTrapConcussiveExhaustCost;
-        }
-
-        if (launchTrapDoubleTriggerButton != null)
-        {
-            launchTrapDoubleTriggerButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(LaunchTrapDoubleTriggerID) && drops >= launchTrapDoubleTriggerCost;
-        }
-
-        if (pullTrapExpandedVacuumButton != null)
-        {
-            pullTrapExpandedVacuumButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PullTrapExpandedVacuumID) && drops >= pullTrapExpandedVacuumCost;
-        }
-
-        if (pullTrapExtendedReachButton != null)
-        {
-            pullTrapExtendedReachButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PullTrapExtendedReachID) && drops >= pullTrapExtendedReachCost;
-        }
-
-        if (pullTrapForcefulLaunchButton != null)
-        {
-            pullTrapForcefulLaunchButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(PullTrapForcefulLaunchID) && drops >= pullTrapForcefulLaunchCost;
-        }
-
-        if (beehiveTrapExpandedColonyButton != null)
-        {
-            beehiveTrapExpandedColonyButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BeehiveTrapExpandedColonyID) && drops >= beehiveTrapExpandedColonyCost;
-        }
-
-        if (beehiveTrapFrenziedSwarmButton != null)
-        {
-            beehiveTrapFrenziedSwarmButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BeehiveTrapFrenziedSwarmID) && drops >= beehiveTrapFrenziedSwarmCost;
-        }
-
-        if (beehiveTrapSwarmReplicationButton != null)
-        {
-            beehiveTrapSwarmReplicationButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(BeehiveTrapSwarmReplicationID) && drops >= beehiveTrapSwarmReplicationCost;
-        }
-
-        if (sprinklerTrapPressurizedSprayButton != null)
-        {
-            sprinklerTrapPressurizedSprayButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SprinklerTrapPressurizedSprayID) && drops >= sprinklerTrapPressurizedSprayCost;
-        }
-
-        if (sprinklerTrapRapidRotationButton != null)
-        {
-            sprinklerTrapRapidRotationButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SprinklerTrapRapidRotationID) && drops >= sprinklerTrapRapidRotationCost;
-        }
-
-        if (sprinklerTrapReinforcedBarriersButton != null)
-        {
-            sprinklerTrapReinforcedBarriersButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(SprinklerTrapReinforcedBarriersID) && drops >= sprinklerTrapReinforcedBarriersCost;
-        }
-
-        if (magnifyingGlassTrapFocusedSunlightButton != null)
-        {
-            magnifyingGlassTrapFocusedSunlightButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MagnifyingGlassTrapFocusedSunlightID) && drops >= magnifyingGlassTrapFocusedSunlightCost;
-        }
-
-        if (magnifyingGlassTrapIntensifiedHeatButton != null)
-        {
-            magnifyingGlassTrapIntensifiedHeatButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MagnifyingGlassTrapIntensifiedHeatID) && drops >= magnifyingGlassTrapIntensifiedHeatCost;
-        }
-
-        if (magnifyingGlassTrapRefractedBeamButton != null)
-        {
-            magnifyingGlassTrapRefractedBeamButton.interactable = upgradeManager != null && !upgradeManager.HasUpgrade(MagnifyingGlassTrapRefractedBeamID) && drops >= magnifyingGlassTrapRefractedBeamCost;
-        }
+        if (tabs.upgradeWeaponsButton != null)
+            tabs.upgradeWeaponsButton.onClick.RemoveListener(ShowUpgradeWeaponsTab);
     }
 }
