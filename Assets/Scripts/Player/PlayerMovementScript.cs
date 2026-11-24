@@ -217,7 +217,7 @@ public class PlayerMovementScript : MonoBehaviour
 
         float moveControlMultiplier = grounded ? groundedAirControl : airControl;
 
-        if (PlayerCollisionScript.playerWallRunning && targetVelocity.magnitude > 1)
+        if (PlayerCollisionScript.playerWallRunning && targetVelocity.magnitude > 10)
         {
             //playerRigidBody.linearVelocity = new Vector3(playerRigidBody.linearVelocity.x, 0, playerRigidBody.linearVelocity.z); // Slowly glide down the wall
             playerRigidBody.useGravity = false;
