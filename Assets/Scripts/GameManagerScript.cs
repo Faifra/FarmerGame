@@ -228,4 +228,9 @@ public class GameManagerScript : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void TogglePauseMenu(bool b)
+    {
+        togglePauseMenu = b;
+    }
+
 }
