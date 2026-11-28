@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Updates the hotbar UI to display the assigned weapon in each slot.
@@ -14,19 +15,25 @@ public class HotbarUIScript : MonoBehaviour
     [Header("Slot Labels (1 to 9)")]
     [SerializeField] private TextMeshProUGUI[] slotLabels;
 
+    [Header("Slot Outlines (1 to 9)")]
+    [SerializeField] private Outline[] slotOutlines;
+
     // Stores previous label values to avoid unnecessary UI updates.
     private string[] previousLabels = new string[9];
+    private int previousSelectedSlot = -1;
 
     // Initializes the hotbar display.
     void Start()
     {
         RefreshHotbar();
+        UpdateSelectedOutline();
     }
 
     // Keeps the displayed slots synchronized with the player's hotbar.
     void Update()
     {
         RefreshHotbar();
+        UpdateSelectedOutline();
     }
 
     // Updates slot labels when their assigned weapon changes.
@@ -49,6 +56,25 @@ public class HotbarUIScript : MonoBehaviour
                 slotLabels[i].text = labelText;
                 previousLabels[i] = labelText;
             }
+        }
+    }
+
+    private void UpdateSelectedOutline()
+    {
+        if (playerWeapons == null || slotOutlines == null)
+            return;
+
+        int selectedSlot = playerWeapons.GetCurrentHotbarSlot();
+
+        if (selectedSlot == previousSelectedSlot)
+            return;
+
+        previousSelectedSlot = selectedSlot;
+
+        for (int i = 0; i < slotOutlines.Length; i++)
+        {
+            if (slotOutlines[i] != null)
+                slotOutlines[i].enabled = (i == selectedSlot);
         }
     }
 }

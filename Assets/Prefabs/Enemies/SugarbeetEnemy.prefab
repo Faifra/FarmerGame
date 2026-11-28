@@ -5035,6 +5035,7 @@ GameObject:
   - component: {fileID: 7496189725551747925}
   - component: {fileID: 1290560114266358280}
   - component: {fileID: -6300649277110659574}
+  - component: {fileID: 9035851929865255262}
   m_Layer: 6
   m_Name: SugarbeetEnemy
   m_TagString: BossBarCollection
@@ -5242,3 +5243,17 @@ MonoBehaviour:
     amount: 7
   burstDistance: 1.5
   burstHeight: 1
+--- !u!114 &9035851929865255262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384746767767502866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c269c24d29938e545bce49922c418970, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMarkerSpawnerScript
+  markerPrefab: {fileID: 7493753560536211224, guid: d333690cd38a0a14ba47e1bc47eb8049, type: 3}
+  enemyIcon: {fileID: 1215296530120796333, guid: 0e9df4971272c624087a0cd922546c8f, type: 3}
