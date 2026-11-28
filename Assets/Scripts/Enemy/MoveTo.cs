@@ -19,6 +19,9 @@ public class MoveTo : MonoBehaviour
     [SerializeField] private float flankAngleVariation = 20f;
     [SerializeField] private float flankDistanceVariation = 1.5f;
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+
     private static readonly List<MoveTo> activeEnemies = new List<MoveTo>();
     private static float groupAngleOffset;
 
@@ -130,6 +133,11 @@ public class MoveTo : MonoBehaviour
                     agent.speed = originalSpeed;
             }
         }
+    }
+
+    private void Update()
+    {
+        UpdateMovementAnimation();
     }
 
     public void ApplySlow(float multiplier, float duration)
@@ -394,6 +402,16 @@ public class MoveTo : MonoBehaviour
         {
             hasErraticDestination = false;
         }
+    }
+
+    private void UpdateMovementAnimation()
+    {
+        if (animator == null || agent == null) return; //if animator or navmesh agent is null, return
+
+        float moveSpeed = agent.velocity.magnitude; //get the enemy's movement speed
+        Debug.Log($"updating movement animation. speed: {moveSpeed}");
+
+        animator.SetFloat("speed", moveSpeed); //update speed parameter in the animationcontroller.
     }
 
     private void OnEnable()
